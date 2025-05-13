@@ -1,0 +1,22 @@
+{
+  "titles": {
+    "title": "My App",
+    "greeting": "Hello"
+  },
+  "buttons": {
+    "change_language": "Change Language",
+    "enviar": "Send"
+  },
+  "texts": {
+    "texto1": "Since 2010, Pro Eco Azuero has been dedicated to reforestation, habitat restoration, sustainable land management, and environmental education with the mission to preserve the earth’s ecosystems, protect biodiversity, and promote healthy communities by helping people to make informed decisions, take sustainable actions, and share knowledge",
+    "esun": "Pro Eco Azuero is a “living laboratory” located on Panama’s Azuero Peninsula focused on reforestation, habitat restoration, sustainable land use and environmental education. We combine community outreach with science and fieldwork to create models that are scalable and replicable worldwide."
+  },
+  "Login":{
+    "name": "name",
+    "password": "password",
+    "errores": {
+      "vacio": "this camp cant be null",
+      "mail": "please use a correct gmail"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "titles": {
+    "title": "Mi App",
+    "greeting": "¡Hola!"
+  },
+  "buttons": {
+    "change_language": "Cambiar Idioma",
+    "enviar": "Enviar"
+  },
+  "texts": {
+    "texto1": "Desde 2010, Pro Eco Azuero se ha dedicado a la reforestación, la restauración del hábitat, el manejo sostenible de la tierra y la educación ambiental con la misión de preservar los ecosistemas terrestres, proteger la biodiversidad y promover comunidades saludables al ayudar a las personas a tomar decisiones informadas, emprender acciones sostenibles, y compartir conocimientos.",
+    "esun": "Pro Eco Azuero es un “laboratorio viviente” ubicado en la Península de Azuero en Panamá enfocado en la reforestación, restauración de hábitat, uso sostenible de la tierra y educación ambiental. Combinamos el alcance comunitario con la ciencia y el trabajo de campo para crear modelos escalables y replicables en todo el mundo."
+  },
+  "Login":{
+    "name": "nombre",
+    "password": "contrasenia",
+    "errores": {
+      "vacio": "no se permite campo vacio",
+      "mail": "agregue un correo valido"
+    }
+  }
+}
