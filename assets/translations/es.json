@@ -16,7 +16,7 @@
     "password": "contrasenia",
     "errores": {
       "vacio": "no se permite campo vacio",
-      "mail": "agregue un correo valido"
+      "mail": "agregue un correo valido" 
     }
   }
 }

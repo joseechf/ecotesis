@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class Educacion extends StatelessWidget {

@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
       ),
       //idioma
       debugShowCheckedModeBanner: false,
-      title: 'titles.title'.tr(),
+      title: context.tr('titles.title'), 
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
@@ -85,8 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return Scaffold(
           appBar: customAppBar(
             context: context,
-          ), // Usas tu AppBar personalizado
-          //appBar: AppBar(title: Text('Tercera Página')),
+          ), 
           body: SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -94,7 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   Container(
                     width: double.infinity, //ancho completo
                     constraints: BoxConstraints(
-                      //minHeight: ResponsiveWrapper.of(context).isMobile ? 200 : 300,
                       maxHeight: 400,
                     ),
                     color: const Color.fromARGB(255, 24, 190, 29),
@@ -138,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: EdgeInsets.all(16), // Espacio interno,
                     alignment: Alignment.center,
                     child: Text(
-                      tr('texts.texto1'),
+                      context.tr('texts.texto1'),
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.045,
                         height: 1.5, // Espaciado entre líneas
@@ -156,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         return Row(
                           children: [
                             Expanded(
-                              child: _constructorContainer(tr('texts.esun')),
+                              child: _constructorContainer(context.tr('texts.esun')),
                             ),
                             Expanded(
                               child: _constructorContainerimg(
@@ -169,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _constructorContainer(tr('texts.esun')),
+                            _constructorContainer(context.tr('texts.esun')),
                             _constructorContainerimg('assets/images/doñas.jpg'),
                           ],
                         );

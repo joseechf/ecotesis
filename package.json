@@ -24,5 +24,13 @@
   },
   "dependencies": {
     "aws-amplify": "^6.14.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josechf/AppHibridaEco.git"
+  },
+  "bugs": {
+    "url": "https://github.com/josechf/AppHibridaEco/issues"
+  },
+  "homepage": "https://github.com/josechf/AppHibridaEco#readme"
 }
