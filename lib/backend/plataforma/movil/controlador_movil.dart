@@ -1,11 +1,5 @@
-import 'package:ecoazuero/backend/utilidades/variableglobal.dart';
 
-import 'sqlite/localdatabase.dart';
-import '../../utilidades/item.dart';
-import '../../lambda/remotedatabase.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:synchronized/synchronized.dart';
-
+/*
 class Sincronizar {
   final LocalDatabase _localBD = LocalDatabase.instance;
   final _lock = Lock();
@@ -97,3 +91,4 @@ class crud {
     }
   }
 }
+*/

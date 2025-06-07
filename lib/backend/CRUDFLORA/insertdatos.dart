@@ -1,10 +1,5 @@
 
-import '../utilidades/item.dart';
-import 'package:flutter/material.dart';
-import '../detectaplataforma.dart';
-import 'package:uuid/uuid.dart';
-import '../utilidades/variableglobal.dart';
-
+/*
 class insertBD extends StatefulWidget {
   const insertBD({Key? key}) : super(key: key);
 
@@ -60,4 +55,4 @@ class _IuInsertBD extends State<insertBD> {
   }
 
 }
-
+*/

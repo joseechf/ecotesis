@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class interfazUpDatos extends StatefulWidget {
-  const interfazUpDatos({Key? key}) : super(key: key);  
+  const interfazUpDatos({super.key});  
   @override
   _updateDatos createState() => _updateDatos();
 }

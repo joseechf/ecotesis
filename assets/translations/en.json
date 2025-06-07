@@ -1,16 +1,143 @@
 {
   "titles": {
     "title": "My App",
-    "greeting": "Hello"
+    "titlePrincipal":{
+      "nosotros": "WHO WE ARE",
+      "equipo": "OUR TEAM",
+      "PARTNERS": "OUR PARTNERS",
+      "conservrefor": "CONSERVATION AND\n RESTORATION",
+      "corredor":"The Biological Corridor",
+      "educacion": "EDUCATION",
+      "comunidad":"GROW COMMUNITY"
+    },
+    "greeting": "Hello",
+    "hacemos": "What we do",
+    "noticias": "late News",
+    "charrito": "The Azuero Spider Monkey, CHARRITO",
+    "cultivoSostenible": "GROWING PLANTS & TREES SUSTAINABLY",
+    "pregFrecuentes": "FREQUENTLY ASKED QUESTIONS"
   },
   "buttons": {
     "change_language": "Change Language",
-    "enviar": "Send"
+    "enviar": "Send",
+    "somos":"Who we are",
+    "trabajo":"What We Do",
+    "conservref":"CONSERVATION AND RESTORATION",
+    "educacion":"EDUCATION",
+    "comunidad": "GROW COMMUNITY",
+    "recursos":"Resources",
+    "mapa":"AZUERO MAP",
+    "ecoguias":"ECO-GUIDES",
+    "basedatos":"AZUERO PLANT DATABASE",
+    "biblioteca":"LIBRARY",
+    "blog":"BLOG"
   },
   "texts": {
-    "texto1": "Since 2010, Pro Eco Azuero has been dedicated to reforestation, habitat restoration, sustainable land management, and environmental education with the mission to preserve the earth’s ecosystems, protect biodiversity, and promote healthy communities by helping people to make informed decisions, take sustainable actions, and share knowledge",
-    "esun": "Pro Eco Azuero is a “living laboratory” located on Panama’s Azuero Peninsula focused on reforestation, habitat restoration, sustainable land use and environmental education. We combine community outreach with science and fieldwork to create models that are scalable and replicable worldwide."
+    "textsHome": {
+      "texto1": "Since 2010, Pro Eco Azuero has been dedicated to reforestation, habitat restoration, sustainable land management, and environmental education with the mission to preserve the earth’s ecosystems, protect biodiversity, and promote healthy communities by helping people to make informed decisions, take sustainable actions, and share knowledge",
+      "esun": "Pro Eco Azuero is a “living laboratory” located on Panama’s Azuero Peninsula focused on reforestation, habitat restoration, sustainable land use and environmental education. We combine community outreach with science and fieldwork to create models that are scalable and replicable worldwide.",
+      "monoArania": "The Azuero Spider Monkey is our guiding symbol because it is one of the rarest subspecies of primates in Central and South America, yet vital to our ecosystems. The few that remain on the planet live only on the Azuero.",
+      "textconservacion":"Restoring the tropical dry forest ecosystem and supporting sustainable land use practices in Azuero to save the critically endangered Azuero Spider Monkey.",
+      "hacemos":{
+        "titulo": {
+          "conservacion": "conservation",
+          "educDiv": "Education and Outreach",
+          "colaboracion": "Collaboration"
+        },
+        "texto": {
+          "conservacion": "Restoring the tropical dry forest ecosystem and supporting sustainable land use practices in Azuero to save the critically endangered Azuero Spider Monkey.",
+          "educDiv": "Collaborating with local schools to educate the next generation of environmental protectors about ecosystems, biodiversity, reforestation, and climate change.",
+          "colaboracion": "Knitting together a network ranging from grassroots actors to international institutions to create positive environmental change in Azuero."
+        }
+      },
+      "NewYorkTimes": "“Pro Eco Azuero has developed a community-oriented approach to conservation that includes working alongside farmers to replant trees, working with local teachers to create lesson plans around conservation and sustainability, and partnering with local supporters to foster a culture of conservation and land stewardship.”"  ,
+      "fecha": "10 sept 2024 - 3 Min. de lectura"
+    },
+    "textsNosotros":{
+      "historia": {
+        "p1": "Pro Eco Azuero was founded by a group of scientists and local landowners interested in sharing the joy of conserving local wildlife through restoring the dry forest they depend upon with the larger community. Since 2010, we have been dedicated to reforestation, habitat restoration, sustainable land management, and environmental education with the mission to:",
+        "negrita": "Preserve the earth’s ecosystems, protect biodiversity, and promote healthy communities by helping people to make informed decisions, take sustainable actions, and share knowledge.",
+        "p2": "The Azuero Eco Foundation is incorporated in Panama with the organizational identification number R.U.C. 25036801-3-2018 D.V. 88 and the tax exempt resolution number 201-4940 of September 2nd, 2019."
+      },
+      "aprendizaje": "Home is the place that creates a sense of calm and safety that people look for to live. This is exactly what this house represents for Pro Eco Azuero . This is the place that shelters the hope of building a greener Azuero, the place where tons of ideas on how to continue to restore the region’s habitat are born. This compound holds the Azuero Eco Foundation office ever since it started. It is here where all the planning of our projects take place. Here, we receive people that is looking for information about environmental topics, it is a refuge of environmental knowledge. Every Friday, this becomes a school for the Pro Eco Pelaos, one of our environmental education programs. January 3rd, 2020, was a great day for our organization, as Edwina Von Gal, co-founder of the Azuero Earth Project, believing in our environmental efforts, has officially donated the house to our organization. Edwina Von Gal was the creator of this space, she dreamed that this compound would host such a commendable project.",
+      "charrito": "The Azuero Spider Monkey, CHARRITO (Ateles geoffroyi azuerensis), is our indicator subspecies and guiding symbol because it is a vitally important but critically endangered species in the Azuero dry forest ecosystem. The few that remain on the planet live only on the Azuero. They are victims of rapidly decreasing habitat, hunting, and capture for the pet trade. They are particularly smart and cute, but also shy, which may be why they have managed to hold on this long. However, the loss of habitat and shrinking gene pool may be more than they can manage. We are working to stop the killing and capture of Spider monkeys, and all monkeys, and provide them with sufficient habitat to ensure their future."
+    },
+    "conservrefor": {
+      "restHabit": {
+        "title": "RESTORING HABITAT",
+        "text":{
+          "p1": "In collaboration with local landowners,",
+          "negrita": "Pro Eco Azuero is restoring habitat along a biological corridor  80km in length, with a 10km buffer on each side - nearly 25,000 hectares",
+          "p2":"- made up of  nearly 400 privately owned properties. The project aims to gradually restore the critically important tropical dry forest ecosystem and support sustainable land use practices in the Azuero."
+        }
+      },
+      "progInternos": "Pro Eco Azuero supports its sustainable land management and habitat restoration initiatives through three in-house programs.",
+      "preguntas":{
+        "titulo": "What are the negative consequences of deforestation on the Azuero Peninsula?",
+        "texto": "-Increased soil erosion and nutrient runoff, decreasing water quality\n -Decreased groundwater recharge and larger floods\n -Drier conditions increase stress on livestock and exacerbate climate change impacts\n -Reduced wildlife habitat and decreasing biodiversity\n -Reduced access to non-timber forest products, including healthy fruit products"
+      },
+      "beneficios":{
+        "titulo":"What are the benefits of reforestation?",
+        "texto":"-Lower soil erosion and nutrient runoff, resulting in more fertile soil and healthier livestock\n -Higher groundwater recharge, helping to mitigate droughts\n -Lower heat stress on livestock due to shade from trees\n -Greater biodiversity, resulting in improved pollination, dissemination and other ecosystem services\n -Economic diversification and food production, resulting in improved livelihoods\n -Carbon capture helping to mitigate climate change\n -Greater resilience to climate change impacts on the Azuero peninsula, which is identified as part of the FAO’s Central American dry corridor"
+      },
+      "enfoque":{
+        "titulo": "How is our approach innovative?",
+        "texto": "Pro Eco Azuero works directly with local landowners, supporting collaboration and collective action, rather than purchasing or renting the land for reforestation. This builds ownership in the project and builds the capacity within local communities which will ultimately be responsible for long-term management of the reforestation effort and will inspire sustainable land use practices"
+      },
+      "Patrick_Leung": {
+        "texto": "\"It's about shifting incentives on the ground for people who have been on that land and, through no fault of their own, engaged in practices that have degraded the land. Getting them to band together and restore the land...\"",
+        "autor": "- Patrick Leung, Co-Founder and CTO of Earthshot Labs" 
+      },
+      "cultivosSostenibles": {
+        "titulo": {
+          "viveros": "Tree Nursery",
+          "Microproductores":"Tree Nursery",
+          "semillas":"Seed Bank"
+        },
+        "texto": {
+          "viveros": "Each year we grow thousands of native, fruit and timber seedlings for planting out in the field during the June-July reforestation season.",
+          "Microproductores":"We create micro-contracts with rural residents to grow saplings in home nurseries, which we then buy back from them for our reforestation season -their economic growth fuels habitat conservation.",
+          "semillas":"We collect seed from local plants and trees to exchange with other community members and local seed banks. "
+        }
+      }
+    },
+    "educacion":{
+      "monoArania":"Spider Monkey School Initiative",
+      "texto1":"Since 2010 we have been reaching out to local elementary schools closest to Azuero spider monkey habitat and their surrounding communities. We now work with students in 15 schools in 5 districts to explore the importance of spider monkeys in the local environment, the dangers these animals face from hunting, development, and deforestation, the uniqueness of the dry forest ecosystem, and how reforestation can increase farm productivity.",
+      "objetivo": {
+        "texto1": "Educating the younger generation while fostering a relationship between the Foundation and the communities that are interested in reforesting their land.",
+        "texto2": "Raise awareness in the community about the importance of restoring watersheds and the role of reforestation in improving water quality, increasing habitat connectivity and diversifying the production of rural farms.",
+        "texto3": "Increase awareness and  critical analysis of environmental problems in order to transform future landowners into protectors of the environment."
+      },
+      "kids": {
+        "title": "PRO ECO KIDS",
+        "texto": "In 2010, we formed a program called Pro Eco Kids, a group of 5-12-year-old youth environmental leaders that meets weekly at our office in Pedasi to discover the importance of environmental conservation through fun and hands-on experiences. In the past the Pro Eco Kids have explored topics such as waste/recycling, biodiversity, the science and importance of plants, sea turtles, and respect for nature. Some Pro Eco Kids activities include planting in the garden, promotion of reusable bags to town residents, participation in the 2012 Pedasi Local Parade, visits to local protected areas and farms, and exciting guests from the community to engage the kids through their passion for different aspects of conservation and environmental issues. "
+      }
+    },
+    "comunidad": { 
+      "texto1": "A key part of our work is knitting together a network ranging from grassroots actors to international institutions, working together to create positive environmental change in Azuero.",
+      "comites": {
+        "titulo": "ECO ARTISANS",
+        "texto": "The Azuero Eco Artisans group brings together women and girls from rural communities in the Azuero peninsula to create hand-crafted products from locally sourced, sustainable materials that they can sell to support their families and communities. The communities where the Eco Artisans live are associated with our ecological corridor, which has been mapped to strategically reforest and unify patches of tropical dry forest to fortify the area's resilience against the effects of climate change."
+      },
+      "instituciones": {
+        "titulo": "EDUCATIONAL INSTITUTIONS",
+        "texto": "Among our collaborators are educational institutions. We host students and faculty that perform research or conduct internships that intersect and engage with Pro Eco Azuero's programs. The Azuero offers a perfect combination of remoteness and easy access, excellent scientific documentation, research projects in progress, good accommodations, and a well-equipped laboratory."
+      },
+      "recursoColaborador": {
+        "titulo": "Resources for Collaborators",
+        "texto1": "Resources at our Pedasí office: temporary lodging digital and print library, high speed WiFi, research assistants. We also hold community activities and educational workshops here.",
+        "texto2": "The nearby Achotines Laboratory is the only place in the world where Yellow Fin Tuna have been spawning in captivity since 1996. It is adjacent to one of the Azuero’s largest intact dry coastal forests. The Achotines lab constantly receives groups of visiting students and scientists and has researcher accommodations available.",
+        "texto3": "In 2003 PRORENA (Native Species Reforestation Project), an affiliate of The Smithsonian Tropical Research Institute STRI, started native tree species test plots. These plots are providing valuable information on reforestation possibilities for targeted purposes in the difficult Azuero environment and demonstration plots for those stakeholders interested in reforestation. Researchers from Yale and PRORENA have used these as a resource for research on secondary succession and carbon sequestration",
+        "texto4": "As we continue to work with private landowners to reforest strategic areas of Azuero, these new reforestation sites serve as wonderful study sites for research on the impacts of reforestation on wildlife and farmland productivity."
+      }
+    },
+    "ecoguias":{
+     "titulo": "ECO-GUIDES",
+     "texto": "On this page you will find guides to jumpstart your eco-journey in Azuero. These guides serve as the jumping off point for the specifics of sustainable living on the peninsula. Looking to put in a live fence? Check out our guide on live fences for where to start. Want to know how to reduce waste? Check out the Reduce, Reuse, Recycle Eco-guide. These eco-guides are living documents and we rely on community feedback to keep them in top shape!"
+    }
   },
+
   "Login":{
     "name": "name",
     "password": "password",

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ecoazuero/frond/conservrefor.dart';
 import 'package:ecoazuero/frond/nosotros.dart';
-import 'backend/login/login.dart';
-import 'frond/educacion.dart';
-import 'main.dart';
-import 'frond/comunidad.dart';
+import '../../backend/login/login.dart';
+import '../educacion.dart';
+import '../../main.dart';
+import '../comunidad.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'frond/menubd.dart';
+import '../menubd.dart';
+import '../ecoguias.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class customAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
@@ -24,41 +26,50 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      title: InkWell(
-        onTap: () {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => MyApp()),
-            (route) => false,
-          );
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          child: Text('PRO ECO AZUERO'),
+@override
+Widget build(BuildContext context) {
+  return AppBar(
+    backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+    titleSpacing: 0,
+    title: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        InkWell(
+          onTap: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MyApp()),
+              (route) => false,
+            );
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Text(
+              'PRO ECO AZUERO',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
-      ),
-      actions: [
-        PopupMenuButton(
-          position: PopupMenuPosition.under, // Añade esto
-          icon: Icon(Icons.menu),
-          itemBuilder:
+        Row(
+          children: [
+            PopupMenuButton(
+              position: PopupMenuPosition.over,
+              icon: Icon(Icons.menu),
+              itemBuilder:
               (context) => [
                 PopupMenuItem(
-                  child: Text('Quiénes somos'),
+                  child: Text(context.tr('buttons.somos')), 
                   onTap:
-                      () => Navigator.push(
+                      () => Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (_) => Nosotros()),
+                        (route) => false,
                       ),
                 ),
                 PopupMenuItem(
                   child: Row(
                     children: [
-                      Text('Nuestro trabajo'),
+                      Text(context.tr('buttons.trabajo')),
                       Spacer(),
                       Icon(Icons.chevron_right, size: 20),
                     ],
@@ -70,33 +81,33 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
                         position: _calculatePosition(context, 1),
                         items: [
                           PopupMenuItem(
-                            child: Text('Conservacion y reforestacion'),
+                            child: Text(context.tr('buttons.conservref')),
                             onTap:
-                                () => Navigator.push(
+                                () => Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => Conservrefor(),
-                                  ),
+                                  ),(route) => false,
                                 ),
                           ),
                           PopupMenuItem(
-                            child: Text('Educacion'),
+                            child: Text(context.tr('buttons.educacion')),
                             onTap:
-                                () => Navigator.push(
+                                () => Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => Educacion(),
-                                  ),
+                                  ),(route) => false,
                                 ),
                           ),
                           PopupMenuItem(
-                            child: Text('Hacer crecer la comunidad'),
+                            child: Text(context.tr('buttons.comunidad')),
                             onTap:
-                                () => Navigator.push(
+                                () => Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => Comunidad(),
-                                  ),
+                                  ),(route) => false,
                                 ),
                           ),
                         ],
@@ -107,7 +118,7 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
                 PopupMenuItem(
                   child: Row(
                     children: [
-                      Text('Recursos'),
+                      Text(context.tr('buttons.recursos')),
                       Spacer(),
                       Icon(Icons.chevron_right, size: 20),
                     ],
@@ -119,51 +130,57 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
                         position: _calculatePosition(context, 1),
                         items: [
                           PopupMenuItem(
-                            child: Text('Mapa de Azuero'),
+                            child: Text(context.tr('buttons.mapa')),
                             onTap:
-                                () => Navigator.push(
+                                () => Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => Conservrefor(),
-                                  ),
+                                  ),(route) => false,
                                 ),
                           ),
                           PopupMenuItem(
-                            child: Text('Ecoguías'),
+                            child: Text(context.tr('buttons.ecoguias')),
                             onTap:
-                                () => Navigator.push(
+                                () => Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => Ecoguias(),
+                                  ),(route) => false,
+                                ),
+                          ),
+                          PopupMenuItem(
+                            child: Text(context.tr('buttons.basedatos')),
+                            onTap:
+                                () => Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => menuBD()),(route) => false,
+                                ),
+                          ),
+                          PopupMenuItem(
+                            child: Text(context.tr('buttons.biblioteca')),
+                            onTap:
+                                () async {
+            final url =
+                'https://www.librarything.com/catalog/ProEcoAzuero';
+            if (await canLaunchUrl(Uri.parse(url))) {
+              await launchUrl(
+                Uri.parse(url),
+                mode: LaunchMode.externalApplication,
+              );
+            } else {
+              throw 'No se pudo abrir el PDF';
+            }
+          },
+                          ),
+                          PopupMenuItem(
+                            child: Text(context.tr('buttons.blog')),
+                            onTap:
+                                () => Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => Conservrefor(),
-                                  ),
-                                ),
-                          ),
-                          PopupMenuItem(
-                            child: Text('Base de datos'),
-                            onTap:
-                                () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => menuBD()),
-                                ),
-                          ),
-                          PopupMenuItem(
-                            child: Text('Biblioteca'),
-                            onTap:
-                                () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => Conservrefor(),
-                                  ),
-                                ),
-                          ),
-                          PopupMenuItem(
-                            child: Text('Blog'),
-                            onTap:
-                                () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => Conservrefor(),
-                                  ),
+                                  ), (route) => false,
                                 ),
                           ),
                         ],
@@ -172,38 +189,40 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
                   },
                 ),
               ],
-        ),
-
-        IconButton(
-          onPressed: () {
-            //if (conectar() == 1) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => login(),
-              ), // Navega a la segunda pantalla
-              (route) => false,
-            );
-            /*} else {
-              Text('necesita conexion para esta accion');
-            }*/
-          },
-          icon: Icon(Icons.account_circle_rounded),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            // Alterna entre inglés y español
-            final newLocale =
-                context.locale == const Locale('en')
-                    ? const Locale('es')
-                    : const Locale('en');
-            context.setLocale(newLocale);
-          },
-          child: Text(tr('buttons.change_language')),
+            ),
+            IconButton(
+              icon: Icon(Icons.account_circle_rounded),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => login()),
+                  (route) => false,
+                );
+              },
+            ),
+            SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: () {
+                final newLocale =
+                    context.locale == const Locale('en')
+                        ? const Locale('es')
+                        : const Locale('en');
+                context.setLocale(newLocale);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white70,
+                foregroundColor: Colors.black,
+                shape: StadiumBorder(),
+              ),
+              child: Text(tr('buttons.change_language')),
+            ),
+            SizedBox(width: 12),
+          ],
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
