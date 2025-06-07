@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ecoazuero/frond/conservrefor.dart';
 import 'package:ecoazuero/frond/nosotros.dart';
-import '../../backend/login/login.dart';
+import '../../backend/login/loginInterfaz.dart';
 import '../educacion.dart';
 import '../../main.dart';
 import '../comunidad.dart';
@@ -195,7 +195,7 @@ Widget build(BuildContext context) {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => login()),
+                  MaterialPageRoute(builder: (_) => LoginInterfaz()),
                   (route) => false,
                 );
               },
