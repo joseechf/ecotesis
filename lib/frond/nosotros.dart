@@ -7,6 +7,8 @@ import 'iureutilizables/widgetpersonalizados.dart';
 class Nosotros extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     return Builder(
       builder: (context) {
         return Scaffold(
@@ -20,6 +22,7 @@ class Nosotros extends StatelessWidget {
                   0,
                   0,
                   400,
+                  0
                 ),
 
                 Container(
@@ -63,6 +66,7 @@ class Nosotros extends StatelessWidget {
                               20,
                               10,
                               400,
+                              0
                             ),
                           ),
                           Expanded(
@@ -116,6 +120,7 @@ class Nosotros extends StatelessWidget {
                             20,
                             10,
                             400,
+                            0
                           ),
                           Container(
                             width: double.infinity,
@@ -163,6 +168,7 @@ class Nosotros extends StatelessWidget {
                   0,
                   0,
                   400,
+                  0
                 ),
 
                 Container(
@@ -176,7 +182,7 @@ class Nosotros extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(10),
                         10,
-                        25,
+                        (!isMobile)?50:30,
                         'Oswald',
                         FontWeight.bold,
                         Alignment.center,
@@ -187,7 +193,7 @@ class Nosotros extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(10),
                         10,
-                        15,
+                        (!isMobile)?40:20,
                         'Oswald',
                         FontWeight.normal,
                         Alignment.center,
@@ -216,6 +222,7 @@ class Nosotros extends StatelessWidget {
                   0,
                   0,
                   400,
+                  0
                 ),
 
                 Container(
@@ -240,7 +247,7 @@ class Nosotros extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(10),
                         10,
-                        15,
+                        (!isMobile)?40:20,
                         'Oswald',
                         FontWeight.normal,
                         Alignment.center,

@@ -30,6 +30,8 @@ class Conservrefor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
       body: SafeArea(
@@ -42,6 +44,7 @@ class Conservrefor extends StatelessWidget {
               0,
               0,
               400,
+              0
             ),
 
             LayoutBuilder(builder: (context, constraints){
@@ -137,13 +140,13 @@ class Conservrefor extends StatelessWidget {
                     color: const Color.fromARGB(255, 12, 61, 16),
                     padding: EdgeInsets.all(20),
                     alignment: Alignment.center,
-                    child: FittedBox(
-                      fit: BoxFit.contain,
+                   /* child: FittedBox(
+                      fit: BoxFit.contain,*/
                       child: Text(
                       context.tr('titles.titlePrincipal.corredor'),
-                      style: TextStyle(fontSize: 120, color: Colors.white),
+                      style: TextStyle(fontSize: (!isMobile)?120:15, color: Colors.white),
                     ),
-                    ),
+                    //),
                     
                   ),
                 ),
@@ -154,6 +157,7 @@ class Conservrefor extends StatelessWidget {
                     0,
                     0,
                     400,
+                    0
                   ),
                 ),
               ],
@@ -167,7 +171,7 @@ class Conservrefor extends StatelessWidget {
                     const Color.fromARGB(255, 20, 68, 6),
                     EdgeInsets.all(20),
                     10,
-                    50,
+                    (!isMobile)? 50 : 30,
                     'Oswald',
                     FontWeight.bold,
                     Alignment.center,
@@ -220,14 +224,14 @@ class Conservrefor extends StatelessWidget {
               const Color.fromARGB(255, 3, 54, 11),
               EdgeInsets.all(20),
               20,
-              50,
+              (!isMobile)?120:30,
               'Oswald',
               FontWeight.bold,
               Alignment.center,
             ),
 
             Container(
-              margin: EdgeInsets.all(50),
+              margin: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
               color: const Color.fromARGB(255, 21, 70, 12),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
@@ -236,7 +240,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 255, 255, 255),
                   EdgeInsets.all(20),
                   10,
-                  40,
+                  (!isMobile)?100:30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
@@ -247,7 +251,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 255, 255, 255),
                   EdgeInsets.all(20),
                   10,
-                  30,
+                  (!isMobile)?40:30,
                   'Oswald',
                   FontWeight.w100,
                   Alignment.center,
@@ -257,7 +261,7 @@ class Conservrefor extends StatelessWidget {
 
             Container(
               margin: EdgeInsets.all(0),
-              padding: EdgeInsets.all(50),
+              padding: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
               color: const Color.fromARGB(255, 21, 70, 12),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
@@ -266,7 +270,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 2, 51, 6),
                   EdgeInsets.all(0),
                   10,
-                  40,
+                  (!isMobile)?100:30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
@@ -277,7 +281,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 2, 51, 6),
                   EdgeInsets.all(0),
                   10,
-                  30,
+                  (!isMobile)?40:30,
                   'Oswald',
                   FontWeight.w100,
                   Alignment.center,
@@ -286,7 +290,7 @@ class Conservrefor extends StatelessWidget {
             ),
 
             Container(
-              margin: EdgeInsets.all(50),
+              margin: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
               color: const Color.fromARGB(255, 21, 70, 12),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
@@ -295,7 +299,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 255, 255, 255),
                   EdgeInsets.all(20),
                   10,
-                  40,
+                  (!isMobile)?100:30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
@@ -306,7 +310,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 255, 255, 255),
                   EdgeInsets.all(20),
                   10,
-                  30,
+                  (!isMobile)?40:30,
                   'Oswald',
                   FontWeight.w100,
                   Alignment.center,
@@ -319,6 +323,7 @@ class Conservrefor extends StatelessWidget {
               0,
               0,
               400,
+              0
             ),
 
             WidgetPersonalizados.constructorContainerText(
@@ -338,7 +343,7 @@ class Conservrefor extends StatelessWidget {
               const Color.fromARGB(255, 5, 46, 5),
               EdgeInsets.all(10),
               10,
-              15,
+              (!isMobile)?30:15,
               'Oswald',
               FontWeight.w200,
               Alignment.center,

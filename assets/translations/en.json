@@ -30,7 +30,12 @@
     "ecoguias":"ECO-GUIDES",
     "basedatos":"AZUERO PLANT DATABASE",
     "biblioteca":"LIBRARY",
-    "blog":"BLOG"
+    "blog":"BLOG",
+    "editar": "edit",
+    "filtrar": "filter",
+    "nameC": "cientice name",
+    "update": "update",
+    "aprender":"learn more"
   },
   "texts": {
     "textsHome": {
@@ -140,10 +145,14 @@
 
   "Login":{
     "name": "name",
+    "correo":"correo",
     "password": "password",
+    "registro":"sing up",
+    "sesion":"login",
     "errores": {
       "vacio": "this camp cant be null",
-      "mail": "please use a correct gmail"
+      "mail": "You must enter a valid email address that contains @ and ends with .com"
     }
-  }
+  },
+  "nonumero": "dont set numbers"
 }

@@ -1,5 +1,6 @@
 //import 'dart:ffi';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../backend/utilidades/modeloplanta.dart';
+import '../backend/CRUDFLORA/updatedatos.dart';
 //import '../backend/CRUDFLORA/insertdatos.dart';
 
 class menuBD extends StatefulWidget {
@@ -24,7 +27,40 @@ class _Iubasedatos extends State<menuBD> {
 
   List<Map<String, dynamic>> _lista = [];
   Map<String, String?> _filtro = {};
-
+  final List<Modeloplanta> filas = [
+    Modeloplanta(
+      id: '1',
+      nombre: 'calabazo',
+      tipo: 'Medicinal',
+      cientifico: 'Crescentia cujete',
+      imagen: 'assets/images/calabazo.jpeg',
+      ultAct: '1',
+    ),
+    Modeloplanta(
+      id: '2',
+      nombre: 'caucho',
+      tipo: 'Medicinal',
+      cientifico: 'Castilla elastica',
+      imagen: 'assets/images/castilla.jpeg',
+      ultAct: '1',
+    ),
+    Modeloplanta(
+      id: '3',
+      nombre: 'yuco de monte',
+      tipo: 'fruta',
+      cientifico: 'Pachira sessilis',
+      imagen: 'assets/images/yuco.jpeg',
+      ultAct: '1',
+    ),
+    Modeloplanta(
+      id: '4',
+      nombre: 'orinea',
+      tipo: 'Medicinal',
+      cientifico: 'Warszewiczia coccinea',
+      imagen: 'assets/images/flor.jpeg',
+      ultAct: '1',
+    ),
+  ];
   @override
   void initState() {
     super.initState();
@@ -35,226 +71,188 @@ class _Iubasedatos extends State<menuBD> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppBar(context: context),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                width: double.infinity, // Ocupa todo el ancho disponible
-                constraints: BoxConstraints(maxHeight: 50),
-                color: Colors.green[100],
-                alignment: Alignment.center,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        String? iduser = await _obtenerIdUsuario();
-                        if (iduser != null) {
-                          int acceso = await _v.VerificarPermisosCrud(
-                            iduser,
-                            "nada",
-                          );
-                          if (acceso != 0) {
-                            /*  Navigator.push(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: double.infinity, // Ocupa todo el ancho disponible
+            constraints: BoxConstraints(maxHeight: 50),
+            color: Colors.green[100],
+            alignment: Alignment.center,
+            child: Row(
+              children: [
+                SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    String? iduser = await _obtenerIdUsuario();
+                    if (iduser != null) {
+                      int acceso = await _v.VerificarPermisosCrud(
+                        iduser,
+                        "nada",
+                      );
+                      if (acceso != 0) {
+                        /*  Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => insertBD(),
                                   ),
                                 );*/
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                final TextEditingController credencial =
-                                    TextEditingController();
-                                return AlertDialog(
-                                  title: Text(
-                                    'introduzca credencial de administrador',
-                                  ),
-                                  content: TextField(
-                                    controller: credencial,
-                                    decoration: InputDecoration(
-                                      labelText: 'Escribe algo',
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () async {
-                                        String valor = credencial.text;
-                                        Navigator.of(context).pop();
-                                        int acceso =
-                                            await _v.VerificarPermisosCrud(
-                                              iduser,
-                                              valor,
-                                            );
-                                        if (acceso == 1) {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'credencial registrada',
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      child: Text('enviar'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('cancelar'),
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            final TextEditingController credencial =
+                                TextEditingController();
+                            return AlertDialog(
+                              title: Text(
+                                'introduzca credencial de administrador',
+                              ),
+                              content: TextField(
+                                controller: credencial,
+                                decoration: InputDecoration(
+                                  labelText: 'Escribe algo',
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () async {
+                                    String valor = credencial.text;
+                                    Navigator.of(context).pop();
+                                    int acceso = await _v.VerificarPermisosCrud(
+                                      iduser,
+                                      valor,
+                                    );
+                                    if (acceso == 1) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'credencial registrada',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Text('enviar'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('cancelar'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('DEBE INICIAR SESION')),
+                      );
+                    }
+                  },
+                  child: Text('insertar datos'),
+                ),
+                SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    _InterfazFiltro(context);
+                  },
+                  child: Text(context.tr('buttons.filtrar')),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          //conteniedo de la base de datos
+          Expanded(
+            child:
+                _lista.isNotEmpty
+                    ? SingleChildScrollView(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Wrap(
+                            spacing: 10.0,
+                            runSpacing: 10.0,
+                            children: List.generate(_lista.length, (index) {
+                              return Container(
+                                width: 300,
+                                height: 600,
+                                margin: EdgeInsets.all(10),
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 8,
+                                      offset: Offset(
+                                        0,
+                                        4,
+                                      ), // sombra hacia abajo
                                     ),
                                   ],
-                                );
-                              },
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('DEBE INICIAR SESION'),
-                            ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  children: [
+                                    WidgetPersonalizados.ListaWidgetOrdenada(
+                                      _lista[index],
+                                      20,
+                                      context,
+                                    ),
+                                    SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => interfazUpDatos(
+                                                  lista: _lista[index],
+                                                ),
+                                          ),
+                                          (route) => false,
+                                        );
+                                      },
+                                      child: Text(context.tr('buttons.editar')),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
                           );
-                        }
-                      },
-                      child: Text('insertar datos'),
-                    ),
-                    SizedBox(width: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        _InterfazFiltro(context);
-                      },
-                      child: Text('Abrir'),
-                    ),
-                  ],
-                ),
-              ),
-              //conteniedo de la base de datos
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return Wrap(
-                    spacing: 10.0,
-                    runSpacing: 10.0,
-                    children: List.generate(_lista.length, (index) {
-                      return Container(
-                        width: 300,
-                        height: 600,
-                        margin: EdgeInsets.all(10),
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 8,
-                              offset: Offset(0, 4), // sombra hacia abajo
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          children: [
-                            WidgetPersonalizados.ListaWidgetOrdenada(
-                              _lista[index],
-                              20,
-                              context,
-                            ),
-                            SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: Text('Editar'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  );
-                },
-              ),
-            ],
+                        },
+                      ),
+                    )
+                    : Center(child: Text('No hay datos')),
           ),
-        ),
+        ],
       ),
     );
   }
 
   void _cargarLista() async {
-    final online = await conectar();
-    if (online == 1) {
-      _lista = [
-        {
-          'nombre': 'Calabazo',
-          'tipo': 'Medicinal',
-          'cientifico': 'Crescentia cujete',
-          'imagen': 'assets/images/calabazo.jpeg',
-        },
-        {
-          'nombre': 'caucho',
-          'tipo': 'Medicinal',
-          'cientifico': 'Castilla elastica',
-          'imagen': 'assets/images/castilla.jpeg',
-        },
-        {
-          'nombre': 'yuco de monte',
-          'tipo': 'fruta',
-          'cientifico': 'Pachira sessilis',
-          'imagen': 'assets/images/yuco.jpeg',
-        },
-        {
-          'nombre': 'orinea',
-          'tipo': 'Medicinal',
-          'cientifico': 'Warszewiczia coccinea',
-          'imagen': 'assets/images/flor.jpeg',
-        },
-      ];
-    } else {
-      _lista = [
-        {
-          'nombre': 'Calabazo',
-          'tipo': 'Medicinal',
-          'cientifico': 'Crescentia cujete',
-          'imagen': 'assets/images/calabazo.jpeg',
-        },
-        {
-          'nombre': 'caucho',
-          'tipo': 'Medicinal',
-          'cientifico': 'Castilla elastica',
-          'imagen': 'assets/images/castilla.jpeg',
-        },
-        {
-          'nombre': 'yuco de monte',
-          'tipo': 'fruta',
-          'cientifico': 'Pachira sessilis',
-          'imagen': 'assets/images/yuco.jpeg',
-        },
-        {
-          'nombre': 'orinea',
-          'tipo': 'Medicinal',
-          'cientifico': 'Warszewiczia coccinea',
-          'imagen': 'assets/images/flor.jpeg',
-        },
-      ];
-    }
     //este if va a cambiar al utilizar un select, pero de momento uso esto
     if (!_filtro.isEmpty) {
-      _lista = List.generate(_lista.length, (index) {
-        if ((_lista[index]['nombre'] == _filtro['nombre']) ||
+      _lista.clear();
+      for (int index = 0; index < filas.length; index++) {
+        if ((filas[index].nombre.toString() == _filtro['nombre']) ||
             (_filtro['nombre'] == null)) {
-          if ((_lista[index]['tipo'] == _filtro['tipo']) ||
+          if ((filas[index].tipo.toString() == _filtro['tipo']) ||
               (_filtro['tipo'] == null)) {
-            if ((_lista[index]['cientifico'] == _filtro['cientifico']) ||
+            if ((filas[index].cientifico.toString() == _filtro['cientifico']) ||
                 (_filtro['cientifico'] == null)) {
-              return _lista[index];
+              _lista.add(filas[index].toMap());
             }
           }
         }
-        return {'nombre': 'vacio'};
+      }
+    } else {
+      _lista = List.generate(filas.length, (index) {
+        return filas[index].toMap();
       });
     }
     setState(() {

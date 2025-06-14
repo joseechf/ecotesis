@@ -9,6 +9,7 @@ class Educacion extends StatelessWidget {
   Widget build(BuildContext context) {
     double anchoPantalla = MediaQuery.of(context).size.width;
     double alturaPantalla = MediaQuery.of(context).size.height;
+    final isMobile = anchoPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context), 
       body: SafeArea(
@@ -21,12 +22,14 @@ class Educacion extends StatelessWidget {
                 0,
                 0,
                 400,
+                0
               ),
               WidgetPersonalizados.constructorContainerimg(
                 'assets/images/casaVieja.jpg',
                 0,
                 0,
                 400,
+                0
               ),
               WidgetPersonalizados.constructorContainerText(
                 context.tr('titles.titlePrincipal.educacion'),
@@ -34,7 +37,7 @@ class Educacion extends StatelessWidget {
                 const Color.fromARGB(255, 3, 49, 13),
                 EdgeInsets.all(0),
                 0,
-                100,
+                (!isMobile)?100:50,
                 'Oswald',
                 FontWeight.bold,
                 Alignment.center,
@@ -60,7 +63,7 @@ class Educacion extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(20),
                         20,
-                        anchoPantalla*0.050,
+                        anchoPantalla*0.070,
                         'Oswald',
                         FontWeight.bold,
                         Alignment.center, // este puede ser redundante ahora
@@ -150,7 +153,7 @@ class Educacion extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(20),
                         20,
-                        anchoPantalla*0.050,
+                        anchoPantalla*0.070,
                         'Oswald',
                         FontWeight.bold,
                         Alignment.center, // este puede ser redundante ahora

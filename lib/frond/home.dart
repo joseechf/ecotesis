@@ -17,6 +17,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
       body: SafeArea(
@@ -28,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
               0,
               0,
               400,
+              0
             ),
 
             LayoutBuilder(builder: (context, constraints){
@@ -94,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 10,
                 10,
                 400,
+                0
               ),
             ],400),
 
@@ -103,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 20,
                 10,
                 400,
+                0
               ),
               WidgetPersonalizados.constructorContainerText(
                 context.tr('texts.textsHome.monoArania'),
@@ -141,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         const Color.fromARGB(255, 253, 253, 253),
                         EdgeInsets.all(20),
                         10,
-                        50,
+                        (!isMobile)?50:30,
                         'Oswald',
                         FontWeight.bold,
                         Alignment.center,
@@ -155,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               index,
                             ) {
                               return Container(
-                                margin: EdgeInsets.all(20),
+                                margin: (!isMobile)?EdgeInsets.all(20):EdgeInsets.all(10),
                                 padding: EdgeInsets.all(5),
                                 width: 350,
                                 height: 600,
@@ -227,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         const Color.fromARGB(255, 253, 253, 253),
                         EdgeInsets.all(20),
                         10,
-                        50,
+                        (!isMobile)?50:30,
                         'Oswald',
                         FontWeight.bold,
                         Alignment.center,
@@ -271,6 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
               0,
               0,
               400,
+              0
             ),
           ],
           //),

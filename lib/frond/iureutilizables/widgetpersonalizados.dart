@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../conservrefor.dart';
@@ -25,7 +26,7 @@ class WidgetPersonalizados {
       padding: EdgeInsets.all(padding),
       color: colorFondo,
       alignment: AlineacionText,
-      child: Text(
+      child: SelectableText(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -43,19 +44,23 @@ class WidgetPersonalizados {
     double margin,
     double padding,
     double altura,
+    double radioImg,
   ) {
     return Container(
       width: double.infinity, // Ocupa todo el ancho disponible
       margin: EdgeInsets.all(margin),
       padding: EdgeInsets.all(padding),
-      child: Image.asset(
-        text,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height:
-            altura, // Fija una altura para evitar que se expanda ilimitadamente
-        cacheWidth: 500,
-        cacheHeight: 400,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radioImg),
+        child: Image.asset(
+          text,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height:
+              altura, // Fija una altura para evitar que se expanda ilimitadamente
+          cacheWidth: 500,
+          cacheHeight: 400,
+        ),
       ),
     );
   }
@@ -89,7 +94,7 @@ class WidgetPersonalizados {
               case 'titulo':
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
+                  child: SelectableText(
                     '${entry.value}',
                     style: TextStyle(
                       color: const Color.fromARGB(255, 4, 53, 3),
@@ -102,33 +107,36 @@ class WidgetPersonalizados {
                   onPressed: () {
                     switch (entry.value) {
                       case 'conservacion':
-                        Navigator.push(
+                        Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (_) => Conservrefor()),
+                          (route) => false,
                         );
                         break;
                       case 'educDiv':
-                        Navigator.push(
+                        Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (_) => Educacion()),
+                          (route) => false,
                         );
                         break;
                       case 'colaboracion':
-                        Navigator.push(
+                        Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (_) => Comunidad()),
+                          (route) => false,
                         );
                         break;
                       default:
                     }
                   },
-                  child: Text('aprender mas'),
+                  child: Text(context.tr('buttons.aprender')),
                 );
 
               default:
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
+                  child: SelectableText(
                     '${entry.value}',
                     style: TextStyle(
                       color: const Color.fromARGB(255, 4, 53, 3),

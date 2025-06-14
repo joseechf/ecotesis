@@ -30,7 +30,12 @@
     "ecoguias":"ECOGUIAS",
     "basedatos":"BASE DE DATOS DE PLANTAS DE AZUERO",
     "biblioteca":"BIBLIOTECA",
-    "blog":"BLOG"
+    "blog":"BLOG",
+    "editar": "editar",
+    "filtrar": "filtrar",
+    "nameC": "nombre cientifico",
+    "update":"actualizar",
+    "aprender":"aprender mas"
   },
   "texts": {
     "textsHome": {
@@ -139,10 +144,14 @@
   },
   "Login":{
     "name": "nombre",
+    "correo": "correo",
     "password": "contrasenia",
+    "registro":"registrarse",
+    "sesion":"iniciar sesion",
     "errores": {
       "vacio": "no se permite campo vacio",
-      "mail": "agregue un correo valido" 
+      "mail": "debe ingresar un correo valido, que contenga @ y termine en .com" 
     }
-  }
+  },
+  "nonumero": "no introduzca numeros"
 }

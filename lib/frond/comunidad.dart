@@ -8,6 +8,7 @@ class Comunidad extends StatelessWidget {
   Widget build(BuildContext context) {
     double anchoPantalla = MediaQuery.of(context).size.width;
     double alturaPantalla = MediaQuery.of(context).size.height;
+    bool isMobile = alturaPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
       body: SafeArea(
@@ -20,6 +21,7 @@ class Comunidad extends StatelessWidget {
                   0,
                   0,
                   400,
+                  0
                 ),
 
                 Container(
@@ -44,7 +46,7 @@ class Comunidad extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'Oswald',
-                            fontSize: 70,
+                            fontSize: (!isMobile)?70:40,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -58,6 +60,7 @@ class Comunidad extends StatelessWidget {
                   0,
                   0,
                   400,
+                  0
                 ),
 
                 WidgetPersonalizados.ElijeFilaColumnaDynamico([
@@ -76,9 +79,9 @@ class Comunidad extends StatelessWidget {
                     context.tr('texts.comunidad.comites.texto'),
                     const Color.fromARGB(255, 255, 255, 255),
                     const Color.fromARGB(255, 2, 56, 14),
-                    EdgeInsets.all(50),
+                    (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
                     20,
-                    30,
+                    (!isMobile)?30:20,
                     'Oswald',
                     FontWeight.w200,
                     Alignment.center,
@@ -90,6 +93,7 @@ class Comunidad extends StatelessWidget {
                   0,
                   0,
                   400,
+                  0
                 ),
 
                 WidgetPersonalizados.ElijeFilaColumnaDynamico([

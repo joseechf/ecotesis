@@ -15,7 +15,7 @@ class Item {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'id': id, 
       'name': name,
       'tipo': tipo,
       'ultAct': ultAct,

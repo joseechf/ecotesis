@@ -3,6 +3,7 @@ import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'visorpdf.dart';
 
 class Ecoguias extends StatelessWidget {
   @override
@@ -83,6 +84,7 @@ class Ecoguias extends StatelessWidget {
                         10,
                         0,
                         300,
+                        0,
                       ),
                       Container(
                         child: Column(
@@ -132,42 +134,39 @@ class Ecoguias extends StatelessWidget {
         "imagen": "assets/images/mirando.jpg",
         "titulo": "Fire Control: Rights & Regulations",
         "boton": ElevatedButton(
-          onPressed: () async {
-            final url =
-                'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf';
-            if (await canLaunchUrl(Uri.parse(url))) {
-              await launchUrl(
-                Uri.parse(url),
-                mode: LaunchMode.externalApplication,
-              );
-            } else {
-              throw 'No se pudo abrir el PDF';
-            }
-          },
-          child: Text('Abrir PDF'),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => VisorPDF(
+          url: 'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
         ),
+      ),
+    );
+  },
+  child: Text('Abrir PDF'),
+)
+,
         "texto": context.tr('texts.comunidad.recursoColaborador.texto1'),
       },
       {
         "imagen": "assets/images/mirando.jpg",
         "titulo": "Fire Control: Rights & Regulations",
         "boton": ElevatedButton(
-          onPressed: () async {
-            final url =
-                'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf';
-            if (await canLaunchUrl(Uri.parse(url))) {
-              await launchUrl(
-                Uri.parse(url),
-                mode: LaunchMode.externalApplication,
-              );
-            } else {
-              throw 'No se pudo abrir el PDF';
-            }
-          },
-          child: Text('Abrir PDF'),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => VisorPDF(
+          url: 'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
         ),
+      ),
+    );
+  },
+  child: Text('Abrir PDF'),
+),
         "texto": context.tr('texts.comunidad.recursoColaborador.texto1'),
-      }
+      },
     ];
   }
 }
