@@ -2,6 +2,7 @@ import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'iureutilizables/custom_appbar.dart' as app_bar;
 
 class Comunidad extends StatelessWidget {
   @override
@@ -11,6 +12,7 @@ class Comunidad extends StatelessWidget {
     bool isMobile = alturaPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
+      endDrawer: isMobile ? app_bar.MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [

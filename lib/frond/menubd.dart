@@ -11,6 +11,7 @@ import 'dart:convert';
 import '../backend/utilidades/modeloplanta.dart';
 import '../backend/CRUDFLORA/updatedatos.dart';
 //import '../backend/CRUDFLORA/insertdatos.dart';
+import 'iureutilizables/custom_appbar.dart' as app_bar;
 
 class menuBD extends StatefulWidget {
   const menuBD({Key? key}) : super(key: key);
@@ -69,8 +70,11 @@ class _Iubasedatos extends State<menuBD> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
+      endDrawer: isMobile ? app_bar.MobileMenu() : null,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

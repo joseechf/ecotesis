@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'iureutilizables/widgetpersonalizados.dart';
+import 'iureutilizables/custom_appbar.dart' as app_bar;
 
 class Nosotros extends StatelessWidget {
   @override
@@ -13,6 +14,7 @@ class Nosotros extends StatelessWidget {
       builder: (context) {
         return Scaffold(
           appBar: customAppBar(context: context),
+          endDrawer: isMobile ? app_bar.MobileMenu() : null, // Agregar el Drawer solo para móvil
           body: SafeArea(
             child: ListView(
               //child: Column(
