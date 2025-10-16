@@ -56,17 +56,23 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
               // Espacio flexible
               Spacer(),
               
-              // Botón de idioma (visible en ambas versiones)
-              _LanguageToggleButton(),
-              
-              // Espacio flexible
-              Spacer(),
-              
               // Menú para escritorio o móvil
               if (!isMobile)
                 _DesktopMenu()
-              //else
-              //  _MobileMenuOpener(),
+              else
+                // Menú hamburguesa para móvil con botón de idioma
+                Row(
+                  children: [
+                    _LanguageToggleButton(),
+                    SizedBox(width: 8),
+                    /*IconButton(
+                      icon: Icon(Icons.menu, color: Colors.white),
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                    ),*/
+                  ],
+                ),
             ],
           );
         },
@@ -326,6 +332,7 @@ class _DesktopMenu extends StatelessWidget {
             // Implementa tu buscador aquí
           },
         ),
+        _LanguageToggleButton(),
         IconButton(
           icon: Icon(Icons.account_circle_rounded, color: Colors.white),
           onPressed: () {

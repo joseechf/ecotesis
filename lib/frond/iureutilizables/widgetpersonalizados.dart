@@ -17,11 +17,18 @@ class WidgetPersonalizados {
     double tamanioText,
     String fuente,
     FontWeight tipo,
-    Alignment AlineacionText,
-  ) {
+    Alignment AlineacionText, {
+    int? maxLines,
+    TextOverflow? overflow,
+  }) {
+    // Debug logs to identify centering issues
+    print('DEBUG: constructorContainerText called with text: "$text"');
+    print('DEBUG: Alignment parameter: ${AlineacionText.toString()}');
+    print('DEBUG: Container width: Removed double.infinity to allow proper centering');
+    
     //container en columna
     return Container(
-      width: double.infinity,
+      // Removed width: double.infinity to allow proper centering when used within Align widgets
       margin: margin,
       padding: EdgeInsets.all(padding),
       color: colorFondo,
@@ -29,11 +36,13 @@ class WidgetPersonalizados {
       child: SelectableText(
         text,
         textAlign: TextAlign.center,
+        maxLines: maxLines,
         style: TextStyle(
           color: colorTexto,
           fontFamily: fuente,
           fontSize: tamanioText,
           fontWeight: tipo,
+          overflow: overflow ?? TextOverflow.clip,
         ),
       ),
     );
@@ -159,10 +168,7 @@ class WidgetPersonalizados {
         if (constraints.maxWidth > 600) {
           List<Expanded> expandedList =
               listaWidget.map((item) => Expanded(child: item)).toList();
-          return Container(
-            constraints: BoxConstraints(maxHeight: maxAltura),
-            child: Row(children: expandedList),
-          );
+          return Row(children: expandedList);
         } else {
           return Column(children: listaWidget);
         }

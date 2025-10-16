@@ -166,7 +166,10 @@ class Comunidad extends StatelessWidget {
                                       margin: EdgeInsets.all(20),
                                       padding: EdgeInsets.all(5),
                                       width: 400,
-                                      height: 450,
+                                      constraints: BoxConstraints(
+                                        minHeight: 200,
+                                        maxHeight: 450,
+                                      ),
                                       color: const Color.fromARGB(
                                         255,
                                         255,
@@ -176,7 +179,7 @@ class Comunidad extends StatelessWidget {
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment
-                                                .center, 
+                                                .center,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
@@ -190,16 +193,22 @@ class Comunidad extends StatelessWidget {
                                               4,
                                             ),
                                           ),
-                                          WidgetPersonalizados.constructorContainerText(
-                                            listaRecursosColaboradores[index]['texto']!,
-                                            Colors.white,
-                                            const Color.fromARGB(255, 4, 46, 4),
-                                            EdgeInsets.all(10),
-                                            10,
-                                            20,
-                                            'Oswald',
-                                            FontWeight.w200,
-                                            Alignment.center,
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              child: WidgetPersonalizados.constructorContainerText(
+                                                listaRecursosColaboradores[index]['texto']!,
+                                                Colors.white,
+                                                const Color.fromARGB(255, 4, 46, 4),
+                                                EdgeInsets.all(10),
+                                                10,
+                                                20,
+                                                'Oswald',
+                                                FontWeight.w200,
+                                                Alignment.center,
+                                                maxLines: 10,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),

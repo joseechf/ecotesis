@@ -59,16 +59,23 @@ class Educacion extends StatelessWidget {
                     ),
                     Align(
                       alignment: Alignment.center,
-                      child: WidgetPersonalizados.constructorContainerText(
-                        context.tr('texts.educacion.monoArania'),
-                        const Color.fromARGB(0, 255, 255, 255),
-                        Colors.white,
-                        EdgeInsets.all(20),
-                        20,
-                        anchoPantalla*0.070,
-                        'Oswald',
-                        FontWeight.bold,
-                        Alignment.center, // este puede ser redundante ahora
+                      child: Builder(
+                        builder: (context) {
+                          print('DEBUG: monoArania title - Stack alignment: Alignment.center');
+                          print('DEBUG: monoArania title - Screen width: $anchoPantalla');
+                          print('DEBUG: monoArania title - Font size: ${anchoPantalla*0.070}');
+                          return WidgetPersonalizados.constructorContainerText(
+                            context.tr('texts.educacion.monoArania'),
+                            const Color.fromARGB(0, 255, 255, 255),
+                            Colors.white,
+                            EdgeInsets.all(20),
+                            20,
+                            anchoPantalla*0.070,
+                            'Oswald',
+                            FontWeight.bold,
+                            Alignment.center,
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -90,7 +97,7 @@ class Educacion extends StatelessWidget {
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.educacion.objetivo.texto1'),
                   const Color.fromARGB(0, 20, 68, 6),
-                  const Color.fromARGB(255, 20, 68, 6),
+                  const Color.fromARGB(255, 8, 32, 1),
                   EdgeInsets.all(20),
                   10,
                   20,
@@ -101,7 +108,7 @@ class Educacion extends StatelessWidget {
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.educacion.objetivo.texto2'),
                   const Color.fromARGB(0, 20, 68, 6),
-                  const Color.fromARGB(255, 20, 68, 6),
+                  const Color.fromARGB(255, 8, 32, 1),
                   EdgeInsets.all(20),
                   10,
                   20,
@@ -109,10 +116,10 @@ class Educacion extends StatelessWidget {
                   FontWeight.w200,
                   Alignment.center,
                 ),
-                WidgetPersonalizados.constructorContainerText(
+                WidgetPersonalizados.constructorContainerText( 
                   context.tr('texts.educacion.objetivo.texto3'),
                   const Color.fromARGB(0, 20, 68, 6),
-                  const Color.fromARGB(255, 20, 68, 6),
+                  const Color.fromARGB(255, 8, 32, 1),
                   EdgeInsets.all(20),
                   10,
                   20,
@@ -149,16 +156,23 @@ class Educacion extends StatelessWidget {
                     ),
                     Align(
                       alignment: Alignment.center,
-                      child: WidgetPersonalizados.constructorContainerText(
-                        context.tr('texts.educacion.kids.title'),
-                        const Color.fromARGB(0, 255, 255, 255),
-                        Colors.white,
-                        EdgeInsets.all(20),
-                        20,
-                        anchoPantalla*0.070,
-                        'Oswald',
-                        FontWeight.bold,
-                        Alignment.center, // este puede ser redundante ahora
+                      child: Builder(
+                        builder: (context) {
+                          print('DEBUG: kids.title - Stack alignment: Alignment.center');
+                          print('DEBUG: kids.title - Screen width: $anchoPantalla');
+                          print('DEBUG: kids.title - Font size: ${anchoPantalla*0.070}');
+                          return WidgetPersonalizados.constructorContainerText(
+                            context.tr('texts.educacion.kids.title'),
+                            const Color.fromARGB(0, 255, 255, 255),
+                            Colors.white,
+                            EdgeInsets.all(20),
+                            20,
+                            anchoPantalla*0.070,
+                            'Oswald',
+                            FontWeight.bold,
+                            Alignment.center,
+                          );
+                        },
                       ),
                     ),
                   ],

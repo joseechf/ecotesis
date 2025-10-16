@@ -146,7 +146,12 @@ class Conservrefor extends StatelessWidget {
                       fit: BoxFit.contain,*/
                       child: Text(
                       context.tr('titles.titlePrincipal.corredor'),
-                      style: TextStyle(fontSize: (!isMobile)?120:15, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: (!isMobile)
+                          ? (screenWidth * 0.06).clamp(40.0, 60.0)
+                          : 15,
+                        color: Colors.white
+                      ),
                     ),
                     //),
                     
@@ -234,28 +239,27 @@ class Conservrefor extends StatelessWidget {
 
             Container(
               margin: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
-              color: const Color.fromARGB(255, 21, 70, 12),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.preguntas.titulo'),
-                  const Color.fromARGB(255, 21, 70, 12),
-                  Color.fromARGB(255, 255, 255, 255),
+                  Colors.transparent,
+                  Color.fromARGB(255, 20, 40, 20),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)?100:30,
+                  (!isMobile)? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
                 ),
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.preguntas.texto'),
-                  const Color.fromARGB(255, 21, 70, 12),
-                  Color.fromARGB(255, 255, 255, 255),
+                  Colors.transparent,
+                  Color.fromARGB(255, 40, 60, 40),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)?40:30,
+                  (!isMobile)? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
                   'Oswald',
-                  FontWeight.w100,
+                  FontWeight.w300,
                   Alignment.center,
                 ),
               ], 900),
@@ -264,28 +268,27 @@ class Conservrefor extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(0),
               padding: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
-              color: const Color.fromARGB(255, 21, 70, 12),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.beneficios.titulo'),
-                  const Color.fromARGB(255, 255, 255, 255),
-                  Color.fromARGB(255, 2, 51, 6),
-                  EdgeInsets.all(0),
+                  Colors.transparent,
+                  Color.fromARGB(255, 60, 80, 60),
+                  EdgeInsets.all(20),
                   10,
-                  (!isMobile)?100:30,
+                  (!isMobile)? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
                 ),
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.beneficios.texto'),
-                  const Color.fromARGB(255, 255, 255, 255),
-                  Color.fromARGB(255, 2, 51, 6),
-                  EdgeInsets.all(0),
+                  Colors.transparent,
+                  Color.fromARGB(255, 80, 100, 80),
+                  EdgeInsets.all(20),
                   10,
-                  (!isMobile)?40:30,
+                  (!isMobile)? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
                   'Oswald',
-                  FontWeight.w100,
+                  FontWeight.w300,
                   Alignment.center,
                 ),
               ], 900),
@@ -293,28 +296,27 @@ class Conservrefor extends StatelessWidget {
 
             Container(
               margin: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
-              color: const Color.fromARGB(255, 21, 70, 12),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.enfoque.titulo'),
-                  const Color.fromARGB(0, 255, 255, 255),
-                  Color.fromARGB(255, 255, 255, 255),
+                  Colors.transparent,
+                  Color.fromARGB(255, 20, 40, 20),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)?100:30,
+                  (!isMobile)? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
                 ),
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.enfoque.texto'),
-                  const Color.fromARGB(0, 255, 255, 255),
-                  Color.fromARGB(255, 255, 255, 255),
+                  Colors.transparent,
+                  Color.fromARGB(255, 40, 60, 40),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)?40:30,
+                  (!isMobile)? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
                   'Oswald',
-                  FontWeight.w100,
+                  FontWeight.w300,
                   Alignment.center,
                 ),
               ], 900),
