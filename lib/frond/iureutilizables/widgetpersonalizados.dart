@@ -5,6 +5,59 @@ import '../conservrefor.dart';
 import '../educacion.dart';
 import '../comunidad.dart';
 
+class HoverImageWidget extends StatefulWidget {
+  final String imagePath;
+  final double width;
+  final double height;
+  final double borderRadius;
+
+  const HoverImageWidget({
+    Key? key,
+    required this.imagePath,
+    required this.width,
+    required this.height,
+    required this.borderRadius,
+  }) : super(key: key);
+
+  @override
+  _HoverImageWidgetState createState() => _HoverImageWidgetState();
+}
+
+class _HoverImageWidgetState extends State<HoverImageWidget> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
+        decoration: BoxDecoration(
+          boxShadow: _isHovered
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15), // More transparent shadow
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : [],
+        ),
+        child: Image.asset(
+          widget.imagePath,
+          width: widget.width,
+          height: widget.height,
+          fit: BoxFit.cover,
+          cacheWidth: 500,
+        ),
+      ),
+    );
+  }
+}
+
 class WidgetPersonalizados {
   WidgetPersonalizados._();
 
@@ -59,17 +112,14 @@ class WidgetPersonalizados {
       width: double.infinity, // Ocupa todo el ancho disponible
       margin: EdgeInsets.all(margin),
       padding: EdgeInsets.all(padding),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(radioImg),
-        child: Image.asset(
-          text,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height:
-              altura, // Fija una altura para evitar que se expanda ilimitadamente
-          cacheWidth: 500,
-          cacheHeight: 400,
-        ),
+      child: Image.asset(
+        text,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height:
+            altura, // Fija una altura para evitar que se expanda ilimitadamente
+        cacheWidth: 500,
+        cacheHeight: 400,
       ),
     );
   }
@@ -89,15 +139,11 @@ class WidgetPersonalizados {
               case 'imagen':
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(radioImg),
-                    child: Image.asset(
-                      entry.value,
-                      width: 340,
-                      height: 340,
-                      fit: BoxFit.cover,
-                      cacheWidth: 500,
-                    ),
+                  child: HoverImageWidget(
+                    imagePath: entry.value,
+                    width: 340,
+                    height: 340,
+                    borderRadius: radioImg,
                   ),
                 );
               case 'titulo':
@@ -106,8 +152,10 @@ class WidgetPersonalizados {
                   child: SelectableText(
                     '${entry.value}',
                     style: TextStyle(
-                      color: const Color.fromARGB(255, 4, 53, 3),
+                      color: const Color.fromARGB(255, 2, 30, 2), // Darker color
                       fontSize: 30,
+                      fontFamily: 'Oswald',
+                      fontWeight: FontWeight.bold, // Títulos en Bold
                     ),
                   ),
                 );
@@ -150,6 +198,8 @@ class WidgetPersonalizados {
                     style: TextStyle(
                       color: const Color.fromARGB(255, 4, 53, 3),
                       fontSize: 18,
+                      fontFamily: 'Oswald',
+                      fontWeight: FontWeight.w300, // Texto general en Light
                     ),
                   ),
                 );

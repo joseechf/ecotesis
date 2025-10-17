@@ -3,6 +3,7 @@ import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'iureutilizables/custom_appbar.dart' as app_bar;
+import 'dart:ui' as ui;
 
 class Comunidad extends StatelessWidget {
   @override
@@ -156,6 +157,28 @@ class Comunidad extends StatelessWidget {
                           ),
                           LayoutBuilder(
                             builder: (context, constraints) {
+                              // Encontrar el texto más largo para determinar la altura
+                              double maxTextHeight = 0;
+                              for (var item in listaRecursosColaboradores) {
+                                final textSpan = TextSpan(
+                                  text: item['texto'],
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Oswald',
+                                    fontWeight: FontWeight.w200,
+                                  ),
+                                );
+                                final tp = TextPainter(
+                                  text: textSpan,
+                                  maxLines: 10,
+                                  textDirection: ui.TextDirection.ltr,
+                                );
+                                tp.layout(maxWidth: 380); // 400 - padding
+                                if (tp.height > maxTextHeight) {
+                                  maxTextHeight = tp.height;
+                                }
+                              }
+                              
                               return Wrap(
                                 spacing: 10.0,
                                 runSpacing: 10.0,
@@ -166,10 +189,7 @@ class Comunidad extends StatelessWidget {
                                       margin: EdgeInsets.all(20),
                                       padding: EdgeInsets.all(5),
                                       width: 400,
-                                      constraints: BoxConstraints(
-                                        minHeight: 200,
-                                        maxHeight: 450,
-                                      ),
+                                      height: maxTextHeight + 100, // Añadir espacio para el icono y padding
                                       color: const Color.fromARGB(
                                         255,
                                         255,

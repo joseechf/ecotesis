@@ -271,8 +271,8 @@ class Conservrefor extends StatelessWidget {
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.beneficios.titulo'),
-                  Colors.transparent,
-                  Color.fromARGB(255, 60, 80, 60),
+                  const Color.fromARGB(0, 0, 0, 0),
+                  Color.fromARGB(255, 4, 88, 4),
                   EdgeInsets.all(20),
                   10,
                   (!isMobile)? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
@@ -283,7 +283,7 @@ class Conservrefor extends StatelessWidget {
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.beneficios.texto'),
                   Colors.transparent,
-                  Color.fromARGB(255, 80, 100, 80),
+                  Color.fromARGB(255, 4, 88, 4),
                   EdgeInsets.all(20),
                   10,
                   (!isMobile)? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,

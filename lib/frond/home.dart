@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
               10,
               MediaQuery.of(context).size.width * 0.045,
               'Oswald',
-              FontWeight.normal,
+              FontWeight.w300, // Cambiado a Light para texto general
               Alignment.center,
             ),
 
@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 10,
                 30,
                 'Oswald',
-                FontWeight.normal,
+                FontWeight.bold, // Cambiado a Bold para subtítulos
                 Alignment.centerLeft,
               ),
               WidgetPersonalizados.constructorContainerimg(
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 10,
                 30,
                 'Oswald',
-                FontWeight.normal,
+                FontWeight.bold, // Cambiado a Bold para subtítulos
                 Alignment.centerLeft,
               )
             ],400),
@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 final listaHacemos = snapshot.data!;
                 return Container(
-                  color: const Color.fromARGB(255, 10, 58, 6),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     children: [
                       WidgetPersonalizados.constructorContainerText(
@@ -149,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         10,
                         (!isMobile)?50:30,
                         'Oswald',
-                        FontWeight.bold,
+                        FontWeight.bold, // Ya está en Bold, pero lo aseguramos
                         Alignment.center,
                       ),
                       LayoutBuilder(
@@ -165,7 +165,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 padding: EdgeInsets.all(5),
                                 width: 350,
                                 height: 600,
-                                color: const Color.fromARGB(255, 255, 255, 255),
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent, // Removed white background
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                                 child: Column(
                                   children: [
                                     WidgetPersonalizados.ListaWidgetOrdenada(
@@ -194,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
               10,
               MediaQuery.of(context).size.width * 0.045,
               'Oswald',
-              FontWeight.normal,
+              FontWeight.w300, // Cambiado a Light para texto general
               Alignment.center,
             ),
             WidgetPersonalizados.constructorContainerText(
@@ -224,18 +227,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 final listaNoticias = snapshot.data!;
                 return Container(
-                  color: const Color.fromARGB(255, 10, 51, 4),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     children: [
                       WidgetPersonalizados.constructorContainerText(
                         context.tr('titles.noticias'),
                         fondo,
-                        const Color.fromARGB(255, 253, 253, 253),
+                        const Color.fromARGB(255, 20, 56, 28),
                         EdgeInsets.all(20),
                         10,
                         (!isMobile)?50:30,
                         'Oswald',
-                        FontWeight.bold,
+                        FontWeight.bold, // Ya está en Bold, pero lo aseguramos
                         Alignment.center,
                       ),
                       LayoutBuilder(
@@ -251,7 +254,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 padding: EdgeInsets.all(5),
                                 width: 350,
                                 height: 600,
-                                color: const Color.fromARGB(255, 255, 255, 255),
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent, // Removed white background
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                                 child: Column(
                                   children: [
                                     WidgetPersonalizados.ListaWidgetOrdenada(

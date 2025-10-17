@@ -65,12 +65,6 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     _LanguageToggleButton(),
                     SizedBox(width: 8),
-                    /*IconButton(
-                      icon: Icon(Icons.menu, color: Colors.white),
-                      onPressed: () {
-                        Scaffold.of(context).openEndDrawer();
-                      },
-                    ),*/
                   ],
                 ),
             ],
@@ -128,13 +122,22 @@ class __NavItemState extends State<_NavItem> {
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: _isHovered ? Colors.green[800]! : Colors.transparent,
+                      width: 2.0,
+                    ),
+                  ),
+                ),
                 child: Row(
                   children: [
                     Text(
                       widget.title,
                       style: TextStyle(
                         color: _isHovered ? Colors.green[800] : Colors.white,
-                        fontWeight: _isHovered ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: FontWeight.normal, // Mantiene el mismo peso de fuente
+                        fontSize: 16, // Tamaño de fuente consistente
                       ),
                     ),
                     SizedBox(width: 4),
@@ -147,13 +150,30 @@ class __NavItemState extends State<_NavItem> {
                 ),
               ),
             )
-          : TextButton(
-              onPressed: widget.onTap,
-              child: Text(
-                widget.title,
-                style: TextStyle(
-                  color: _isHovered ? Colors.green[800] : Colors.white,
-                  fontWeight: _isHovered ? FontWeight.bold : FontWeight.normal,
+          : Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: _isHovered ? Colors.green[800]! : Colors.transparent,
+                    width: 2.0,
+                  ),
+                ),
+              ),
+              child: TextButton(
+                onPressed: widget.onTap,
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  elevation: 0, // Eliminar la sombra
+                  minimumSize: Size(0, 0),
+                ),
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: _isHovered ? Colors.green[800] : Colors.white,
+                    fontWeight: FontWeight.normal, // Mantiene el mismo peso de fuente
+                    fontSize: 16, // Tamaño de fuente consistente
+                  ),
                 ),
               ),
             ),
@@ -331,6 +351,9 @@ class _DesktopMenu extends StatelessWidget {
           onPressed: () {
             // Implementa tu buscador aquí
           },
+          style: IconButton.styleFrom(
+            elevation: 0, // Eliminar la sombra
+          ),
         ),
         _LanguageToggleButton(),
         IconButton(
@@ -342,6 +365,9 @@ class _DesktopMenu extends StatelessWidget {
               (route) => false,
             );
           },
+          style: IconButton.styleFrom(
+            elevation: 0, // Eliminar la sombra
+          ),
         ),
       ],
     );
@@ -484,6 +510,10 @@ class _LanguageToggleButton extends StatelessWidget {
             : const Locale('en');
         context.setLocale(newLocale);
       },
+      style: TextButton.styleFrom(
+        elevation: 0, // Eliminar la sombra
+        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      ),
       child: Text(
         context.locale == const Locale('en') ? 'ES' : 'EN',
         style: TextStyle(color: Colors.white),
