@@ -1,8 +1,8 @@
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
+import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'iureutilizables/custom_appbar.dart' as app_bar;
 import 'dart:ui' as ui;
 
 class Comunidad extends StatelessWidget {
@@ -10,10 +10,10 @@ class Comunidad extends StatelessWidget {
   Widget build(BuildContext context) {
     double anchoPantalla = MediaQuery.of(context).size.width;
     double alturaPantalla = MediaQuery.of(context).size.height;
-    bool isMobile = alturaPantalla < 800;
+    bool isMobile = anchoPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer: isMobile ? app_bar.MobileMenu() : null,
+      endDrawer: isMobile ? MobileMenu() : null, // Agregar el Drawer solo para móvil
       body: SafeArea(
         child: ListView(
           children: [
@@ -243,6 +243,7 @@ class Comunidad extends StatelessWidget {
                     );
                   },
                 ),
+                const CustomFooter(),
               ],
             ),
           ],

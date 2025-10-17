@@ -1,3 +1,4 @@
+import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'iureutilizables/custom_appbar.dart';
@@ -352,6 +353,7 @@ class Conservrefor extends StatelessWidget {
               FontWeight.w200,
               Alignment.center,
             ),
+            const CustomFooter(),
           ],
         ),
       ),

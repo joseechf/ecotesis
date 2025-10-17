@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
+import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -122,6 +123,7 @@ class Ecoguias extends StatelessWidget {
                 );
               },
             ),
+                const CustomFooter(),
           ],
         ),
       ),

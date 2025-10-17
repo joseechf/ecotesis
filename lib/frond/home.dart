@@ -2,6 +2,41 @@ import 'package:flutter/material.dart';
 import 'iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'iureutilizables/widgetpersonalizados.dart';
+import 'conservrefor.dart';
+import 'educacion.dart';
+import 'comunidad.dart';
+import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
+
+// Implementación personalizada del manejador de navegación para la página de inicio
+class HomeNavigationHandler implements NavigationHandler {
+  @override
+  void navigateTo(BuildContext context, String route) {
+    switch (route) {
+      case 'conservacion':
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => Conservrefor()),
+          (route) => false,
+        );
+        break;
+      case 'educDiv':
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => Educacion()),
+          (route) => false,
+        );
+        break;
+      case 'colaboracion':
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => Comunidad()),
+          (route) => false,
+        );
+        break;
+      default:
+    }
+  }
+}
 
 
 
@@ -174,7 +209,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     WidgetPersonalizados.ListaWidgetOrdenada(
                                       listaHacemos[index],
                                       0,
-                                      context
+                                      context,
+                                      navigationHandler: HomeNavigationHandler(),
                                     ),
                                   ],
                                 ),
@@ -263,7 +299,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     WidgetPersonalizados.ListaWidgetOrdenada(
                                       listaNoticias[index],
                                       0,
-                                      context
+                                      context,
+                                      navigationHandler: HomeNavigationHandler(),
                                     ),
                                   ],
                                 ),
@@ -285,6 +322,8 @@ class _MyHomePageState extends State<MyHomePage> {
               400,
               0
             ),
+            const CustomFooter(),
+
           ],
           //),
         ),
