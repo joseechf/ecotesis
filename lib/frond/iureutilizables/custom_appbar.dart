@@ -2,10 +2,10 @@ import 'package:ecoazuero/frond/mapazuero.dart';
 import 'package:flutter/material.dart';
 import 'package:ecoazuero/frond/conservrefor.dart';
 import 'package:ecoazuero/frond/nosotros.dart';
-import '../../backend/login/loginInterfaz.dart';
 import '../educacion.dart';
 import '../../main.dart';
 import '../comunidad.dart';
+import '../usuarios/gestionUsuario.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../menubd.dart';
@@ -359,10 +359,9 @@ class _DesktopMenu extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.account_circle_rounded, color: Colors.white),
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
+            Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => LoginInterfaz()),
-              (route) => false,
+              MaterialPageRoute(builder: (_) => const GestionUsuario()),
             );
           },
           style: IconButton.styleFrom(
@@ -487,10 +486,9 @@ class MobileMenu extends StatelessWidget {
             title: Text('Iniciar sesión'),
             onTap: () {
               Navigator.pop(context); // Cierra el drawer
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => LoginInterfaz()),
-                (route) => false,
+                MaterialPageRoute(builder: (_) => const GestionUsuario()),
               );
             },
           ),

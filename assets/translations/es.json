@@ -142,16 +142,45 @@
      "texto": "En esta página encontrará guías para impulsar su viaje ecológico en Azuero. Estas guías sirven como punto de partida para los detalles de la vida sostenible en la península. ¿Buscas poner una cerca viva? Consulte nuestra guía sobre cercas vivas para saber por dónde empezar. ¿Quieres saber cómo reducir los residuos? Consulta la Ecoguía Reducir, Reutilizar, Reciclar. ¡Estas guías ecológicas son documentos vivos y dependemos de los comentarios de la comunidad para mantenerlas en la mejor forma!"
     }
   },
-  "Login":{
-    "name": "nombre",
-    "correo": "correo",
-    "password": "contrasenia",
-    "registro":"registrarse",
-    "sesion":"iniciar sesion",
-    "errores": {
-      "vacio": "no se permite campo vacio",
-      "mail": "debe ingresar un correo valido, que contenga @ y termine en .com" 
+  "nonumero": "no introduzca numeros",
+  "gestionUsuario": {
+    "titulo": {
+      "login": "Bienvenido",
+      "registro": "Crear cuenta"
+    },
+    "campos": {
+      "correo": "Correo electrónico",
+      "contrasena": "Contraseña",
+      "nombre": "Nombre completo",
+      "rol": "Rol"
+    },
+    "botones": {
+      "login": "Iniciar sesión",
+      "registro": "Registrarse"
+    },
+    "mensajes": {
+      "loginExitoso": "Inicio de sesión exitoso",
+      "registroExitoso": "Registro exitoso. Rol: {rol}",
+      "procesando": "Procesando..."
+    },
+    "validaciones": {
+      "correoVacio": "Por favor ingrese su correo",
+      "correoInvalido": "Ingrese un correo válido",
+      "contrasenaVacia": "Por favor ingrese su contraseña",
+      "contrasenaInvalida": "La contraseña debe tener al menos 6 caracteres",
+      "nombreVacio": "Por favor ingrese su nombre"
+    },
+    "textoCambio": {
+      "tieneCuenta": "¿Ya tienes cuenta?",
+      "noTieneCuenta": "¿No tienes cuenta?",
+      "iniciarSesion": "Inicia sesión",
+      "registrarse": "Regístrate"
+    },
+    "roles": {
+      "cientifico": "Científico",
+      "duenoTerreno": "Dueño de terreno",
+      "estudiante": "Estudiante",
+      "sinRol": "Sin rol"
     }
-  },
-  "nonumero": "no introduzca numeros"
+  }
 }

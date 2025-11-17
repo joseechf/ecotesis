@@ -88,19 +88,19 @@ class _Iubasedatos extends State<menuBD> {
                 SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () async {
-                    String? iduser = await _obtenerIdUsuario();
-                    if (iduser != null) {
+                    String iduser = await _obtenerIdUsuario();
+                    if (iduser != null) { 
                       int acceso = await _v.VerificarPermisosCrud(
                         iduser,
                         "nada",
                       );
                       if (acceso != 0) {
-                        /*  Navigator.push(
+                        /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => insertBD(),
                                   ),
-                                );*/
+                        );*/
                       } else {
                         showDialog(
                           context: context,
@@ -277,8 +277,10 @@ class _Iubasedatos extends State<menuBD> {
   }
 
   //obtiene el id del usuario logueado
-  Future<String?> _obtenerIdUsuario() async {
-    try {
+  Future<String> _obtenerIdUsuario() async {
+    //implementar obtencion de usuario
+    return "true"; //para pruebas
+    /*try {
       final attributes = await Amplify.Auth.fetchUserAttributes();
 
       final subAttribute = attributes.firstWhere(
@@ -289,7 +291,7 @@ class _Iubasedatos extends State<menuBD> {
     } catch (e) {
       print('Error obteniendo el sub: $e');
       return null;
-    }
+    }*/
   }
 
   void _InterfazFiltro(BuildContext context) {
@@ -348,7 +350,7 @@ class Verificacion {
   static const String _apiUrl =
       'https://t3f65fc1ta.execute-api.us-east-1.amazonaws.com/verificar';
   Future<int> VerificarPermisosCrud(String iduser, String credencial) async {
-    try {
+    /*try {
       final response = await http.post(
         Uri.parse(_apiUrl),
         headers: {'Content-Type': 'application/json'},
@@ -364,7 +366,7 @@ class Verificacion {
       }
     } catch (e) {
       return 0;
-    }
-    return 0;
+    }*/
+    return 1; //para pruebas
   }
 }

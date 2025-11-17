@@ -143,16 +143,45 @@
     }
   },
 
-  "Login":{
-    "name": "name",
-    "correo":"correo",
-    "password": "password",
-    "registro":"sing up",
-    "sesion":"login",
-    "errores": {
-      "vacio": "this camp cant be null",
-      "mail": "You must enter a valid email address that contains @ and ends with .com"
+  "nonumero": "dont set numbers",
+  "gestionUsuario": {
+    "titulo": {
+      "login": "Welcome",
+      "registro": "Create account"
+    },
+    "campos": {
+      "correo": "Email",
+      "contrasena": "Password",
+      "nombre": "Full name",
+      "rol": "Role"
+    },
+    "botones": {
+      "login": "Sign in",
+      "registro": "Sign up"
+    },
+    "mensajes": {
+      "loginExitoso": "Login successful",
+      "registroExitoso": "Registration successful. Role: {rol}",
+      "procesando": "Processing..."
+    },
+    "validaciones": {
+      "correoVacio": "Please enter your email",
+      "correoInvalido": "Enter a valid email",
+      "contrasenaVacia": "Please enter your password",
+      "contrasenaInvalida": "Password must be at least 6 characters",
+      "nombreVacio": "Please enter your name"
+    },
+    "textoCambio": {
+      "tieneCuenta": "Already have an account?",
+      "noTieneCuenta": "Don't have an account?",
+      "iniciarSesion": "Sign in",
+      "registrarse": "Sign up"
+    },
+    "roles": {
+      "cientifico": "Scientist",
+      "duenoTerreno": "Landowner",
+      "estudiante": "Student",
+      "sinRol": "No role"
     }
-  },
-  "nonumero": "dont set numbers"
+  }
 }
