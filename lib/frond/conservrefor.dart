@@ -1,4 +1,4 @@
-import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
+import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'iureutilizables/custom_appbar.dart';
@@ -7,25 +7,36 @@ import 'iureutilizables/widgetpersonalizados.dart';
 import 'iureutilizables/custom_appbar.dart' as app_bar;
 
 class Conservrefor extends StatelessWidget {
-
   Future<List<Map<String, String>>> _cargarListaIniciativas(
     BuildContext context,
   ) async {
     return [
       {
         'imagen': 'assets/images/doñas.jpg',
-        'titulo': context.tr('texts.conservrefor.cultivosSostenibles.titulo.viveros'),
-        'resumen': context.tr('texts.conservrefor.cultivosSostenibles.texto.viveros'), 
+        'titulo': context.tr(
+          'texts.conservrefor.cultivosSostenibles.titulo.viveros',
+        ),
+        'resumen': context.tr(
+          'texts.conservrefor.cultivosSostenibles.texto.viveros',
+        ),
       },
       {
         'imagen': 'assets/images/doñas.jpg',
-        'titulo': context.tr('texts.conservrefor.cultivosSostenibles.titulo.Microproductores'),
-        'resumen': context.tr('texts.conservrefor.cultivosSostenibles.texto.Microproductores'),
+        'titulo': context.tr(
+          'texts.conservrefor.cultivosSostenibles.titulo.Microproductores',
+        ),
+        'resumen': context.tr(
+          'texts.conservrefor.cultivosSostenibles.texto.Microproductores',
+        ),
       },
       {
         'imagen': 'assets/images/doñas.jpg',
-        'titulo': context.tr('texts.conservrefor.cultivosSostenibles.titulo.semillas'),
-        'resumen': context.tr('texts.conservrefor.cultivosSostenibles.texto.semillas'),
+        'titulo': context.tr(
+          'texts.conservrefor.cultivosSostenibles.titulo.semillas',
+        ),
+        'resumen': context.tr(
+          'texts.conservrefor.cultivosSostenibles.texto.semillas',
+        ),
       },
     ];
   }
@@ -36,7 +47,10 @@ class Conservrefor extends StatelessWidget {
     final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer: isMobile ? app_bar.MobileMenu() : null, // Agregar el Drawer solo para móvil
+      endDrawer:
+          isMobile
+              ? app_bar.MobileMenu()
+              : null, // Agregar el Drawer solo para móvil
       body: SafeArea(
         child: ListView(
           //lazy loading
@@ -47,43 +61,44 @@ class Conservrefor extends StatelessWidget {
               0,
               0,
               400,
-              0
+              0,
             ),
 
-            LayoutBuilder(builder: (context, constraints){
-              double ancho = constraints.maxWidth;
-              double tamanioResponsive = ancho * 0.082;
-              return Container(
-              width: double.infinity,
-              constraints: BoxConstraints(maxHeight: 400),
-              margin: EdgeInsets.only(bottom: 20),
-              child: Stack(
-                //fit: StackFit.expand,
-                children: [
-                  Opacity(
-                    opacity: 0.8,
-                    child: Image.asset(
-                      'assets/images/manos.jpg',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      context.tr('titles.titlePrincipal.conservrefor'),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: tamanioResponsive,
-                        fontWeight: FontWeight.bold,
+            LayoutBuilder(
+              builder: (context, constraints) {
+                double ancho = constraints.maxWidth;
+                double tamanioResponsive = ancho * 0.082;
+                return Container(
+                  width: double.infinity,
+                  constraints: BoxConstraints(maxHeight: 400),
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Stack(
+                    //fit: StackFit.expand,
+                    children: [
+                      Opacity(
+                        opacity: 0.8,
+                        child: Image.asset(
+                          'assets/images/manos.jpg',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
                       ),
-                    ),
+                      Center(
+                        child: Text(
+                          context.tr('titles.titlePrincipal.conservrefor'),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: tamanioResponsive,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-            }),
-            
+                );
+              },
+            ),
 
             WidgetPersonalizados.ElijeFilaColumnaDynamico([
               WidgetPersonalizados.constructorContainerText(
@@ -143,19 +158,20 @@ class Conservrefor extends StatelessWidget {
                     color: const Color.fromARGB(255, 12, 61, 16),
                     padding: EdgeInsets.all(20),
                     alignment: Alignment.center,
-                   /* child: FittedBox(
+                    /* child: FittedBox(
                       fit: BoxFit.contain,*/
-                      child: Text(
+                    child: Text(
                       context.tr('titles.titlePrincipal.corredor'),
                       style: TextStyle(
-                        fontSize: (!isMobile)
-                          ? (screenWidth * 0.06).clamp(40.0, 60.0)
-                          : 15,
-                        color: Colors.white
+                        fontSize:
+                            (!isMobile)
+                                ? (screenWidth * 0.06).clamp(40.0, 60.0)
+                                : 15,
+                        color: Colors.white,
                       ),
                     ),
+
                     //),
-                    
                   ),
                 ),
                 Expanded(
@@ -165,7 +181,7 @@ class Conservrefor extends StatelessWidget {
                     0,
                     0,
                     400,
-                    0
+                    0,
                   ),
                 ),
               ],
@@ -179,7 +195,7 @@ class Conservrefor extends StatelessWidget {
                     const Color.fromARGB(255, 20, 68, 6),
                     EdgeInsets.all(20),
                     10,
-                    (!isMobile)? 50 : 30,
+                    (!isMobile) ? 50 : 30,
                     'Oswald',
                     FontWeight.bold,
                     Alignment.center,
@@ -198,7 +214,8 @@ class Conservrefor extends StatelessWidget {
                   FutureBuilder<List<Map<String, String>>>(
                     future: _cargarListaIniciativas(context),
                     builder: (context, datos) {
-                      if (datos.hasError) return Text('ERROR AL CARGAR LA SECCION');
+                      if (datos.hasError)
+                        return Text('ERROR AL CARGAR LA SECCION');
                       if (!datos.hasData) return Text('SECCION VACIA');
                       final listaIniciativas = datos.data!;
                       return Wrap(
@@ -215,7 +232,7 @@ class Conservrefor extends StatelessWidget {
                             child: WidgetPersonalizados.ListaWidgetOrdenada(
                               listaIniciativas[index],
                               100,
-                              context
+                              context,
                             ),
                           );
                         }),
@@ -232,14 +249,14 @@ class Conservrefor extends StatelessWidget {
               const Color.fromARGB(255, 3, 54, 11),
               EdgeInsets.all(20),
               20,
-              (!isMobile)?120:30,
+              (!isMobile) ? 120 : 30,
               'Oswald',
               FontWeight.bold,
               Alignment.center,
             ),
 
             Container(
-              margin: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
+              margin: (!isMobile) ? EdgeInsets.all(50) : EdgeInsets.all(10),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.preguntas.titulo'),
@@ -247,7 +264,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 20, 40, 20),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
+                  (!isMobile) ? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
@@ -258,7 +275,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 40, 60, 40),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
+                  (!isMobile) ? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
                   'Oswald',
                   FontWeight.w300,
                   Alignment.center,
@@ -268,7 +285,7 @@ class Conservrefor extends StatelessWidget {
 
             Container(
               margin: EdgeInsets.all(0),
-              padding: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
+              padding: (!isMobile) ? EdgeInsets.all(50) : EdgeInsets.all(10),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.beneficios.titulo'),
@@ -276,7 +293,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 4, 88, 4),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
+                  (!isMobile) ? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
@@ -287,7 +304,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 4, 88, 4),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
+                  (!isMobile) ? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
                   'Oswald',
                   FontWeight.w300,
                   Alignment.center,
@@ -296,7 +313,7 @@ class Conservrefor extends StatelessWidget {
             ),
 
             Container(
-              margin: (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
+              margin: (!isMobile) ? EdgeInsets.all(50) : EdgeInsets.all(10),
               child: WidgetPersonalizados.ElijeFilaColumnaDynamico([
                 WidgetPersonalizados.constructorContainerText(
                   context.tr('texts.conservrefor.enfoque.titulo'),
@@ -304,7 +321,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 20, 40, 20),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
+                  (!isMobile) ? (screenWidth * 0.04).clamp(32.0, 50.0) : 30,
                   'Oswald',
                   FontWeight.bold,
                   Alignment.center,
@@ -315,7 +332,7 @@ class Conservrefor extends StatelessWidget {
                   Color.fromARGB(255, 40, 60, 40),
                   EdgeInsets.all(20),
                   10,
-                  (!isMobile)? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
+                  (!isMobile) ? (screenWidth * 0.02).clamp(18.0, 24.0) : 30,
                   'Oswald',
                   FontWeight.w300,
                   Alignment.center,
@@ -328,7 +345,7 @@ class Conservrefor extends StatelessWidget {
               0,
               0,
               400,
-              0
+              0,
             ),
 
             WidgetPersonalizados.constructorContainerText(
@@ -348,12 +365,12 @@ class Conservrefor extends StatelessWidget {
               const Color.fromARGB(255, 5, 46, 5),
               EdgeInsets.all(10),
               10,
-              (!isMobile)?30:15,
+              (!isMobile) ? 30 : 15,
               'Oswald',
               FontWeight.w200,
               Alignment.center,
             ),
-            const CustomFooter(),
+            const Footer(),
           ],
         ),
       ),

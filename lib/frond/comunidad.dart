@@ -1,5 +1,5 @@
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
-import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
+import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -13,7 +13,8 @@ class Comunidad extends StatelessWidget {
     bool isMobile = anchoPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer: isMobile ? MobileMenu() : null, // Agregar el Drawer solo para móvil
+      endDrawer:
+          isMobile ? MobileMenu() : null, // Agregar el Drawer solo para móvil
       body: SafeArea(
         child: ListView(
           children: [
@@ -24,7 +25,7 @@ class Comunidad extends StatelessWidget {
                   0,
                   0,
                   400,
-                  0
+                  0,
                 ),
 
                 Container(
@@ -49,7 +50,7 @@ class Comunidad extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'Oswald',
-                            fontSize: (!isMobile)?70:40,
+                            fontSize: (!isMobile) ? 70 : 40,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -63,7 +64,7 @@ class Comunidad extends StatelessWidget {
                   0,
                   0,
                   400,
-                  0
+                  0,
                 ),
 
                 WidgetPersonalizados.ElijeFilaColumnaDynamico([
@@ -82,9 +83,9 @@ class Comunidad extends StatelessWidget {
                     context.tr('texts.comunidad.comites.texto'),
                     const Color.fromARGB(255, 255, 255, 255),
                     const Color.fromARGB(255, 2, 56, 14),
-                    (!isMobile)?EdgeInsets.all(50):EdgeInsets.all(10),
+                    (!isMobile) ? EdgeInsets.all(50) : EdgeInsets.all(10),
                     20,
-                    (!isMobile)?30:20,
+                    (!isMobile) ? 30 : 20,
                     'Oswald',
                     FontWeight.w200,
                     Alignment.center,
@@ -96,7 +97,7 @@ class Comunidad extends StatelessWidget {
                   0,
                   0,
                   400,
-                  0
+                  0,
                 ),
 
                 WidgetPersonalizados.ElijeFilaColumnaDynamico([
@@ -178,7 +179,7 @@ class Comunidad extends StatelessWidget {
                                   maxTextHeight = tp.height;
                                 }
                               }
-                              
+
                               return Wrap(
                                 spacing: 10.0,
                                 runSpacing: 10.0,
@@ -189,7 +190,9 @@ class Comunidad extends StatelessWidget {
                                       margin: EdgeInsets.all(20),
                                       padding: EdgeInsets.all(5),
                                       width: 400,
-                                      height: maxTextHeight + 100, // Añadir espacio para el icono y padding
+                                      height:
+                                          maxTextHeight +
+                                          100, // Añadir espacio para el icono y padding
                                       color: const Color.fromARGB(
                                         255,
                                         255,
@@ -198,8 +201,7 @@ class Comunidad extends StatelessWidget {
                                       ),
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .center,
+                                            MainAxisAlignment.center,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
@@ -218,7 +220,12 @@ class Comunidad extends StatelessWidget {
                                               child: WidgetPersonalizados.constructorContainerText(
                                                 listaRecursosColaboradores[index]['texto']!,
                                                 Colors.white,
-                                                const Color.fromARGB(255, 4, 46, 4),
+                                                const Color.fromARGB(
+                                                  255,
+                                                  4,
+                                                  46,
+                                                  4,
+                                                ),
                                                 EdgeInsets.all(10),
                                                 10,
                                                 20,
@@ -243,7 +250,7 @@ class Comunidad extends StatelessWidget {
                     );
                   },
                 ),
-                const CustomFooter(),
+                const Footer(),
               ],
             ),
           ],

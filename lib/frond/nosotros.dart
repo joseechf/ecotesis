@@ -4,6 +4,7 @@ import 'iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'iureutilizables/widgetpersonalizados.dart';
 import 'iureutilizables/custom_appbar.dart' as app_bar;
+import 'iureutilizables/footer.dart';
 
 class Nosotros extends StatelessWidget {
   @override
@@ -14,7 +15,10 @@ class Nosotros extends StatelessWidget {
       builder: (context) {
         return Scaffold(
           appBar: customAppBar(context: context),
-          endDrawer: isMobile ? app_bar.MobileMenu() : null, // Agregar el Drawer solo para móvil
+          endDrawer:
+              isMobile
+                  ? app_bar.MobileMenu()
+                  : null, // Agregar el Drawer solo para móvil
           body: SafeArea(
             child: ListView(
               //child: Column(
@@ -24,7 +28,7 @@ class Nosotros extends StatelessWidget {
                   0,
                   0,
                   400,
-                  0
+                  0,
                 ),
 
                 Container(
@@ -68,7 +72,7 @@ class Nosotros extends StatelessWidget {
                               20,
                               10,
                               400,
-                              0
+                              0,
                             ),
                           ),
                           Expanded(
@@ -122,7 +126,7 @@ class Nosotros extends StatelessWidget {
                             20,
                             10,
                             400,
-                            0
+                            0,
                           ),
                           Container(
                             width: double.infinity,
@@ -170,7 +174,7 @@ class Nosotros extends StatelessWidget {
                   0,
                   0,
                   400,
-                  0
+                  0,
                 ),
 
                 Container(
@@ -184,7 +188,7 @@ class Nosotros extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(10),
                         10,
-                        (!isMobile)?50:30,
+                        (!isMobile) ? 50 : 30,
                         'Oswald',
                         FontWeight.bold,
                         Alignment.center,
@@ -195,7 +199,7 @@ class Nosotros extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(10),
                         10,
-                        (!isMobile)?40:20,
+                        (!isMobile) ? 40 : 20,
                         'Oswald',
                         FontWeight.normal,
                         Alignment.center,
@@ -224,7 +228,7 @@ class Nosotros extends StatelessWidget {
                   0,
                   0,
                   400,
-                  0
+                  0,
                 ),
 
                 Container(
@@ -249,7 +253,7 @@ class Nosotros extends StatelessWidget {
                         Colors.white,
                         EdgeInsets.all(10),
                         10,
-                        (!isMobile)?40:20,
+                        (!isMobile) ? 40 : 20,
                         'Oswald',
                         FontWeight.normal,
                         Alignment.center,
@@ -277,6 +281,7 @@ class Nosotros extends StatelessWidget {
                     ],
                   ),
                 ),
+                const Footer(),
               ],
               //),
             ),

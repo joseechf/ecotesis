@@ -1,3 +1,4 @@
+/*
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../frond/iureutilizables/widgetpersonalizados.dart';
@@ -150,3 +151,4 @@ class _interfazUpDatos extends State<interfazUpDatos> {
     );
   }
 }
+*/

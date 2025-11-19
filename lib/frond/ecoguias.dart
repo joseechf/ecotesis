@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
-import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
+import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,7 +14,7 @@ class Ecoguias extends StatelessWidget {
     double alturaPantalla = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer: anchoPantalla < 800 ? app_bar.MobileMenu() : null, 
+      endDrawer: anchoPantalla < 800 ? app_bar.MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [
@@ -123,7 +123,7 @@ class Ecoguias extends StatelessWidget {
                 );
               },
             ),
-                const CustomFooter(),
+            const Footer(),
           ],
         ),
       ),
@@ -138,37 +138,40 @@ class Ecoguias extends StatelessWidget {
         "imagen": "assets/images/mirando.jpg",
         "titulo": "Fire Control: Rights & Regulations",
         "boton": ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => VisorPDF(
-          url: 'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (_) => VisorPDF(
+                      url:
+                          'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
+                    ),
+              ),
+            );
+          },
+          child: Text('Abrir PDF'),
         ),
-      ),
-    );
-  },
-  child: Text('Abrir PDF'),
-)
-,
         "texto": context.tr('texts.comunidad.recursoColaborador.texto1'),
       },
       {
         "imagen": "assets/images/mirando.jpg",
         "titulo": "Fire Control: Rights & Regulations",
         "boton": ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => VisorPDF(
-          url: 'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (_) => VisorPDF(
+                      url:
+                          'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
+                    ),
+              ),
+            );
+          },
+          child: Text('Abrir PDF'),
         ),
-      ),
-    );
-  },
-  child: Text('Abrir PDF'),
-),
         "texto": context.tr('texts.comunidad.recursoColaborador.texto1'),
       },
     ];
