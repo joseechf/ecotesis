@@ -8,10 +8,10 @@ import '../comunidad.dart';
 import '../usuarios/gestionUsuario.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../menubd.dart';
 import '../ecoguias.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
+import '../baseDatos/pages/catalogo_page.dart';
 
 class customAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
@@ -52,21 +52,16 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ],
                 ),
               ),
-              
+
               // Espacio flexible
               Spacer(),
-              
+
               // Menú para escritorio o móvil
               if (!isMobile)
                 _DesktopMenu()
               else
                 // Menú hamburguesa para móvil con botón de idioma
-                Row(
-                  children: [
-                    _LanguageToggleButton(),
-                    SizedBox(width: 8),
-                  ],
-                ),
+                Row(children: [_LanguageToggleButton(), SizedBox(width: 8)]),
             ],
           );
         },
@@ -99,84 +94,92 @@ class __NavItemState extends State<_NavItem> {
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: widget.subItems != null && widget.subItems!.isNotEmpty
-          ? PopupMenuButton<String>(
-              offset: Offset(0, 40),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              color: Colors.white,
-              onSelected: (value) {
-                // Aquí se manejaría la selección del submenú
-              },
-              itemBuilder: (BuildContext context) {
-                return widget.subItems!.map((item) {
-                  if (item is PopupMenuItem<String>) {
-                    return item;
-                  }
-                  return const PopupMenuItem<String>(
-                    value: '',
-                    child: Text(''),
-                  );
-                }).toList();
-              },
-              child: Container(
+      child:
+          widget.subItems != null && widget.subItems!.isNotEmpty
+              ? PopupMenuButton<String>(
+                offset: Offset(0, 40),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                color: Colors.white,
+                onSelected: (value) {
+                  // Aquí se manejaría la selección del submenú
+                },
+                itemBuilder: (BuildContext context) {
+                  return widget.subItems!.map((item) {
+                    if (item is PopupMenuItem<String>) {
+                      return item;
+                    }
+                    return const PopupMenuItem<String>(
+                      value: '',
+                      child: Text(''),
+                    );
+                  }).toList();
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color:
+                            _isHovered
+                                ? Colors.green[800]!
+                                : Colors.transparent,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        widget.title,
+                        style: TextStyle(
+                          color: _isHovered ? Colors.green[800] : Colors.white,
+                          fontWeight:
+                              FontWeight
+                                  .normal, // Mantiene el mismo peso de fuente
+                          fontSize: 16, // Tamaño de fuente consistente
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Icon(
+                        Icons.arrow_drop_down,
+                        color: _isHovered ? Colors.green[800] : Colors.white,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              : Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: _isHovered ? Colors.green[800]! : Colors.transparent,
+                      color:
+                          _isHovered ? Colors.green[800]! : Colors.transparent,
                       width: 2.0,
                     ),
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Text(
-                      widget.title,
-                      style: TextStyle(
-                        color: _isHovered ? Colors.green[800] : Colors.white,
-                        fontWeight: FontWeight.normal, // Mantiene el mismo peso de fuente
-                        fontSize: 16, // Tamaño de fuente consistente
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(
-                      Icons.arrow_drop_down,
+                child: TextButton(
+                  onPressed: widget.onTap,
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    elevation: 0, // Eliminar la sombra
+                    minimumSize: Size(0, 0),
+                  ),
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
                       color: _isHovered ? Colors.green[800] : Colors.white,
-                      size: 18
+                      fontWeight:
+                          FontWeight.normal, // Mantiene el mismo peso de fuente
+                      fontSize: 16, // Tamaño de fuente consistente
                     ),
-                  ],
-                ),
-              ),
-            )
-          : Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: _isHovered ? Colors.green[800]! : Colors.transparent,
-                    width: 2.0,
                   ),
                 ),
               ),
-              child: TextButton(
-                onPressed: widget.onTap,
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  elevation: 0, // Eliminar la sombra
-                  minimumSize: Size(0, 0),
-                ),
-                child: Text(
-                  widget.title,
-                  style: TextStyle(
-                    color: _isHovered ? Colors.green[800] : Colors.white,
-                    fontWeight: FontWeight.normal, // Mantiene el mismo peso de fuente
-                    fontSize: 16, // Tamaño de fuente consistente
-                  ),
-                ),
-              ),
-            ),
     );
   }
 }
@@ -289,7 +292,7 @@ class _DesktopMenu extends StatelessWidget {
                 );
               },
             ),
-            PopupMenuItem<String>(
+            /*PopupMenuItem<String>(
               value: 'basedatos',
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -305,6 +308,22 @@ class _DesktopMenu extends StatelessWidget {
                   (route) => false,
                 );
               },
+            ),*/
+            PopupMenuItem<String>(
+              value: 'basedatos',
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Text(
+                  context.tr('buttons.basedatos'),
+                  style: TextStyle(color: Colors.green[800]),
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CatalogoPage()),
+                );
+              },
             ),
             if (kIsWeb)
               PopupMenuItem<String>(
@@ -317,7 +336,9 @@ class _DesktopMenu extends StatelessWidget {
                   ),
                 ),
                 onTap: () async {
-                  final Uri url = Uri.parse('https://www.librarything.com/catalog/ProEcoAzuero');
+                  final Uri url = Uri.parse(
+                    'https://www.librarything.com/catalog/ProEcoAzuero',
+                  );
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.platformDefault);
                   } else {
@@ -465,13 +486,15 @@ class MobileMenu extends StatelessWidget {
           _MenuItem(context.tr('buttons.basedatos'), () {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (_) => menuBD()),
+              MaterialPageRoute(builder: (_) => const CatalogoPage()),
               (route) => false,
             );
           }),
           if (kIsWeb)
             _MenuItem(context.tr('buttons.biblioteca'), () async {
-              final Uri url = Uri.parse('https://www.librarything.com/catalog/ProEcoAzuero');
+              final Uri url = Uri.parse(
+                'https://www.librarything.com/catalog/ProEcoAzuero',
+              );
               if (await canLaunchUrl(url)) {
                 await launchUrl(url, mode: LaunchMode.platformDefault);
               } else {
@@ -503,9 +526,10 @@ class _LanguageToggleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        final newLocale = context.locale == const Locale('en')
-            ? const Locale('es')
-            : const Locale('en');
+        final newLocale =
+            context.locale == const Locale('en')
+                ? const Locale('es')
+                : const Locale('en');
         context.setLocale(newLocale);
       },
       style: TextButton.styleFrom(

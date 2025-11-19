@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'estilos.dart';
+import '../estilos.dart';
 
 // Widget de botón personalizado con estilo consistente
 class BotonPersonalizado extends StatelessWidget {

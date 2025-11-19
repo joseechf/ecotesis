@@ -4,7 +4,7 @@ import 'iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'iureutilizables/widgetpersonalizados.dart';
 import 'iureutilizables/custom_appbar.dart' as app_bar;
-import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart';
+import 'package:ecoazuero/frond/iureutilizables/custom_footer.dart'; 
 
 class Educacion extends StatelessWidget {
   @override

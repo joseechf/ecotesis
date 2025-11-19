@@ -4,6 +4,9 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'amplify_outputs.dart';
 import 'frond/home.dart';
+import 'frond/estilos.dart';
+import 'package:provider/provider.dart';
+import 'frond/baseDatos/providers/especies_provider.dart'; // para la bd falsa, cambiar despues
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,8 +83,11 @@ class _SplashLoaderState extends State<SplashLoader> {
         ),
       );
     }
-
-    return const MyApp(); // Tu app real
+    return ChangeNotifierProvider(
+      create: (_) => EspeciesProvider(), // mientras uso bd falsa, cambiar luego
+      child: const MyApp(),
+    );
+    //return const MyApp(); 
   }
 }
 
@@ -91,12 +97,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
+      /*theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 24, 42, 1),
         ),
         fontFamily: 'Oswald',
-      ),
+      )*/
+      theme: Estilos.tema,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

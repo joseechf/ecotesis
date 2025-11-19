@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'estilos.dart';
+import '../estilos.dart';
 
 // Clase con utilidades comunes para la aplicación
 class Utilidades {
