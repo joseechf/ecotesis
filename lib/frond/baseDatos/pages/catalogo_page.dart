@@ -9,7 +9,6 @@ import '../widgets/insertar_dialog.dart';
 import '../../estilos.dart';
 import '../../iureutilizables/widgetpersonalizados.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../iureutilizables/custom_appbar.dart' as app_bar;
 import '../../iureutilizables/custom_appbar.dart';
 
 import '../../usuarios/usuarioPrueba.dart';
@@ -25,10 +24,8 @@ class CatalogoPage extends StatelessWidget {
     final isMobile = anchoPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer:
-          isMobile
-              ? app_bar.MobileMenu()
-              : null, // Agregar el Drawer solo para móvil,
+      drawer:
+          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: Padding(
         padding: const EdgeInsets.all(Estilos.paddingMedio),
         child: Column(

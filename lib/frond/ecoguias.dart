@@ -5,7 +5,6 @@ import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'visorpdf.dart';
-import 'iureutilizables/custom_appbar.dart' as app_bar;
 
 class Ecoguias extends StatelessWidget {
   @override
@@ -14,7 +13,8 @@ class Ecoguias extends StatelessWidget {
     double alturaPantalla = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer: anchoPantalla < 800 ? app_bar.MobileMenu() : null,
+      drawer:
+          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [

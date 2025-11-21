@@ -13,8 +13,8 @@ class Comunidad extends StatelessWidget {
     bool isMobile = anchoPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer:
-          isMobile ? MobileMenu() : null, // Agregar el Drawer solo para móvil
+      drawer:
+          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [

@@ -2,7 +2,6 @@ import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'iureutilizables/custom_appbar.dart' as app_bar;
 
 class mappAzuero extends StatelessWidget {
   @override
@@ -11,7 +10,8 @@ class mappAzuero extends StatelessWidget {
     final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
-      endDrawer: isMobile ? app_bar.MobileMenu() : null,
+      drawer:
+          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -22,7 +22,13 @@ class mappAzuero extends StatelessWidget {
               height: 400,
               width: 600,
               color: const Color.fromARGB(255, 98, 180, 116),
-              child: WidgetPersonalizados.constructorContainerimg('assets/images/corredor.jpg', 0, 0, 600,0),
+              child: WidgetPersonalizados.constructorContainerimg(
+                'assets/images/corredor.jpg',
+                0,
+                0,
+                600,
+                0,
+              ),
             ),
           ],
         ),

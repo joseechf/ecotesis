@@ -1,150 +1,241 @@
-import 'package:ecoazuero/frond/mapazuero.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ecoazuero/frond/conservrefor.dart';
-import 'package:ecoazuero/frond/nosotros.dart';
-import '../educacion.dart';
-import '../../main.dart';
-import '../comunidad.dart';
-import '../usuarios/gestionUsuario.dart';
+import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../ecoguias.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart';
-import '../baseDatos/pages/catalogo_page.dart';
 
+import '../../main.dart';
+import '../educacion.dart';
+import '../comunidad.dart';
+import '../usuarios/gestionUsuario.dart';
+import '../ecoguias.dart';
+import '../baseDatos/pages/catalogo_page.dart';
+import '../conservrefor.dart';
+import '../mapazuero.dart';
+import '../nosotros.dart';
+import '../estilos.dart';
+
+/// Punto de quiebre entre diseño móvil y escritorio.
+const double _mobileBreakpoint = 800;
+
+/// AppBar personalizada que se adapta a escritorio y móvil.
 class customAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
   const customAppBar({Key? key, required this.context}) : super(key: key);
 
-  // Definir el punto de quiebre para dispositivos móviles
-  static const double _mobileBreakpoint = 800;
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < _mobileBreakpoint;
+    final bool isMobile = MediaQuery.sizeOf(context).width < _mobileBreakpoint;
 
     return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      backgroundColor: Estilos.verdePrincipal,
+      elevation: 2,
       titleSpacing: 0,
-      title: LayoutBuilder(
-        builder: (context, constraints) {
-          return Row(
-            children: [
-              // Logo y título de la aplicación
-              InkWell(
-                onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => MyApp()),
-                    (route) => false,
-                  );
-                },
-                child: Row(
-                  children: [
-                    FlutterLogo(),
-                    SizedBox(width: 8),
-                    Text(
-                      'PRO ECO AZUERO',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
+      title: Row(
+        children: [
+          _LogoTitle(
+            onTap:
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const MyApp()),
                 ),
-              ),
-
-              // Espacio flexible
-              Spacer(),
-
-              // Menú para escritorio o móvil
-              if (!isMobile)
-                _DesktopMenu()
-              else
-                // Menú hamburguesa para móvil con botón de idioma
-                Row(children: [_LanguageToggleButton(), SizedBox(width: 8)]),
-            ],
-          );
-        },
+          ),
+          const Spacer(),
+          isMobile
+              ? Row(
+                children: const [
+                  _LanguageToggleButton(),
+                  SizedBox(width: Estilos.margenPequeno),
+                ],
+              )
+              : const _DesktopMenu(),
+        ],
       ),
     );
   }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
-// Widget para los elementos de navegación en escritorio
-class _NavItem extends StatefulWidget {
-  final String title;
-  final VoidCallback? onTap;
-  final List<Widget>? subItems;
-
-  const _NavItem(this.title, this.onTap, {this.subItems});
-
-  @override
-  __NavItemState createState() => __NavItemState();
-}
-
-class __NavItemState extends State<_NavItem> {
-  bool _isHovered = false;
+/// Logo + título.
+class _LogoTitle extends StatelessWidget {
+  const _LogoTitle({required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(Estilos.radioBorde),
+      child: const Padding(
+        padding: EdgeInsets.all(Estilos.paddingPequeno),
+        child: Row(
+          children: [
+            FlutterLogo(),
+            SizedBox(width: Estilos.paddingPequeno),
+            Text(
+              'PRO ECO AZUERO',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: Estilos.textoGrande,
+                color: Estilos.blanco,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Menú horizontal para escritorio.
+class _DesktopMenu extends StatelessWidget {
+  const _DesktopMenu();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _NavItem(context.tr('buttons.somos'), () => _go(context, Nosotros())),
+        _NavItem(
+          context.tr('buttons.trabajo'),
+          null,
+          subItems: _trabajoItems(context),
+        ),
+        _NavItem(
+          context.tr('buttons.recursos'),
+          null,
+          subItems: _recursosItems(context),
+        ),
+        IconButton(
+          icon: const Icon(Icons.search, color: Estilos.blanco),
+          onPressed: () {
+            /* TODO: buscador */
+          },
+        ),
+        const _LanguageToggleButton(),
+        IconButton(
+          icon: const Icon(Icons.account_circle_rounded, color: Estilos.blanco),
+          onPressed:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const GestionUsuario()),
+              ),
+        ),
+      ],
+    );
+  }
+
+  /* ---------- submenús ---------- */
+  List<PopupMenuEntry<String>> _trabajoItems(BuildContext ctx) => [
+    _popup(ctx, 'buttons.conservref', () => _go(ctx, Conservrefor())),
+    _popup(ctx, 'buttons.educacion', () => _go(ctx, Educacion())),
+    _popup(ctx, 'buttons.comunidad', () => _go(ctx, Comunidad())),
+  ];
+
+  List<PopupMenuEntry<String>> _recursosItems(BuildContext ctx) => [
+    _popup(ctx, 'buttons.mapa', () => _go(ctx, mappAzuero())),
+    _popup(ctx, 'buttons.ecoguias', () => _go(ctx, Ecoguias())),
+    _popup(ctx, 'buttons.basedatos', () => _go(ctx, const CatalogoPage())),
+    if (kIsWeb)
+      _popup(
+        ctx,
+        'buttons.biblioteca',
+        () => _launchUrl(
+          ctx,
+          'https://www.librarything.com/catalog/ProEcoAzuero',
+        ),
+      ),
+    _popup(ctx, 'buttons.blog', () => _go(ctx, Conservrefor())),
+  ];
+
+  PopupMenuItem<String> _popup(
+    BuildContext ctx,
+    String key,
+    VoidCallback onTap,
+  ) => PopupMenuItem<String>(
+    onTap: onTap,
+    child: Text(
+      ctx.tr(key),
+      style: const TextStyle(
+        color: Estilos.verdeOscuro,
+        fontSize: Estilos.textoGrande,
+      ),
+    ),
+  );
+
+  void _go(BuildContext ctx, Widget page) =>
+      Navigator.pushReplacement(ctx, MaterialPageRoute(builder: (_) => page));
+
+  Future<void> _launchUrl(BuildContext ctx, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      launchUrl(uri, mode: LaunchMode.platformDefault);
+    } else {
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        const SnackBar(content: Text('No se pudo abrir el enlace.')),
+      );
+    }
+  }
+}
+
+/// Elemento de navegación con hover y sub-menú opcional.
+class _NavItem extends StatefulWidget {
+  const _NavItem(this.title, this.onTap, {this.subItems});
+  final String title;
+  final VoidCallback? onTap;
+  final List<PopupMenuEntry<String>>? subItems;
+
+  @override
+  State<_NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<_NavItem> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool hasMenu = widget.subItems?.isNotEmpty == true;
+    final border = BorderSide(
+      color: _hovered ? Estilos.verdeOscuro : Colors.transparent,
+      width: 2,
+    );
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
       child:
-          widget.subItems != null && widget.subItems!.isNotEmpty
+          hasMenu
               ? PopupMenuButton<String>(
-                offset: Offset(0, 40),
+                offset: const Offset(0, 40),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(Estilos.radioBorde),
                 ),
-                color: Colors.white,
-                onSelected: (value) {
-                  // Aquí se manejaría la selección del submenú
-                },
-                itemBuilder: (BuildContext context) {
-                  return widget.subItems!.map((item) {
-                    if (item is PopupMenuItem<String>) {
-                      return item;
-                    }
-                    return const PopupMenuItem<String>(
-                      value: '',
-                      child: Text(''),
-                    );
-                  }).toList();
-                },
+                color: Estilos.blanco,
+                itemBuilder: (_) => widget.subItems!,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color:
-                            _isHovered
-                                ? Colors.green[800]!
-                                : Colors.transparent,
-                        width: 2.0,
-                      ),
-                    ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Estilos.paddingPequeno,
+                    vertical: 4,
                   ),
+                  decoration: BoxDecoration(border: Border(bottom: border)),
                   child: Row(
                     children: [
                       Text(
                         widget.title,
                         style: TextStyle(
-                          color: _isHovered ? Colors.green[800] : Colors.white,
-                          fontWeight:
-                              FontWeight
-                                  .normal, // Mantiene el mismo peso de fuente
-                          fontSize: 16, // Tamaño de fuente consistente
+                          color:
+                              _hovered ? Estilos.verdeOscuro : Estilos.blanco,
+                          fontSize: Estilos.textoGrande,
                         ),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Icon(
                         Icons.arrow_drop_down,
-                        color: _isHovered ? Colors.green[800] : Colors.white,
+                        color: _hovered ? Estilos.verdeOscuro : Estilos.blanco,
                         size: 18,
                       ),
                     ],
@@ -152,30 +243,22 @@ class __NavItemState extends State<_NavItem> {
                 ),
               )
               : Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color:
-                          _isHovered ? Colors.green[800]! : Colors.transparent,
-                      width: 2.0,
-                    ),
-                  ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Estilos.paddingPequeno,
+                  vertical: 4,
                 ),
+                decoration: BoxDecoration(border: Border(bottom: border)),
                 child: TextButton(
                   onPressed: widget.onTap,
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    elevation: 0, // Eliminar la sombra
-                    minimumSize: Size(0, 0),
+                    minimumSize: Size.zero,
                   ),
                   child: Text(
                     widget.title,
                     style: TextStyle(
-                      color: _isHovered ? Colors.green[800] : Colors.white,
-                      fontWeight:
-                          FontWeight.normal, // Mantiene el mismo peso de fuente
-                      fontSize: 16, // Tamaño de fuente consistente
+                      color: _hovered ? Estilos.verdeOscuro : Estilos.blanco,
+                      fontSize: Estilos.textoGrande,
                     ),
                   ),
                 ),
@@ -184,371 +267,156 @@ class __NavItemState extends State<_NavItem> {
   }
 }
 
-// Widget para el menú de escritorio
-class _DesktopMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _NavItem(context.tr('buttons.somos'), () {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => Nosotros()),
-            (route) => false,
-          );
-        }),
-        _NavItem(
-          context.tr('buttons.trabajo'),
-          null,
-          subItems: [
-            PopupMenuItem<String>(
-              value: 'conservref',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.conservref'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => Conservrefor()),
-                  (route) => false,
-                );
-              },
-            ),
-            PopupMenuItem<String>(
-              value: 'educacion',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.educacion'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => Educacion()),
-                  (route) => false,
-                );
-              },
-            ),
-            PopupMenuItem<String>(
-              value: 'comunidad',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.comunidad'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => Comunidad()),
-                  (route) => false,
-                );
-              },
-            ),
-          ],
-        ),
-        _NavItem(
-          context.tr('buttons.recursos'),
-          null,
-          subItems: [
-            PopupMenuItem<String>(
-              value: 'mapa',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.mapa'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => mappAzuero()),
-                  (route) => false,
-                );
-              },
-            ),
-            PopupMenuItem<String>(
-              value: 'ecoguias',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.ecoguias'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => Ecoguias()),
-                  (route) => false,
-                );
-              },
-            ),
-            /*PopupMenuItem<String>(
-              value: 'basedatos',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.basedatos'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => menuBD()),
-                  (route) => false,
-                );
-              },
-            ),*/
-            PopupMenuItem<String>(
-              value: 'basedatos',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.basedatos'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CatalogoPage()),
-                );
-              },
-            ),
-            if (kIsWeb)
-              PopupMenuItem<String>(
-                value: 'biblioteca',
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: Text(
-                    context.tr('buttons.biblioteca'),
-                    style: TextStyle(color: Colors.green[800]),
-                  ),
-                ),
-                onTap: () async {
-                  final Uri url = Uri.parse(
-                    'https://www.librarything.com/catalog/ProEcoAzuero',
-                  );
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.platformDefault);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('No se pudo abrir el enlace.')),
-                    );
-                  }
-                },
-              ),
-            PopupMenuItem<String>(
-              value: 'blog',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Text(
-                  context.tr('buttons.blog'),
-                  style: TextStyle(color: Colors.green[800]),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => Conservrefor()),
-                  (route) => false,
-                );
-              },
-            ),
-          ],
-        ),
-        IconButton(
-          icon: Icon(Icons.search, color: Colors.white),
-          onPressed: () {
-            // Implementa tu buscador aquí
-          },
-          style: IconButton.styleFrom(
-            elevation: 0, // Eliminar la sombra
-          ),
-        ),
-        _LanguageToggleButton(),
-        IconButton(
-          icon: Icon(Icons.account_circle_rounded, color: Colors.white),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const GestionUsuario()),
-            );
-          },
-          style: IconButton.styleFrom(
-            elevation: 0, // Eliminar la sombra
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// Widget para los elementos del menú móvil
-class _MenuItem extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-
-  const _MenuItem(this.title, this.onTap);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      onTap: () {
-        Navigator.pop(context); // Cierra el drawer
-        onTap();
-      },
-    );
-  }
-}
-
-// Widget para el menú móvil (Drawer)
+/// Drawer para dispositivos móviles.
 class MobileMenu extends StatelessWidget {
+  const MobileMenu({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+      backgroundColor: Estilos.verdePrincipal,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          right: Radius.circular(Estilos.radioBordeGrande),
+        ),
+      ),
+      child: Column(
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.inversePrimary,
+            decoration: const BoxDecoration(
+              color: Estilos.verdePrincipal,
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(Estilos.radioBordeGrande),
+              ),
             ),
-            child: Column(
+            child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 FlutterLogo(size: 60),
-                SizedBox(height: 10),
+                SizedBox(height: Estilos.margenPequeno),
                 Text(
                   'PRO ECO AZUERO',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Estilos.blanco,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontSize: Estilos.textoMuyGrande,
                   ),
                 ),
               ],
             ),
           ),
-          _MenuItem(context.tr('buttons.somos'), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => Nosotros()),
-              (route) => false,
-            );
-          }),
-          _MenuItem(context.tr('buttons.conservref'), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => Conservrefor()),
-              (route) => false,
-            );
-          }),
-          _MenuItem(context.tr('buttons.educacion'), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => Educacion()),
-              (route) => false,
-            );
-          }),
-          _MenuItem(context.tr('buttons.comunidad'), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => Comunidad()),
-              (route) => false,
-            );
-          }),
-          _MenuItem(context.tr('buttons.mapa'), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => mappAzuero()),
-              (route) => false,
-            );
-          }),
-          _MenuItem(context.tr('buttons.ecoguias'), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => Ecoguias()),
-              (route) => false,
-            );
-          }),
-          _MenuItem(context.tr('buttons.basedatos'), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const CatalogoPage()),
-              (route) => false,
-            );
-          }),
-          if (kIsWeb)
-            _MenuItem(context.tr('buttons.biblioteca'), () async {
-              final Uri url = Uri.parse(
-                'https://www.librarything.com/catalog/ProEcoAzuero',
-              );
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url, mode: LaunchMode.platformDefault);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('No se pudo abrir el enlace.')),
-                );
-              }
-            }),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.account_circle_rounded),
-            title: Text('Iniciar sesión'),
-            onTap: () {
-              Navigator.pop(context); // Cierra el drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const GestionUsuario()),
-              );
-            },
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _drawerTile(context, 'buttons.somos', Nosotros()),
+                _drawerTile(context, 'buttons.conservref', Conservrefor()),
+                _drawerTile(context, 'buttons.educacion', Educacion()),
+                _drawerTile(context, 'buttons.comunidad', Comunidad()),
+                _drawerTile(context, 'buttons.mapa', mappAzuero()),
+                _drawerTile(context, 'buttons.ecoguias', Ecoguias()),
+                _drawerTile(context, 'buttons.basedatos', CatalogoPage()),
+                if (kIsWeb)
+                  ListTile(
+                    title: Text(
+                      context.tr('buttons.biblioteca'),
+                      style: TextStyle(
+                        color: Estilos.blanco,
+                        fontWeight: FontWeight.w100,
+                        fontSize: Estilos.textoPequeno,
+                      ),
+                    ),
+                    onTap:
+                        () => _launchUrl(
+                          context,
+                          'https://www.librarything.com/catalog/ProEcoAzuero',
+                        ),
+                  ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(
+                    Icons.account_circle_rounded,
+                    color: Estilos.verdeOscuro,
+                  ),
+                  title: Text(
+                    context.tr('login'),
+                    style: TextStyle(
+                      color: Estilos.blanco,
+                      fontWeight: FontWeight.w100,
+                      fontSize: Estilos.textoPequeno,
+                    ),
+                  ),
+                  onTap:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const GestionUsuario(),
+                        ),
+                      ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
+
+  Widget _drawerTile(BuildContext ctx, String key, Widget page) => ListTile(
+    title: Text(
+      ctx.tr(key),
+      style: const TextStyle(
+        fontSize: Estilos.textoGrande,
+        color: Estilos.blanco,
+        fontWeight: FontWeight.w100,
+        fontFamily: 'Oswald',
+      ),
+    ),
+    onTap: () {
+      Navigator.pop(ctx); // cierra drawer
+      Navigator.pushReplacement(ctx, MaterialPageRoute(builder: (_) => page));
+    },
+  );
+
+  Future<void> _launchUrl(BuildContext ctx, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      launchUrl(uri);
+    } else {
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        const SnackBar(content: Text('No se pudo abrir el enlace.')),
+      );
+    }
+  }
 }
 
+/// Botón conmutador de idioma (EN ↔ ES).
 class _LanguageToggleButton extends StatelessWidget {
+  const _LanguageToggleButton();
+
   @override
   Widget build(BuildContext context) {
+    final bool isEn = context.locale == const Locale('en');
     return TextButton(
-      onPressed: () {
-        final newLocale =
-            context.locale == const Locale('en')
-                ? const Locale('es')
-                : const Locale('en');
-        context.setLocale(newLocale);
-      },
+      onPressed:
+          () =>
+              context.setLocale(isEn ? const Locale('es') : const Locale('en')),
       style: TextButton.styleFrom(
-        elevation: 0, // Eliminar la sombra
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: Estilos.paddingPequeno),
       ),
       child: Text(
-        context.locale == const Locale('en') ? 'ES' : 'EN',
-        style: TextStyle(color: Colors.white),
+        isEn ? 'ES' : 'EN',
+        style: const TextStyle(
+          color: Estilos.blanco,
+          fontSize: Estilos.textoGrande,
+        ),
       ),
     );
   }
 
-  // ver si hay internet
-  Future<int?> conectar() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult != ConnectivityResult.none) {
-      return 1;
-    }
-    return null;
-  }
+  /// Devuelve 1 si hay conectividad, null en caso contrario.
+  static Future<int?> checkConnectivity() async =>
+      (await Connectivity().checkConnectivity()) == ConnectivityResult.none
+          ? null
+          : 1;
 }
