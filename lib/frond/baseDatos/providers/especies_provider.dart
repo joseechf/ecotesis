@@ -4,31 +4,28 @@ import '../models/especie.dart';
 class EspeciesProvider with ChangeNotifier {
   List<Especie> _especies = [
     Especie(
-      id: '1',
-      titulo: 'Roble Europeo',
-      imagen: '../../../../assets/images/manos.jpg',
-      tipo: 'Árbol',
-      nombreCientifico: 'Quercus robur',
-      ubicacion: 'Europa Central',
-      especie: 'Fagaceae',
+      nombreLatino: 'Swietenia macrophylla',
+      nombre: 'Caoba',
+      imagen: 'assets/images/manos.jpg',
+      establecido: 'Establecido al sol',
+      ubicacion: 'Mesoamerica',
+      polinizador: 'abeja',
     ),
     Especie(
-      id: '2',
-      titulo: 'Orquídea Mariposa',
-      imagen: '../../../../assets/images/bosque.jpg',
-      tipo: 'Flor',
-      nombreCientifico: 'Phalaenopsis amabilis',
-      ubicacion: 'Sudeste Asiático',
-      especie: 'Orchidaceae',
+      nombreLatino: 'Syzygium jambos',
+      nombre: 'Pomarosa',
+      imagen: 'assets/images/bosque.jpg',
+      establecido: 'sombra',
+      ubicacion: 'Himalaya a China (Sur Yunnan) y Oeste de Malasia',
+      polinizador: 'abeja',
     ),
     Especie(
-      id: '3',
-      titulo: 'Palo de Mango',
-      imagen: '../../../../assets/images/yuco.jpeg',
-      tipo: 'Árbol',
-      nombreCientifico: 'Phalaenopsis amabilis',
-      ubicacion: 'Centro America',
-      especie: 'Orchidaceae',
+      nombreLatino: 'Syzygium malaccense',
+      nombre: 'Marañón curasao',
+      imagen: 'assets/images/yuco.jpeg',
+      establecido: 'sombra',
+      ubicacion: 'Indochina a Vanuatu',
+      polinizador: 'abeja',
     ),
     // ... agrega el resto
   ];
@@ -40,7 +37,7 @@ class EspeciesProvider with ChangeNotifier {
 
   List<Especie> get especiesFiltradas {
     if (_filtro == 'all') return _especies;
-    return _especies.where((e) => e.tipo == _filtro).toList();
+    return _especies.where((e) => e.establecido == _filtro).toList();
   }
 
   void setFiltro(String valor) {
@@ -48,22 +45,21 @@ class EspeciesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void eliminar(String id) {
-    _especies.removeWhere((e) => e.id == id);
+  void eliminar(String nombreLatino) {
+    _especies.removeWhere((e) => e.nombreLatino == nombreLatino);
     notifyListeners();
   }
 
   void insertar(Especie nueva) {
-    final nuevoId = (int.parse(_especies.last.id) + 1).toString();
+    final nuevoId = (int.parse(_especies.last.nombreLatino) + 1).toString();
     _especies.add(
       Especie(
-        id: nuevoId,
-        titulo: nueva.titulo,
-        imagen: 'https://via.placeholder.com/400x300?text=${nueva.titulo}',
-        tipo: nueva.tipo,
-        nombreCientifico: nueva.nombreCientifico,
+        nombreLatino: nuevoId,
+        nombre: nueva.nombre,
+        imagen: 'https://via.placeholder.com/400x300?text=${nueva.nombre}',
+        establecido: nueva.establecido,
         ubicacion: nueva.ubicacion,
-        especie: nueva.especie,
+        polinizador: nueva.polinizador,
       ),
     );
     notifyListeners();

@@ -179,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       WidgetPersonalizados.constructorContainerText(
                         context.tr('titles.hacemos'),
                         fondo,
-                        const Color.fromARGB(255, 253, 253, 253),
+                        const Color.fromARGB(255, 2, 63, 2),
                         EdgeInsets.all(20),
                         10,
                         (!isMobile) ? 50 : 30,
@@ -202,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         : EdgeInsets.all(10),
                                 padding: EdgeInsets.all(5),
                                 width: 350,
-                                height: 600,
+                                height: 700,
                                 decoration: BoxDecoration(
                                   color:
                                       Colors

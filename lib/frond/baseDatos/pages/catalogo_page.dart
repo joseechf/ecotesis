@@ -12,6 +12,8 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../iureutilizables/custom_appbar.dart' as app_bar;
 import '../../iureutilizables/custom_appbar.dart';
 
+import '../../usuarios/usuarioPrueba.dart';
+
 class CatalogoPage extends StatelessWidget {
   const CatalogoPage({super.key});
 
@@ -19,7 +21,7 @@ class CatalogoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<EspeciesProvider>(context);
     double anchoPantalla = MediaQuery.of(context).size.width;
-    double alturaPantalla = MediaQuery.of(context).size.height;
+    usuarioLogueado usuarioPrueba = usuarioLogueado();
     final isMobile = anchoPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
@@ -58,21 +60,37 @@ class CatalogoPage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(width: Estilos.paddingPequeno),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  label: const Text('Nuevo Registro'),
-                  onPressed: () async {
-                    final nueva = await mostrarInsertarDialog(context);
-                    if (nueva != null) provider.insertar(nueva);
-                  },
-                ),
+                (!usuarioPrueba.validar())
+                    ? Text(
+                      " Modo Lectura ",
+                      style: TextStyle(
+                        color: Estilos.grisMedio,
+                        fontSize: Estilos.textoPequeno,
+                      ),
+                    )
+                    : ElevatedButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: const Text('Nuevo Registro'),
+                      onPressed: () async {
+                        final nueva = await mostrarInsertarDialog(context);
+                        if (nueva != null) provider.insertar(nueva);
+                      },
+                    ),
               ],
             ),
             const SizedBox(height: Estilos.paddingMedio),
             Expanded(
               child:
                   provider.especiesFiltradas.isEmpty
-                      ? const Center(child: Text('No se encontraron especies'))
+                      ? const Center(
+                        child: Text(
+                          'No se encontraron especies',
+                          style: TextStyle(
+                            color: Estilos.grisMedio,
+                            fontSize: Estilos.textoPequeno,
+                          ),
+                        ),
+                      )
                       : CustomScrollView(
                         slivers: [
                           SliverPadding(
@@ -132,7 +150,7 @@ class CatalogoPage extends StatelessWidget {
             },
             onEliminar: () {
               Navigator.pop(context);
-              provider.eliminar(especie.id);
+              provider.eliminar(especie.nombreLatino);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Eliminado'),

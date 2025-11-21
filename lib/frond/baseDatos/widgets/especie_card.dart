@@ -43,7 +43,7 @@ class EspecieCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          especie.titulo,
+                          especie.nombre,
                           style: const TextStyle(
                             fontSize: Estilos.textoGrande,
                             fontWeight: FontWeight.bold,
@@ -57,10 +57,12 @@ class EspecieCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: Estilos.verdeClaro,
-                          borderRadius: BorderRadius.circular(Estilos.radioBorde),
+                          borderRadius: BorderRadius.circular(
+                            Estilos.radioBorde,
+                          ),
                         ),
                         child: Text(
-                          especie.tipo,
+                          especie.establecido,
                           style: const TextStyle(
                             fontSize: Estilos.textoPequeno,
                             color: Estilos.verdeOscuro,
@@ -68,15 +70,6 @@ class EspecieCard extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    especie.nombreCientifico,
-                    style: const TextStyle(
-                      fontSize: Estilos.textoMedio,
-                      fontStyle: FontStyle.italic,
-                      color: Estilos.grisMedio,
-                    ),
                   ),
                 ],
               ),

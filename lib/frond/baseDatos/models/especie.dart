@@ -1,19 +1,17 @@
 class Especie {
-  final String id;
-  final String titulo;
+  final String nombreLatino;
+  final String nombre;
   final String imagen;
-  final String tipo;
-  final String nombreCientifico;
+  final String establecido;
   final String ubicacion;
-  final String especie;
+  final String polinizador;
 
   Especie({
-    required this.id,
-    required this.titulo,
+    required this.nombreLatino,
+    required this.nombre,
     required this.imagen,
-    required this.tipo,
-    required this.nombreCientifico,
-    required this.ubicacion,
-    required this.especie,
+    required this.establecido, //sol,sombra,mixto
+    required this.ubicacion, //pionero
+    required this.polinizador,
   });
 }

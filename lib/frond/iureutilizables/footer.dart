@@ -107,11 +107,14 @@ class Footer extends StatelessWidget {
       const SizedBox(height: Estilos.margenMedio),
       Row(
         children: [
-          _iconButton(Icons.facebook, 'https://facebook.com'),
+          _iconButton(Icons.facebook, 'https://www.facebook.com/proecoazuero'),
           const SizedBox(width: Estilos.margenMedio),
-          _iconButton(Icons.link, 'https://twitter.com'),
+          _iconButton(Icons.link, 'https://twitter.com/proecoazuero'),
           const SizedBox(width: Estilos.margenMedio),
-          _iconButton(Icons.play_arrow, 'https://youtube.com'),
+          _iconButton(
+            Icons.play_arrow,
+            'https://www.youtube.com/@proecoazuero',
+          ),
         ],
       ),
     ],

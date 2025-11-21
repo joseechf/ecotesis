@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/especie.dart';
 import '../../estilos.dart';
 
+import '../../usuarios/usuarioPrueba.dart';
+
 class EspecieModal extends StatelessWidget {
   final Especie especie;
   final VoidCallback onEditar;
@@ -16,12 +18,13 @@ class EspecieModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    usuarioLogueado usuarioPrueba = usuarioLogueado();
     return AlertDialog(
       shape: RoundedRectangleBorder(
         //modificar forma de tarjeta
         borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
       ),
-      title: Text(especie.titulo),
+      title: Text(especie.nombre),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,28 +41,39 @@ class EspecieModal extends StatelessWidget {
               ),
             ),
             const SizedBox(height: Estilos.paddingMedio),
-            _fila(Icons.label, 'Tipo', especie.tipo),
-            _fila(Icons.science, 'Nombre Científico', especie.nombreCientifico),
+            _fila(Icons.label, 'establecido a', especie.establecido),
             _fila(Icons.location_on, 'Ubicación', especie.ubicacion),
-            _fila(Icons.grass, 'Familia', especie.especie),
+            _fila(Icons.grass, 'Familia', especie.polinizador),
           ],
         ),
       ),
       actions: [
-        ElevatedButton.icon(
-          onPressed: onEditar,
-          icon: const Icon(Icons.edit),
-          label: const Text('Actualizar'),
-        ),
-        ElevatedButton.icon(
-          onPressed: onEliminar,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-          ),
-          icon: const Icon(Icons.delete),
-          label: const Text('Eliminar'),
-        ),
+        (!usuarioPrueba.validar())
+            ? Text(
+              " Modo Lectura ",
+              style: TextStyle(
+                color: Estilos.grisMedio,
+                fontSize: Estilos.textoPequeno,
+              ),
+            )
+            : Column(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: onEditar,
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Actualizar'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: onEliminar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: const Icon(Icons.delete),
+                  label: const Text('Eliminar'),
+                ),
+              ],
+            ),
       ],
     );
   }

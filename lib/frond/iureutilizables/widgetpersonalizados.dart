@@ -39,11 +39,8 @@ class StyledImageWidgetBuilder implements WidgetBuilderStrategy {
 
 // Estrategia para construir widgets de imagen (usa StyledImageWidgetBuilder con valores por defecto)
 class ImageWidgetBuilder extends StyledImageWidgetBuilder {
-  ImageWidgetBuilder({required double borderRadius}) : super(
-    width: 340,
-    height: 340,
-    borderRadius: borderRadius,
-  );
+  ImageWidgetBuilder({required double borderRadius})
+    : super(width: 340, height: 340, borderRadius: borderRadius);
 }
 
 // Estrategia para construir widgets de texto con estilo personalizable
@@ -85,12 +82,13 @@ class StyledTextWidgetBuilder implements WidgetBuilderStrategy {
 
 // Estrategia para construir widgets de título (usa StyledTextWidgetBuilder con valores por defecto)
 class TitleWidgetBuilder extends StyledTextWidgetBuilder {
-  TitleWidgetBuilder() : super(
-    textColor: const Color.fromARGB(255, 2, 30, 2),
-    fontSize: 30,
-    fontFamily: 'Oswald',
-    fontWeight: FontWeight.bold,
-  );
+  TitleWidgetBuilder()
+    : super(
+        textColor: const Color.fromARGB(255, 2, 30, 2),
+        fontSize: 30,
+        fontFamily: 'Oswald',
+        fontWeight: FontWeight.bold,
+      );
 }
 
 // Interfaz para la navegación
@@ -106,21 +104,27 @@ class DefaultNavigationHandler implements NavigationHandler {
       case 'conservacion':
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const Placeholder()), // Placeholder hasta que se inyecte la dependencia
+          MaterialPageRoute(
+            builder: (_) => const Placeholder(),
+          ), // Placeholder hasta que se inyecte la dependencia
           (route) => false,
         );
         break;
       case 'educDiv':
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const Placeholder()), // Placeholder hasta que se inyecte la dependencia
+          MaterialPageRoute(
+            builder: (_) => const Placeholder(),
+          ), // Placeholder hasta que se inyecte la dependencia
           (route) => false,
         );
         break;
       case 'colaboracion':
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const Placeholder()), // Placeholder hasta que se inyecte la dependencia
+          MaterialPageRoute(
+            builder: (_) => const Placeholder(),
+          ), // Placeholder hasta que se inyecte la dependencia
           (route) => false,
         );
         break;
@@ -169,10 +173,7 @@ class StyledButtonWidgetBuilder implements WidgetBuilderStrategy {
         },
         child: Text(
           context.tr(buttonText),
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-          ),
+          style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
         ),
       ),
     );
@@ -181,21 +182,23 @@ class StyledButtonWidgetBuilder implements WidgetBuilderStrategy {
 
 // Estrategia para construir widgets de botón (usa StyledButtonWidgetBuilder con valores por defecto)
 class ButtonWidgetBuilder extends StyledButtonWidgetBuilder {
-  ButtonWidgetBuilder({required NavigationHandler navigationHandler}) : super(
-    navigationHandler: navigationHandler,
-    buttonText: 'buttons.aprender',
-  );
+  ButtonWidgetBuilder({required NavigationHandler navigationHandler})
+    : super(
+        navigationHandler: navigationHandler,
+        buttonText: 'buttons.aprender',
+      );
 }
 
 // Estrategia por defecto para construir widgets de texto (usa StyledTextWidgetBuilder con valores por defecto)
 class DefaultTextWidgetBuilder extends StyledTextWidgetBuilder {
-  DefaultTextWidgetBuilder() : super(
-    textColor: const Color.fromARGB(255, 4, 53, 3),
-    fontSize: 18,
-    fontFamily: 'Oswald',
-    fontWeight: FontWeight.w300,
-    padding: const EdgeInsets.symmetric(vertical: 10),
-  );
+  DefaultTextWidgetBuilder()
+    : super(
+        textColor: const Color.fromARGB(255, 4, 53, 3),
+        fontSize: 18,
+        fontFamily: 'Oswald',
+        fontWeight: FontWeight.w300,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+      );
 }
 
 // Clase base para contenedores
@@ -253,20 +256,15 @@ class TextContainerWidget extends BaseContainerWidget {
     this.maxLines,
     this.overflow,
   }) : super(
-          key: key,
-          margin: margin,
-          padding: padding,
-          backgroundColor: backgroundColor,
-          alignment: alignment,
-        );
+         key: key,
+         margin: margin,
+         padding: padding,
+         backgroundColor: backgroundColor,
+         alignment: alignment,
+       );
 
   @override
   Widget buildContent() {
-    // Debug logs to identify centering issues
-    print('DEBUG: TextContainerWidget called with text: "$text"');
-    print('DEBUG: Alignment parameter: ${alignment.toString()}');
-    print('DEBUG: Container width: Removed double.infinity to allow proper centering');
-    
     return SelectableText(
       text,
       textAlign: textAlign,
@@ -302,12 +300,12 @@ class ImageContainerWidget extends BaseContainerWidget {
     this.cacheWidth,
     this.cacheHeight,
   }) : super(
-          key: key,
-          margin: margin,
-          padding: padding,
-          backgroundColor: backgroundColor,
-          alignment: alignment,
-        );
+         key: key,
+         margin: margin,
+         padding: padding,
+         backgroundColor: backgroundColor,
+         alignment: alignment,
+       );
 
   @override
   Widget buildContent() {
@@ -352,16 +350,19 @@ class _HoverImageWidgetState extends State<HoverImageWidget> {
         duration: const Duration(milliseconds: 300),
         transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
         decoration: BoxDecoration(
-          boxShadow: _isHovered
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15), // More transparent shadow
-                    spreadRadius: 1,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [],
+          boxShadow:
+              _isHovered
+                  ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(
+                        0.15,
+                      ), // More transparent shadow
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                  : [],
         ),
         child: Image.asset(
           widget.imagePath,
@@ -426,7 +427,6 @@ class WidgetPersonalizados {
     );
   }
 
-
   //este metodo obtiene un Map dynamic y lo ordena, la idea es recorrer el map y devolver el contenido ya estructurado en una lista de Widget
   static Widget ListaWidgetOrdenada(
     Map<String, dynamic> registro,
@@ -450,10 +450,11 @@ class WidgetPersonalizados {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: registro.entries.map<Widget>((entry) {
-        final strategy = builders[entry.key] ?? builders['default'];
-        return strategy!.build(context, entry.value);
-      }).toList(),
+      children:
+          registro.entries.map<Widget>((entry) {
+            final strategy = builders[entry.key] ?? builders['default'];
+            return strategy!.build(context, entry.value);
+          }).toList(),
     );
   }
 
@@ -493,9 +494,10 @@ class ResponsiveLayout extends StatelessWidget {
       key: key,
       children: children,
       breakpoint: breakpoint,
-      rowBuilder: (children) => Row(
-        children: children.map((child) => Expanded(child: child)).toList(),
-      ),
+      rowBuilder:
+          (children) => Row(
+            children: children.map((child) => Expanded(child: child)).toList(),
+          ),
       columnBuilder: (children) => Column(children: children),
     );
   }

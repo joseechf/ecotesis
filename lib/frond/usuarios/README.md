@@ -5,21 +5,30 @@ Esta carpeta contiene los componentes necesarios para la gestión de usuarios en
 ## Archivos
 
 ### 1. gestionUsuario.dart
+
 Pantalla principal que permite a los usuarios registrarse e iniciar sesión. Incluye:
+
 - Formulario con validación de campos
 - Animaciones y transiciones suaves
 - Diseño responsive con tonos verdes
 - Cambio dinámico entre modo registro y login
 
+PRUEBAS
+para hacer pruebas de permisos con la bd estoy usando la clase usuarioPrueba
+
 ### 2. estilos.dart
+
 Define las constantes de colores, tamaños y estilos utilizados en toda la aplicación:
+
 - Paleta de colores con tonos verdes
 - Tamaños de espaciado y texto
 - Tema de Material Design personalizado
 - Decoraciones y sombras consistentes
 
 ### 3. utilidades.dart
+
 Funciones de utilidad reutilizables:
+
 - Diálogos de alerta y confirmación
 - Indicadores de carga
 - Validación de correo y contraseña
@@ -27,7 +36,9 @@ Funciones de utilidad reutilizables:
 - Mensajes temporales (snackbar)
 
 ### 4. widgets.dart
+
 Widgets personalizados reutilizables:
+
 - BotonPersonalizado: Botón con estilo consistente y estado de carga
 - CampoTextoPersonalizado: Campo de texto con validación y estilos
 - TarjetaAnimada: Tarjeta con animación de aparición
@@ -37,6 +48,7 @@ Widgets personalizados reutilizables:
 ## Uso
 
 ### Integración básica
+
 ```dart
 import 'package:flutter/material.dart';
 import 'lib/frond/usuarios/gestionUsuario.dart';
@@ -50,6 +62,7 @@ MaterialApp(
 ```
 
 ### Navegación a la pantalla de gestión de usuarios
+
 ```dart
 Navigator.push(
   context,
@@ -60,6 +73,7 @@ Navigator.push(
 ```
 
 ### Uso de widgets personalizados
+
 ```dart
 // Botón personalizado
 BotonPersonalizado(
@@ -86,6 +100,7 @@ CampoTextoPersonalizado(
 ```
 
 ### Uso de utilidades
+
 ```dart
 // Mostrar mensaje
 Utilidades.mostrarMensaje(context, 'Operación exitosa');
