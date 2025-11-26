@@ -31,8 +31,8 @@ class CatalogoPage extends StatelessWidget {
         child: Column(
           children: [
             WidgetPersonalizados.constructorContainerText(
-              //context.tr('titles.titlePrincipal.educacion'),
-              'especies categorizadas',
+              context.tr('bdInterfaz.titulo'),
+              //'especies categorizadas',
               Colors.white,
               const Color.fromARGB(255, 3, 49, 13),
               EdgeInsets.all(0),
@@ -47,7 +47,7 @@ class CatalogoPage extends StatelessWidget {
               children: [
                 ElevatedButton.icon(
                   icon: const Icon(Icons.filter_list),
-                  label: const Text('Filtrar'),
+                  label: Text(context.tr('buttons.filtrar')),
                   onPressed: () async {
                     final res = await mostrarFiltroDialog(
                       context,
@@ -59,7 +59,7 @@ class CatalogoPage extends StatelessWidget {
                 const SizedBox(width: Estilos.paddingPequeno),
                 (!usuarioPrueba.validar())
                     ? Text(
-                      " Modo Lectura ",
+                      context.tr('bdInterfaz.lectura'),
                       style: TextStyle(
                         color: Estilos.grisMedio,
                         fontSize: Estilos.textoPequeno,
@@ -67,7 +67,7 @@ class CatalogoPage extends StatelessWidget {
                     )
                     : ElevatedButton.icon(
                       icon: const Icon(Icons.add),
-                      label: const Text('Nuevo Registro'),
+                      label: Text(context.tr('bdInterfaz.nuevoRegistro')),
                       onPressed: () async {
                         final nueva = await mostrarInsertarDialog(context);
                         if (nueva != null) provider.insertar(nueva);
@@ -79,9 +79,9 @@ class CatalogoPage extends StatelessWidget {
             Expanded(
               child:
                   provider.especiesFiltradas.isEmpty
-                      ? const Center(
+                      ? Center(
                         child: Text(
-                          'No se encontraron especies',
+                          context.tr('bdInterfaz.sinEspecies'),
                           style: TextStyle(
                             color: Estilos.grisMedio,
                             fontSize: Estilos.textoPequeno,
@@ -141,16 +141,16 @@ class CatalogoPage extends StatelessWidget {
             especie: especie,
             onEditar: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Actualizado')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.tr('buttons.update'))),
+              );
             },
             onEliminar: () {
               Navigator.pop(context);
               provider.eliminar(especie.nombreLatino);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Eliminado'),
+                SnackBar(
+                  content: Text(context.tr('buttons.delete')),
                   backgroundColor: Colors.red,
                 ),
               );

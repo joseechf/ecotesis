@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../estilos.dart';
 
+import 'package:easy_localization/easy_localization.dart';
+
 Future<String?> mostrarFiltroDialog(
   BuildContext context,
   String filtroActual,
 ) async {
   final opciones = [
     {'value': 'all', 'label': 'Todos'},
-    {'value': 'Sol', 'label': 'Establecido al sol'},
-    {'value': 'ubicacion', 'label': 'Mesoamerica'},
-    {'value': 'polinizador', 'label': 'abeja'},
+    {'value': 'Establecido al sol', 'label': 'establecido'},
+    {'value': 'Mesoamerica', 'label': 'ubicacion'},
+    {'value': 'abeja', 'label': 'polinizador'},
   ];
 
   return await showDialog<String>(
@@ -19,7 +21,7 @@ Future<String?> mostrarFiltroDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
           ),
-          title: const Text('Filtrar por tipo'),
+          title: Text(context.tr('buttons.filtrar')),
           children:
               opciones.map((op) {
                 return RadioListTile<String>(

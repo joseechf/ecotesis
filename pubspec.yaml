@@ -44,12 +44,17 @@ dependencies:
   amplify_flutter: ^2.0.0
   amplify_auth_cognito: ^2.0.0
   amplify_authenticator: ^2.0.0
+  # dependencias bd
   sqflite: ^2.3.0
   path_provider: ^2.1.1
   uuid: ^4.0.0
   intl: ^0.19.0
   syncfusion_flutter_pdfviewer: 28.1.37
   url_launcher: ^6.2.5
+  # dependencias mapa
+  flutter_map: # mapa base
+  vector_map_tiles: # tiles vectoriales
+  latlong2: # modelos de LatLng
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +82,7 @@ flutter:
     - assets/images/
     - assets/translations/en.json
     - assets/translations/es.json
+    - assets/geo/bibliotecas.geojson
     #- assets/icons/
   #   - images/a_dot_ham.jpeg
 

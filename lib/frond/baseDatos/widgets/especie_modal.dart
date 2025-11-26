@@ -4,6 +4,8 @@ import '../../estilos.dart';
 
 import '../../usuarios/usuarioPrueba.dart';
 
+import 'package:easy_localization/easy_localization.dart';
+
 class EspecieModal extends StatelessWidget {
   final Especie especie;
   final VoidCallback onEditar;
@@ -50,7 +52,7 @@ class EspecieModal extends StatelessWidget {
       actions: [
         (!usuarioPrueba.validar())
             ? Text(
-              " Modo Lectura ",
+              context.tr('bdInterfaz.lectura'),
               style: TextStyle(
                 color: Estilos.grisMedio,
                 fontSize: Estilos.textoPequeno,
@@ -61,7 +63,7 @@ class EspecieModal extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: onEditar,
                   icon: const Icon(Icons.edit),
-                  label: const Text('Actualizar'),
+                  label: Text(context.tr('buttons.update')),
                 ),
                 ElevatedButton.icon(
                   onPressed: onEliminar,
@@ -70,7 +72,7 @@ class EspecieModal extends StatelessWidget {
                     foregroundColor: Colors.white,
                   ),
                   icon: const Icon(Icons.delete),
-                  label: const Text('Eliminar'),
+                  label: Text(context.tr('buttons.delete')),
                 ),
               ],
             ),

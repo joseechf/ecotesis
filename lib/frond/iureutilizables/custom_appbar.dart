@@ -12,7 +12,7 @@ import '../usuarios/gestionUsuario.dart';
 import '../ecoguias.dart';
 import '../baseDatos/pages/catalogo_page.dart';
 import '../conservrefor.dart';
-import '../mapazuero.dart';
+import '../mapa_azuero/mapazuero.dart';
 import '../nosotros.dart';
 import '../estilos.dart';
 

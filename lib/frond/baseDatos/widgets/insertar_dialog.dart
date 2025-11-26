@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import '../models/especie.dart';
 import '../../estilos.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
-  final tituloCtrl = TextEditingController();
-  final cientificoCtrl = TextEditingController();
+  final NombreLatin = TextEditingController();
+  final nombreCtrl = TextEditingController();
   final ubicacionCtrl = TextEditingController();
-  final familiaCtrl = TextEditingController();
-  String tipo = 'Planta';
+  final polinizadorCtrl = TextEditingController();
+  String establecidoa = 'Mixto';
 
   return await showDialog<Especie>(
     context: context,
@@ -18,39 +19,61 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
               ),
-              title: const Text('Agregar Nueva Especie'),
+              title: Text(
+                context.tr('bdInterfaz.nuevaEspecie'),
+                style: TextStyle(
+                  color: Estilos.verdeOscuro,
+                  fontSize: Estilos.textoMedio,
+                ),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   children: [
                     TextField(
-                      controller: tituloCtrl,
-                      decoration: const InputDecoration(labelText: 'Título'),
+                      controller: NombreLatin,
+                      decoration: InputDecoration(
+                        labelText: context.tr('bdInterfaz.insert.Nlatin'),
+                      ),
                     ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: nombreCtrl,
+                      decoration: InputDecoration(
+                        labelText: context.tr('bdInterfaz.insert.Ncomun'),
+                      ),
+                    ),
+                    SizedBox(height: 20),
                     DropdownButtonFormField<String>(
-                      value: tipo,
+                      value: establecidoa,
                       items:
-                          ['Árbol', 'Flor', 'Ave', 'Planta', 'Insecto']
+                          [
+                                'Establecido al sol',
+                                'Establecido a la sombra',
+                                'Mixto',
+                              ]
                               .map(
                                 (t) =>
                                     DropdownMenuItem(value: t, child: Text(t)),
                               )
                               .toList(),
-                      onChanged: (val) => setState(() => tipo = val!),
-                      decoration: const InputDecoration(labelText: 'Tipo'),
-                    ),
-                    TextField(
-                      controller: cientificoCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Nombre Científico',
+                      onChanged: (val) => setState(() => establecidoa = val!),
+                      decoration: InputDecoration(
+                        labelText: context.tr('bdInterfaz.insert.establecido'),
                       ),
                     ),
+                    SizedBox(height: 20),
                     TextField(
                       controller: ubicacionCtrl,
-                      decoration: const InputDecoration(labelText: 'Ubicación'),
+                      decoration: InputDecoration(
+                        labelText: context.tr('bdInterfaz.insert.ubicacion'),
+                      ),
                     ),
+                    SizedBox(height: 20),
                     TextField(
-                      controller: familiaCtrl,
-                      decoration: const InputDecoration(labelText: 'Familia'),
+                      controller: polinizadorCtrl,
+                      decoration: InputDecoration(
+                        labelText: context.tr('bdInterfaz.insert.Polinizador'),
+                      ),
                     ),
                   ],
                 ),
@@ -58,7 +81,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
+                  child: Text(context.tr('buttons.cancelar')),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -66,15 +89,15 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                       context,
                       Especie(
                         nombreLatino: '',
-                        nombre: tituloCtrl.text,
-                        imagen: '',
-                        establecido: tipo,
+                        nombre: NombreLatin.text,
+                        imagen: nombreCtrl.text,
+                        establecido: establecidoa,
                         ubicacion: ubicacionCtrl.text,
-                        polinizador: familiaCtrl.text,
+                        polinizador: polinizadorCtrl.text,
                       ),
                     );
                   },
-                  child: const Text('Agregar'),
+                  child: Text(context.tr('buttons.add')),
                 ),
               ],
             );

@@ -1,14 +1,14 @@
 {
   "titles": {
     "title": "Mi App",
-    "titlePrincipal":{
+    "titlePrincipal": {
       "nosotros": "QUIENES SOMOS",
       "equipo": "NUESTRO EQUIPO",
       "PARTNERS": "Nuestros Compañeros",
-      "conservrefor":"CONSERVACIÓN Y\n REFORESTACIÓN",
-      "corredor":"El Corredor Biológico",
+      "conservrefor": "CONSERVACIÓN Y\n REFORESTACIÓN",
+      "corredor": "El Corredor Biológico",
       "educacion": "EDUCACIÓN",
-      "comunidad":"CRECER COMUNIDAD"
+      "comunidad": "CRECER COMUNIDAD"
     },
     "greeting": "¡Hola!",
     "hacemos": "Que Hacemos",
@@ -20,22 +20,25 @@
   "buttons": {
     "change_language": "Cambiar Idioma",
     "enviar": "Enviar",
-    "somos":"Quiénes somos",
-    "trabajo":"Nuestro Trabajo",
-    "conservref":"CONSERVACIÓN Y REFORESTACIÓN",
-    "educacion":"EDUCACIÓN",
-    "comunidad":"HACER CRECER LA COMUNIDAD",
-    "recursos":"RECURSOS",
-    "mapa":"MAPA DE AZUERO",
-    "ecoguias":"ECOGUIAS",
-    "basedatos":"BASE DE DATOS DE PLANTAS DE AZUERO",
-    "biblioteca":"BIBLIOTECA",
-    "blog":"BLOG",
+    "somos": "Quiénes somos",
+    "trabajo": "Nuestro Trabajo",
+    "conservref": "CONSERVACIÓN Y REFORESTACIÓN",
+    "educacion": "EDUCACIÓN",
+    "comunidad": "HACER CRECER LA COMUNIDAD",
+    "recursos": "RECURSOS",
+    "mapa": "MAPA DE AZUERO",
+    "ecoguias": "ECOGUIAS",
+    "basedatos": "BASE DE DATOS DE PLANTAS DE AZUERO",
+    "biblioteca": "BIBLIOTECA",
+    "blog": "BLOG",
     "editar": "editar",
     "filtrar": "filtrar",
     "nameC": "nombre cientifico",
-    "update":"actualizar",
-    "aprender":"aprender mas"
+    "update": "actualizar",
+    "aprender": "aprender mas",
+    "delete": "eliminar",
+    "add": "agregar",
+    "cancelar": "cancelar"
   },
   "texts": {
     "textsHome": {
@@ -43,7 +46,7 @@
       "esun": "Pro Eco Azuero es un “laboratorio viviente” ubicado en la Península de Azuero en Panamá enfocado en la reforestación, restauración de hábitat, uso sostenible de la tierra y educación ambiental. Combinamos el alcance comunitario con la ciencia y el trabajo de campo para crear modelos escalables y replicables en todo el mundo.",
       "monoArania": "El mono araña de Azuero es nuestro símbolo guía porque es una de las subespecies de primates más raras de América Central y del Sur, pero vital para nuestros ecosistemas. Los pocos que quedan en el planeta viven solo en Azuero.",
       "textconservacion": "Restaurar el ecosistema del bosque seco tropical y apoyar las prácticas sostenibles de uso de la tierra en Azuero para salvar al mono araña de Azuero, en peligro crítico de extinción.",
-      "hacemos":{
+      "hacemos": {
         "titulo": {
           "conservacion": "conservación",
           "educDiv": "Educación y divulgación",
@@ -58,7 +61,7 @@
       "NewYorkTimes": "“Pro Eco Azuero has developed a community-oriented approach to conservation that includes working alongside farmers to replant trees, working with local teachers to create lesson plans around conservation and sustainability, and partnering with local supporters to foster a culture of conservation and land stewardship.”",
       "fecha": "10 sept 2024 - 3 Min. de lectura"
     },
-    "textsNosotros":{
+    "textsNosotros": {
       "historia": {
         "p1": "Pro Eco Azuero fue fundado por un grupo de científicos y terratenientes locales interesados en compartir la alegría de conservar la vida silvestre local mediante la restauración del bosque seco del que dependen con la comunidad en general. Desde 2010, nos hemos dedicado a la reforestación, restauración de hábitat, manejo sostenible de la tierra y educación ambiental con la misión de:",
         "negrita": "Preservar los ecosistemas de la tierra, proteger la biodiversidad y promover comunidades saludables ayudando a las personas a tomar decisiones informadas, tomar medidas sostenibles y compartir conocimientos.",
@@ -70,53 +73,53 @@
     "conservrefor": {
       "restHabit": {
         "title": "RESTAURACIÓN DEL HÁBITAT",
-        "text":{
+        "text": {
           "p1": "En colaboración con los propietarios locales,",
           "negrita": "Pro Eco Azuero está restaurando hábitat a lo largo de un corredor biológico más de 120 km de longitud,",
-          "p2":"con una superficie de casi 25.000 hectáreas, compuesta por  cerca de 400 propiedades de propiedad privada. El proyecto tiene como objetivo restaurar gradualmente el ecosistema de bosque seco tropical de importancia crítica y apoyar prácticas sostenibles de uso de la tierra en Azuero."
+          "p2": "con una superficie de casi 25.000 hectáreas, compuesta por  cerca de 400 propiedades de propiedad privada. El proyecto tiene como objetivo restaurar gradualmente el ecosistema de bosque seco tropical de importancia crítica y apoyar prácticas sostenibles de uso de la tierra en Azuero."
         }
       },
       "progInternos": "Pro Eco Azuero apoya sus iniciativas de gestión sostenible de la tierra y restauración del hábitat a través de tres programas internos.",
-      "preguntas":{
+      "preguntas": {
         "titulo": "¿Cuáles son las consecuencias negativas de la deforestación en la Península de Azuero?",
         "texto": "-Mayor erosión del suelo y escorrentía de nutrientes, disminución de la calidad del agua.\n -Disminución de la recarga de aguas subterráneas e inundaciones más grandes\n -Las condiciones más secas aumentan el estrés del ganado y exacerban los impactos del cambio climático\n -Reducción del hábitat de la vida silvestre y disminución de la biodiversidad.\n -Acceso reducido a productos forestales no madereros, incluidos productos frutales saludables"
       },
-      "beneficios":{
-        "titulo":"¿Cuáles son los beneficios de la reforestación?",
-        "texto":"-Menor erosión del suelo y escorrentía de nutrientes, lo que da como resultado un suelo más fértil y un ganado más sano\n -Mayor recarga de aguas subterráneas, lo que ayuda a mitigar las sequías\n -Menor estrés por calor en el ganado debido a la sombra de los árboles\n -Mayor biodiversidad, lo que resulta en una mejor polinización, diseminación y otros servicios ecosistémicos\n -Diversificación económica y producción de alimentos, lo que se traduce en mejores medios de vida\n -La captura de carbono ayuda a mitigar el cambio climático\n -Mayor resiliencia a los impactos del cambio climático en la península de Azuero, que se identifica como parte del corredor seco centroamericano de la FAO"
+      "beneficios": {
+        "titulo": "¿Cuáles son los beneficios de la reforestación?",
+        "texto": "-Menor erosión del suelo y escorrentía de nutrientes, lo que da como resultado un suelo más fértil y un ganado más sano\n -Mayor recarga de aguas subterráneas, lo que ayuda a mitigar las sequías\n -Menor estrés por calor en el ganado debido a la sombra de los árboles\n -Mayor biodiversidad, lo que resulta en una mejor polinización, diseminación y otros servicios ecosistémicos\n -Diversificación económica y producción de alimentos, lo que se traduce en mejores medios de vida\n -La captura de carbono ayuda a mitigar el cambio climático\n -Mayor resiliencia a los impactos del cambio climático en la península de Azuero, que se identifica como parte del corredor seco centroamericano de la FAO"
       },
-      "enfoque":{
+      "enfoque": {
         "titulo": "¿Cómo es nuestro enfoque innovador?",
         "texto": "Pro Eco Azuero trabaja directamente con los propietarios locales, apoyando la colaboración y la acción colectiva, en lugar de comprar o alquilar la tierra para la reforestación. Esto genera propiedad en el proyecto y desarrolla la capacidad dentro de las comunidades locales que, en última instancia, serán responsables de la gestión a largo plazo del esfuerzo de reforestación e inspirarán prácticas sostenibles de uso de la tierra."
       },
       "Patrick_Leung": {
         "texto": "\"Se trata de cambiar los incentivos sobre el terreno para las personas que han estado en esa tierra y, sin culpa propia, se han involucrado en prácticas que han degradado la tierra. Lograr que se unan y restauren la tierra...\"",
-        "autor": "- Patrick Leung, cofundador y director de tecnología de Earthshot Labs" 
+        "autor": "- Patrick Leung, cofundador y director de tecnología de Earthshot Labs"
       },
       "cultivosSostenibles": {
         "titulo": {
           "viveros": "Vivero de árboles",
-          "Microproductores":"Microproductores",
-          "semillas":"Banco de semillas"
+          "Microproductores": "Microproductores",
+          "semillas": "Banco de semillas"
         },
         "texto": {
           "viveros": "Cada año cultivamos miles de plántulas nativas, frutales y maderables para sembrarlas en el campo durante la temporada de reforestación de junio a julio.",
-          "Microproductores":"Creamos microcontratos con residentes rurales para cultivar árboles jóvenes en viveros caseros, que luego les compramos para nuestra temporada de reforestación: su crecimiento económico impulsa la conservación del hábitat.",
-          "semillas":"Creamos microcontratos con residentes rurales para cultivar árboles jóvenes en viveros caseros, que luego les compramos para nuestra temporada de reforestación: su crecimiento económico impulsa la conservación del hábitat."
+          "Microproductores": "Creamos microcontratos con residentes rurales para cultivar árboles jóvenes en viveros caseros, que luego les compramos para nuestra temporada de reforestación: su crecimiento económico impulsa la conservación del hábitat.",
+          "semillas": "Creamos microcontratos con residentes rurales para cultivar árboles jóvenes en viveros caseros, que luego les compramos para nuestra temporada de reforestación: su crecimiento económico impulsa la conservación del hábitat."
         }
       }
     },
-    "educacion":{
-      "monoArania":"Iniciativa de la Escuela del Mono Araña",
-      "texto1":"Desde 2010, nos hemos acercado a las escuelas primarias locales más cercanas al hábitat del mono araña de Azuero y sus comunidades circundantes. Ahora trabajamos con estudiantes en seis escuelas – Nuario, Vallerriquito, Oria Arriba, Los Asientos, Colan y Bajo Corral –   para explorar la importancia de los monos araña en el medio ambiente local, los peligros que estos animales enfrentan desde la caza, el desarrollo y la deforestación, la singularidad del ecosistema del bosque seco y cómo la reforestación puede aumentar la productividad agrícola.",
-      "objetivo":{
+    "educacion": {
+      "monoArania": "Iniciativa de la Escuela del Mono Araña",
+      "texto1": "Desde 2010, nos hemos acercado a las escuelas primarias locales más cercanas al hábitat del mono araña de Azuero y sus comunidades circundantes. Ahora trabajamos con estudiantes en seis escuelas – Nuario, Vallerriquito, Oria Arriba, Los Asientos, Colan y Bajo Corral –   para explorar la importancia de los monos araña en el medio ambiente local, los peligros que estos animales enfrentan desde la caza, el desarrollo y la deforestación, la singularidad del ecosistema del bosque seco y cómo la reforestación puede aumentar la productividad agrícola.",
+      "objetivo": {
         "texto1": "Educar a las generaciones más jóvenes mientras se fomenta una relación entre la Fundación y las comunidades interesadas en reforestar sus tierras.",
-        "texto2":"Concientizar a la comunidad sobre la importancia de restaurar las cuencas hidrográficas y el papel de la reforestación para mejorar la calidad del agua, aumentar la conectividad del hábitat y diversificar la producción de las fincas rurales.",
+        "texto2": "Concientizar a la comunidad sobre la importancia de restaurar las cuencas hidrográficas y el papel de la reforestación para mejorar la calidad del agua, aumentar la conectividad del hábitat y diversificar la producción de las fincas rurales.",
         "texto3": "Aumentar la conciencia y  análisis crítico de los problemas ambientales para transformar a los futuros propietarios en protectores del medio ambiente."
       },
-      "kids": { 
-        "title":"Niños Pro Eco",
-        "texto":"En 2010, formamos un programa llamado Pro Eco Kids, un grupo de jóvenes líderes ambientales de 5 a 12 años que se reúne semanalmente en nuestra oficina en Pedasí para descubrir la importancia de la conservación del medio ambiente a través de experiencias prácticas y divertidas. En el pasado, Pro Eco Kids ha explorado temas como desechos/reciclaje, biodiversidad, la ciencia y la importancia de las plantas, las tortugas marinas y el respeto por la naturaleza. Algunas actividades de Pro Eco Kids incluyen plantar en el jardín, promoción de bolsas reutilizables para los residentes de la ciudad, participación en el Desfile Local de Pedasi 2012, visitas a áreas protegidas locales y granjas, y emocionantes invitados de la comunidad para involucrar a los niños a través de su pasión por diferentes aspectos de conservación y temas ambientales. "
+      "kids": {
+        "title": "Niños Pro Eco",
+        "texto": "En 2010, formamos un programa llamado Pro Eco Kids, un grupo de jóvenes líderes ambientales de 5 a 12 años que se reúne semanalmente en nuestra oficina en Pedasí para descubrir la importancia de la conservación del medio ambiente a través de experiencias prácticas y divertidas. En el pasado, Pro Eco Kids ha explorado temas como desechos/reciclaje, biodiversidad, la ciencia y la importancia de las plantas, las tortugas marinas y el respeto por la naturaleza. Algunas actividades de Pro Eco Kids incluyen plantar en el jardín, promoción de bolsas reutilizables para los residentes de la ciudad, participación en el Desfile Local de Pedasi 2012, visitas a áreas protegidas locales y granjas, y emocionantes invitados de la comunidad para involucrar a los niños a través de su pasión por diferentes aspectos de conservación y temas ambientales. "
       }
     },
     "comunidad": {
@@ -137,9 +140,9 @@
         "texto4": "A medida que continuamos trabajando con propietarios privados para reforestar áreas estratégicas de Azuero, estos nuevos sitios de reforestación sirven como maravillosos sitios de estudio para investigar los impactos de la reforestación en la vida silvestre y la productividad de las tierras de cultivo."
       }
     },
-    "ecoguias":{
-     "titulo": "ECO-GUIAS",
-     "texto": "En esta página encontrará guías para impulsar su viaje ecológico en Azuero. Estas guías sirven como punto de partida para los detalles de la vida sostenible en la península. ¿Buscas poner una cerca viva? Consulte nuestra guía sobre cercas vivas para saber por dónde empezar. ¿Quieres saber cómo reducir los residuos? Consulta la Ecoguía Reducir, Reutilizar, Reciclar. ¡Estas guías ecológicas son documentos vivos y dependemos de los comentarios de la comunidad para mantenerlas en la mejor forma!"
+    "ecoguias": {
+      "titulo": "ECO-GUIAS",
+      "texto": "En esta página encontrará guías para impulsar su viaje ecológico en Azuero. Estas guías sirven como punto de partida para los detalles de la vida sostenible en la península. ¿Buscas poner una cerca viva? Consulte nuestra guía sobre cercas vivas para saber por dónde empezar. ¿Quieres saber cómo reducir los residuos? Consulta la Ecoguía Reducir, Reutilizar, Reciclar. ¡Estas guías ecológicas son documentos vivos y dependemos de los comentarios de la comunidad para mantenerlas en la mejor forma!"
     }
   },
   "nonumero": "no introduzca numeros",
@@ -181,6 +184,20 @@
       "duenoTerreno": "Dueño de terreno",
       "estudiante": "Estudiante",
       "sinRol": "Sin rol"
+    }
+  },
+  "bdInterfaz": {
+    "titulo": "especies categorizadas",
+    "lectura": "Modo Lectura",
+    "nuevoRegistro": "Nuevo Registro",
+    "sinEspecies": "No se encontraron especies",
+    "nuevaEspecie": "Agregar Nueva Especie",
+    "insert": {
+      "Nlatin": "Nombre Latino",
+      "Ncomun": "Nombre Comun",
+      "establecido": "establecido a",
+      "ubicacion": "Ubicación",
+      "Polinizador": "Polinizador"
     }
   }
 }

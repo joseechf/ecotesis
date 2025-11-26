@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/especie.dart';
 
 class EspeciesProvider with ChangeNotifier {
-  List<Especie> _especies = [
+  final List<Especie> _especies = [
     Especie(
       nombreLatino: 'Swietenia macrophylla',
       nombre: 'Caoba',
@@ -15,7 +15,7 @@ class EspeciesProvider with ChangeNotifier {
       nombreLatino: 'Syzygium jambos',
       nombre: 'Pomarosa',
       imagen: 'assets/images/bosque.jpg',
-      establecido: 'sombra',
+      establecido: 'Establecido a la sombra',
       ubicacion: 'Himalaya a China (Sur Yunnan) y Oeste de Malasia',
       polinizador: 'abeja',
     ),
@@ -23,11 +23,10 @@ class EspeciesProvider with ChangeNotifier {
       nombreLatino: 'Syzygium malaccense',
       nombre: 'Marañón curasao',
       imagen: 'assets/images/yuco.jpeg',
-      establecido: 'sombra',
+      establecido: 'Establecido a la sombra',
       ubicacion: 'Indochina a Vanuatu',
       polinizador: 'abeja',
     ),
-    // ... agrega el resto
   ];
 
   List<Especie> get especies => _especies;
@@ -37,7 +36,20 @@ class EspeciesProvider with ChangeNotifier {
 
   List<Especie> get especiesFiltradas {
     if (_filtro == 'all') return _especies;
-    return _especies.where((e) => e.establecido == _filtro).toList();
+    List<Especie> _especiesFiltradas = [];
+    if (_filtro == 'Establecido al sol') {
+      _especiesFiltradas =
+          _especies.where((e) => e.establecido == _filtro).toList();
+    }
+    if (_filtro == 'Mesoamerica') {
+      _especiesFiltradas =
+          _especies.where((e) => e.ubicacion == _filtro).toList();
+    }
+    if (_filtro == 'abeja') {
+      _especiesFiltradas =
+          _especies.where((e) => e.polinizador == _filtro).toList();
+    }
+    return _especiesFiltradas;
   }
 
   void setFiltro(String valor) {

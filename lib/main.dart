@@ -60,9 +60,7 @@ class _SplashLoaderState extends State<SplashLoader> {
     if (_error != null) {
       return MaterialApp(
         home: Scaffold(
-          body: Center(
-            child: Text('Error configuring Amplify: $_error'),
-          ),
+          body: Center(child: Text('Error configuring Amplify: $_error')),
         ),
       );
     }
@@ -87,7 +85,7 @@ class _SplashLoaderState extends State<SplashLoader> {
       create: (_) => EspeciesProvider(), // mientras uso bd falsa, cambiar luego
       child: const MyApp(),
     );
-    //return const MyApp(); 
+    //return const MyApp();
   }
 }
 
@@ -97,12 +95,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      /*theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 24, 42, 1),
-        ),
-        fontFamily: 'Oswald',
-      )*/
       theme: Estilos.tema,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
