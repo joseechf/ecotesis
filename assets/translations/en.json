@@ -184,6 +184,7 @@
       "cientifico": "Scientist",
       "duenoTerreno": "Landowner",
       "estudiante": "Student",
+      "admin": "Administrator",
       "sinRol": "No role"
     }
   },
@@ -200,5 +201,9 @@
       "ubicacion": "Location",
       "Polinizador": "Pollinator"
     }
+  },
+  "admin": {
+    "titulo": "Admin Console",
+    "bienvenida": "Welcome to the admin console"
   }
 }

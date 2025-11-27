@@ -183,6 +183,7 @@
       "cientifico": "Científico",
       "duenoTerreno": "Dueño de terreno",
       "estudiante": "Estudiante",
+      "admin": "Administrador",
       "sinRol": "Sin rol"
     }
   },
@@ -199,5 +200,9 @@
       "ubicacion": "Ubicación",
       "Polinizador": "Polinizador"
     }
+  },
+  "admin": {
+    "titulo": "Consola de Administrador",
+    "bienvenida": "Bienvenido a la consola de administrador"
   }
 }

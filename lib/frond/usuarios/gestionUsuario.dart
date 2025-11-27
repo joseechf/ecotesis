@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../estilos.dart';
@@ -33,7 +35,7 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   final List<String> _rolesDisponibles = [
     'cientifico',
     'dueño de terreno',
-    'estudiante',
+    'administrador',
     'sin rol',
   ];
 
@@ -45,7 +47,7 @@ class _GestionUsuarioState extends State<GestionUsuario> {
     super.dispose();
   }
 
-  // Método para validar y procesar el formulario
+  //  validar y procesar el formulario
   void _procesarFormulario() {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -58,9 +60,9 @@ class _GestionUsuarioState extends State<GestionUsuario> {
           _cargando = false;
         });
 
-        // Aquí iría la lógica de autenticación o registro
+        // elegir autenticación o registro
         if (_esRegistro) {
-          // En el caso de registro, incluimos el rol seleccionado
+          // En el caso de registro, se incluye el rol seleccionado
           Utilidades.mostrarMensaje(
             context,
             context.tr(
@@ -149,6 +151,13 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   // Widget para el campo de selección de rol (solo en registro)
   Widget _campoRol() {
     if (!_esRegistro) return const SizedBox();
+    final mapRoles = {
+      "cientifico": tr("gestionUsuario.roles.cientifico"),
+      "duenoTerreno": tr("gestionUsuario.roles.duenoTerreno"),
+      "estudiante": tr("gestionUsuario.roles.estudiante"),
+      "sinRol": tr("gestionUsuario.roles.sinRol"),
+    };
+    final listaroles = mapRoles.values.toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,13 +185,11 @@ class _GestionUsuarioState extends State<GestionUsuario> {
               isExpanded: true,
               icon: Icon(Icons.arrow_drop_down, color: Estilos.verdeOscuro),
               items:
-                  _rolesDisponibles.map((String rol) {
+                  listaroles.map((String rol) {
                     return DropdownMenuItem<String>(
                       value: rol,
                       child: Text(
-                        context.tr(
-                          'gestionUsuario.roles.${rol.replaceAll(' ', '')}',
-                        ),
+                        rol,
                         style: TextStyle(
                           fontSize: Estilos.textoGrande,
                           color: Estilos.negro,

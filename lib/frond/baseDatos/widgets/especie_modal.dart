@@ -50,7 +50,7 @@ class EspecieModal extends StatelessWidget {
         ),
       ),
       actions: [
-        (!usuarioPrueba.validar())
+        (!usuarioPrueba.validar('Científico'))
             ? Text(
               context.tr('bdInterfaz.lectura'),
               style: TextStyle(
