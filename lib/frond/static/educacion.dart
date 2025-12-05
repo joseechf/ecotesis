@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'iureutilizables/custom_appbar.dart';
+import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'iureutilizables/widgetpersonalizados.dart';
+import '../iureutilizables/widgetpersonalizados.dart';
 import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 
 class Educacion extends StatelessWidget {

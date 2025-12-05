@@ -12,7 +12,7 @@ class _MapScreenState extends State<mappAzuero> {
   final _layers = <String, bool>{
     /*'parques': true,
     'rios': false,*/
-    'bibliotecas': false,
+    'sembrados': false,
   };
 
   void _toggle(String layer, bool value) =>

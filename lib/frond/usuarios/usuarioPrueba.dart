@@ -7,7 +7,7 @@ class usuarioLogueado {
     return _instancia;
   }
 
-  String _rolSeleccionado = 'Sin rol';
+  String _rolSeleccionado = 'No role';
 
   String get() {
     return _rolSeleccionado;

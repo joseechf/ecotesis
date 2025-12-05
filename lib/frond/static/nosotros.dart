@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'iureutilizables/custom_appbar.dart';
+import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'iureutilizables/widgetpersonalizados.dart';
-import 'iureutilizables/footer.dart';
+import '../iureutilizables/widgetpersonalizados.dart';
+import '../iureutilizables/footer.dart';
 
 class Nosotros extends StatelessWidget {
   @override

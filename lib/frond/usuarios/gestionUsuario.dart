@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../estilos.dart';
 import 'utilidades.dart';
 import 'widgets.dart';
-import '../home.dart';
+import '../static/home.dart';
 
 import 'usuarioPrueba.dart'; //este usuario es para pruebas
 
@@ -31,14 +29,6 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   //String _rolSeleccionado = 'sin rol'; // Valor por defecto
   final _formKey = GlobalKey<FormState>();
 
-  // Lista de roles disponibles
-  final List<String> _rolesDisponibles = [
-    'cientifico',
-    'dueño de terreno',
-    'administrador',
-    'sin rol',
-  ];
-
   @override
   void dispose() {
     _correoController.dispose();
@@ -56,6 +46,7 @@ class _GestionUsuarioState extends State<GestionUsuario> {
 
       // Simular una operación de red
       Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
         setState(() {
           _cargando = false;
         });
@@ -152,10 +143,9 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   Widget _campoRol() {
     if (!_esRegistro) return const SizedBox();
     final mapRoles = {
-      "cientifico": tr("gestionUsuario.roles.cientifico"),
-      "duenoTerreno": tr("gestionUsuario.roles.duenoTerreno"),
-      "estudiante": tr("gestionUsuario.roles.estudiante"),
-      "sinRol": tr("gestionUsuario.roles.sinRol"),
+      "Scientist": tr("gestionUsuario.roles.cientifico"),
+      "Administrator": tr("gestionUsuario.roles.admin"),
+      "No role": tr("gestionUsuario.roles.sinRol"),
     };
     final listaroles = mapRoles.values.toList();
 

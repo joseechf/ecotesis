@@ -10,26 +10,29 @@ class Estilos {
   static const Color grisMedio = Color(0xFF9E9E9E);
   static const Color blanco = Colors.white;
   static const Color negro = Colors.black87;
-  
+
   // Tamaños y espaciados
   static const double paddingPequeno = 8.0;
   static const double paddingMedio = 16.0;
   static const double paddingGrande = 24.0;
   static const double paddingMuyGrande = 32.0;
-  
+
   static const double margenPequeno = 8.0;
   static const double margenMedio = 16.0;
   static const double margenGrande = 24.0;
-  
+
   static const double radioBorde = 8.0;
   static const double radioBordeGrande = 16.0;
-  
+
   // Tamaños de texto
   static const double textoPequeno = 12.0;
   static const double textoMedio = 14.0;
   static const double textoGrande = 16.0;
   static const double textoMuyGrande = 24.0;
-  
+
+  // Tipografía
+  static const String tipografia = 'Oswald';
+
   // Tema de la aplicación
   static ThemeData get tema {
     return ThemeData(
@@ -60,7 +63,10 @@ class Estilos {
         border: const OutlineInputBorder(),
         filled: true,
         fillColor: blanco,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         hintStyle: TextStyle(color: grisMedio),
         labelStyle: TextStyle(color: verdeOscuro),
         enabledBorder: OutlineInputBorder(
@@ -89,7 +95,7 @@ class Estilos {
       ),
     );
   }
-  
+
   // Decoración de cajas
   static BoxDecoration get decoracionCaja {
     return BoxDecoration(
@@ -101,12 +107,12 @@ class Estilos {
       borderRadius: BorderRadius.circular(radioBordeGrande),
     );
   }
-  
+
   // Animaciones
   static const Duration animacionRapida = Duration(milliseconds: 200);
   static const Duration animacionMedia = Duration(milliseconds: 300);
   static const Duration animacionLenta = Duration(milliseconds: 500);
-  
+
   // Sombras
   static List<BoxShadow> get sombraSuave {
     return [
@@ -117,7 +123,7 @@ class Estilos {
       ),
     ];
   }
-  
+
   static List<BoxShadow> get sombraMedia {
     return [
       BoxShadow(

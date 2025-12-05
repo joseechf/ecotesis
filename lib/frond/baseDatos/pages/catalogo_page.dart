@@ -57,7 +57,8 @@ class CatalogoPage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(width: Estilos.paddingPequeno),
-                (!usuarioPrueba.validar('Científico'))
+                (!usuarioPrueba.validar('Scientist') &&
+                        !usuarioPrueba.validar('Administrator'))
                     ? Text(
                       context.tr('bdInterfaz.lectura'),
                       style: TextStyle(

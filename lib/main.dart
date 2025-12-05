@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'amplify_outputs.dart';
-import 'frond/home.dart';
+import 'frond/static/home.dart';
 import 'frond/estilos.dart';
 import 'package:provider/provider.dart';
 import 'frond/baseDatos/providers/especies_provider.dart'; // para la bd falsa, cambiar despues

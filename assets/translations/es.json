@@ -180,15 +180,13 @@
       "registrarse": "Regístrate"
     },
     "roles": {
-      "cientifico": "Científico",
-      "duenoTerreno": "Dueño de terreno",
-      "estudiante": "Estudiante",
-      "admin": "Administrador",
-      "sinRol": "Sin rol"
+      "cientifico": "Scientist",
+      "admin": "Administrator",
+      "sinRol": "No role"
     }
   },
   "bdInterfaz": {
-    "titulo": "especies categorizadas",
+    "titulo": "ESPECIES CATEGORIZADAS",
     "lectura": "Modo Lectura",
     "nuevoRegistro": "Nuevo Registro",
     "sinEspecies": "No se encontraron especies",
@@ -202,7 +200,17 @@
     }
   },
   "admin": {
-    "titulo": "Consola de Administrador",
-    "bienvenida": "Bienvenido a la consola de administrador"
+    "titulo": "CONSOLA DE ADMINISTRADOR",
+    "bienvenida": "Bienvenido a la consola de administrador",
+    "tablas": {
+      "inventas": "Inventario Venta",
+      "invsiembra": "Inventario Siembra",
+      "regventas": "Registro Ventas",
+      "regsiembra": "Registro Siembra",
+      "terrenos": "Terrenos Alquilados"
+    }
+  },
+  "mapa": {
+    "siembra": "sembrados"
   }
 }

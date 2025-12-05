@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'iureutilizables/custom_appbar.dart';
+import '../iureutilizables/custom_appbar.dart';
 
 class VisorPDF extends StatelessWidget {
   final String url;

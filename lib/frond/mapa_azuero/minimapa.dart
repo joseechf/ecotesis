@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'geo_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MiniMap extends StatefulWidget {
   final Map<String, bool> layers;
@@ -21,9 +22,10 @@ class _MiniMapState extends State<MiniMap> {
   void initState() {
     super.initState();
     _futures = {
-      'bibliotecas': loadGeoJson(
-        'assets/geo/bibliotecas.geojson',
-        color: Colors.amber,
+      'sembrados': loadGeoJson(
+        context,
+        'assets/geo/sembrados.geojson',
+        color: const Color.fromARGB(255, 1, 70, 4),
       ),
     };
   }
@@ -60,8 +62,9 @@ class _MiniMapState extends State<MiniMap> {
                   _buildPolygonLayer(_futures['parques']!),
                 if (widget.layers['rios'] == true)
                   _buildPolylineLayer(_futures['rios']!),*/
-                if (widget.layers['bibliotecas'] == true)
-                  _buildMarkerLayer(_futures['bibliotecas']!),
+                if (widget.layers['sembrados'] == true ||
+                    widget.layers['sown'] == true)
+                  _buildMarkerLayer(_futures['sembrados']!),
               ],
             ),
           ),
@@ -115,7 +118,7 @@ class _LayerToggle extends StatelessWidget {
           layers.keys
               .map(
                 (l) => FilterChip(
-                  label: Text(l),
+                  label: Text(context.tr('mapa.siembra')),
                   selected: layers[l]!,
                   onSelected: (v) => onToggle(l, v),
                 ),

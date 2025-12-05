@@ -1,9 +1,9 @@
 import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'iureutilizables/custom_appbar.dart';
+import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'iureutilizables/widgetpersonalizados.dart';
+import '../iureutilizables/widgetpersonalizados.dart';
 
 class Conservrefor extends StatelessWidget {
   Future<List<Map<String, String>>> _cargarListaIniciativas(

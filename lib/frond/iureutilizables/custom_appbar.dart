@@ -6,15 +6,17 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
-import '../educacion.dart';
-import '../comunidad.dart';
+import '../static/educacion.dart';
+import '../static/comunidad.dart';
 import '../usuarios/gestionUsuario.dart';
-import '../ecoguias.dart';
+import '../static/ecoguias.dart';
 import '../baseDatos/pages/catalogo_page.dart';
-import '../conservrefor.dart';
+import '../static/conservrefor.dart';
 import '../mapa_azuero/mapazuero.dart';
-import '../nosotros.dart';
+import '../static/nosotros.dart';
 import '../estilos.dart';
+import '../admin/consolaAdmin.dart';
+import '../usuarios/usuarioPrueba.dart';
 
 /// Punto de quiebre entre diseño móvil y escritorio.
 const double _mobileBreakpoint = 800;
@@ -23,14 +25,13 @@ const double _mobileBreakpoint = 800;
 class customAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
   const customAppBar({Key? key, required this.context}) : super(key: key);
-
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     final bool isMobile = MediaQuery.sizeOf(context).width < _mobileBreakpoint;
-
+    usuarioLogueado usuarioPrueba = usuarioLogueado();
     return AppBar(
       backgroundColor: Estilos.verdePrincipal,
       elevation: 2,
@@ -63,7 +64,6 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
 class _LogoTitle extends StatelessWidget {
   const _LogoTitle({required this.onTap});
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -96,6 +96,7 @@ class _DesktopMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    usuarioLogueado usuarioPrueba = usuarioLogueado();
     return Row(
       children: [
         _NavItem(context.tr('buttons.somos'), () => _go(context, Nosotros())),
@@ -109,12 +110,16 @@ class _DesktopMenu extends StatelessWidget {
           null,
           subItems: _recursosItems(context),
         ),
-        IconButton(
-          icon: const Icon(Icons.search, color: Estilos.blanco),
-          onPressed: () {
-            /* TODO: buscador */
-          },
-        ),
+        (usuarioPrueba.validar(context.tr('gestionUsuario.roles.admin')))
+            ? IconButton(
+              icon: const Icon(Icons.assignment_ind, color: Estilos.blanco),
+              onPressed:
+                  () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ConsolaAdmin()),
+                  ),
+            )
+            : Text(''),
         const _LanguageToggleButton(),
         IconButton(
           icon: const Icon(Icons.account_circle_rounded, color: Estilos.blanco),
@@ -273,6 +278,7 @@ class MobileMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    usuarioLogueado usuarioPrueba = usuarioLogueado();
     return Drawer(
       backgroundColor: Estilos.verdePrincipal,
       shape: const RoundedRectangleBorder(
@@ -336,7 +342,7 @@ class MobileMenu extends StatelessWidget {
                 ListTile(
                   leading: const Icon(
                     Icons.account_circle_rounded,
-                    color: Estilos.verdeOscuro,
+                    color: Estilos.blanco,
                   ),
                   title: Text(
                     context.tr('login'),
@@ -354,6 +360,32 @@ class MobileMenu extends StatelessWidget {
                         ),
                       ),
                 ),
+                const Divider(),
+                (usuarioPrueba.validar(
+                      context.tr('gestionUsuario.roles.admin'),
+                    ))
+                    ? ListTile(
+                      leading: const Icon(
+                        Icons.assignment_ind,
+                        color: Estilos.blanco,
+                      ),
+                      title: Text(
+                        context.tr('Admin'),
+                        style: TextStyle(
+                          color: Estilos.blanco,
+                          fontWeight: FontWeight.w100,
+                          fontSize: Estilos.textoPequeno,
+                        ),
+                      ),
+                      onTap:
+                          () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ConsolaAdmin(),
+                            ),
+                          ),
+                    )
+                    : Text(''),
               ],
             ),
           ),
@@ -390,7 +422,7 @@ class MobileMenu extends StatelessWidget {
   }
 }
 
-/// Botón conmutador de idioma (EN ↔ ES).
+/// Botón conmutador de idioma (EN - ES).
 class _LanguageToggleButton extends StatelessWidget {
   const _LanguageToggleButton();
 

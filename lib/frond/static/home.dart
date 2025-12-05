@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'iureutilizables/custom_appbar.dart';
+import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'iureutilizables/widgetpersonalizados.dart';
+import '../iureutilizables/widgetpersonalizados.dart';
 import 'conservrefor.dart';
 import 'educacion.dart';
 import 'comunidad.dart';
-import 'iureutilizables/footer.dart';
+import '../iureutilizables/footer.dart';
 
 // Implementación personalizada del manejador de navegación para la página de inicio
 class HomeNavigationHandler implements NavigationHandler {

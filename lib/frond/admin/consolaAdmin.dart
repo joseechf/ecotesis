@@ -2,6 +2,7 @@ import 'package:ecoazuero/frond/estilos.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
+import 'SiembrayVentas/page/tablasadmin.dart';
 
 import '../usuarios/usuarioPrueba.dart'; //este usuario es para pruebas
 
@@ -22,7 +23,7 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
           MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SingleChildScrollView(
         child:
-            (!usuarioPrueba.validar('Científico'))
+            (!usuarioPrueba.validar(context.tr('gestionUsuario.roles.admin')))
                 ? Text(
                   context.tr('bdInterfaz.lectura'),
                   style: TextStyle(
@@ -30,7 +31,17 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
                     fontSize: Estilos.textoPequeno,
                   ),
                 )
-                : Text(context.tr('admin.titulo')),
+                : ElevatedButton(
+                  child: Text("Ir a Pantalla A"),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TablasAdministrativas(),
+                      ),
+                    );
+                  },
+                ),
       ),
     );
   }

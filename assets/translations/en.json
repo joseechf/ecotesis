@@ -182,14 +182,12 @@
     },
     "roles": {
       "cientifico": "Scientist",
-      "duenoTerreno": "Landowner",
-      "estudiante": "Student",
       "admin": "Administrator",
       "sinRol": "No role"
     }
   },
   "bdInterfaz": {
-    "titulo": "categorized species",
+    "titulo": "CATEGORIZED SPECIES",
     "lectura": "Rading Mode",
     "nuevoRegistro": "New Registration",
     "sinEspecies": "No species found",
@@ -197,13 +195,23 @@
     "insert": {
       "Nlatin": "Latin Name",
       "Ncomun": "Common Name",
-      "establecido": "established in",
+      "establecido": "Established in",
       "ubicacion": "Location",
       "Polinizador": "Pollinator"
     }
   },
   "admin": {
-    "titulo": "Admin Console",
-    "bienvenida": "Welcome to the admin console"
+    "titulo": "ADMIN CONSOLE",
+    "bienvenida": "Welcome to the admin console",
+    "tablas": {
+      "inventas": "Sales Inventory",
+      "invsiembra": "Planting Inventory",
+      "regventas": "Sales Record",
+      "regsiembra": "Planting Record",
+      "terrenos": "Rented Lands"
+    }
+  },
+  "mapa": {
+    "siembra": "sown"
   }
 }
