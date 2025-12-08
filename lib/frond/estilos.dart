@@ -102,7 +102,7 @@ class Estilos {
       gradient: const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [blanco, grisClaro],
+        colors: [blanco, verdeClaro],
       ),
       borderRadius: BorderRadius.circular(radioBordeGrande),
     );

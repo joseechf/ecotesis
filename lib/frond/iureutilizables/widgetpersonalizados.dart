@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../estilos.dart';
 
 // Estrategia para construir widgets
 abstract class WidgetBuilderStrategy {
@@ -512,6 +513,40 @@ class ResponsiveLayout extends StatelessWidget {
           return columnBuilder(children);
         }
       },
+    );
+  }
+}
+
+// Widget de indicador de carga personalizado
+class IndicadorCarga extends StatelessWidget {
+  final String? mensaje;
+  final Color? color;
+
+  const IndicadorCarga({Key? key, this.mensaje, this.color}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+              color ?? Estilos.verdePrincipal,
+            ),
+          ),
+          if (mensaje != null) ...[
+            SizedBox(height: Estilos.paddingMedio),
+            Text(
+              mensaje!,
+              style: TextStyle(
+                fontSize: Estilos.textoMedio,
+                color: Estilos.grisMedio,
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

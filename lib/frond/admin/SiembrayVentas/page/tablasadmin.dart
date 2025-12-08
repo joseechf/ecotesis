@@ -74,7 +74,7 @@ class _TablasAdministrativasState extends State<TablasAdministrativas> {
               ),
               Tab(
                 child: Tooltip(
-                  message: context.tr('admin.tablas.invsiembra'),
+                  message: context.tr('admin.tablas.inventas'),
                   child: Icon(Icons.article),
                 ),
               ),

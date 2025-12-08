@@ -9,6 +9,7 @@ import '../../main.dart';
 import '../static/educacion.dart';
 import '../static/comunidad.dart';
 import '../usuarios/gestionUsuario.dart';
+import '../usuarios/editUsuario.dart';
 import '../static/ecoguias.dart';
 import '../baseDatos/pages/catalogo_page.dart';
 import '../static/conservrefor.dart';
@@ -124,10 +125,15 @@ class _DesktopMenu extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.account_circle_rounded, color: Estilos.blanco),
           onPressed:
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const GestionUsuario()),
-              ),
+              (!usuarioPrueba.logueado())
+                  ? () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const GestionUsuario()),
+                  )
+                  : () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EditUsuario()),
+                  ),
         ),
       ],
     );
@@ -353,12 +359,19 @@ class MobileMenu extends StatelessWidget {
                     ),
                   ),
                   onTap:
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const GestionUsuario(),
-                        ),
-                      ),
+                      (!usuarioPrueba.logueado())
+                          ? () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const GestionUsuario(),
+                            ),
+                          )
+                          : () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const EditUsuario(),
+                            ),
+                          ),
                 ),
                 const Divider(),
                 (usuarioPrueba.validar(

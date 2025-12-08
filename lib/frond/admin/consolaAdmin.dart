@@ -5,6 +5,7 @@ import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'SiembrayVentas/page/tablasadmin.dart';
 
 import '../usuarios/usuarioPrueba.dart'; //este usuario es para pruebas
+import '../iureutilizables/widgetEdicion.dart';
 
 class ConsolaAdmin extends StatefulWidget {
   const ConsolaAdmin({super.key});
@@ -31,16 +32,17 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
                     fontSize: Estilos.textoPequeno,
                   ),
                 )
-                : ElevatedButton(
-                  child: Text("Ir a Pantalla A"),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => TablasAdministrativas(),
-                      ),
-                    );
-                  },
+                : BotonPersonalizado(
+                  texto: ("Ir a Pantalla A"),
+                  onPressed:
+                      () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => TablasAdministrativas(),
+                          ),
+                        ),
+                      },
                 ),
       ),
     );

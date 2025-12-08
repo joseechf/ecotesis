@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../estilos.dart';
-import 'utilidades.dart';
-import 'widgets.dart';
+import '../iureutilizables/widgetEdicion.dart';
+import '../iureutilizables/widgetpersonalizados.dart';
 import '../static/home.dart';
 
 import 'usuarioPrueba.dart'; //este usuario es para pruebas
+import 'validarEntradaCampos.dart';
 
 // Pantalla principal de gestión de usuarios con opciones de registro y login
 class GestionUsuario extends StatefulWidget {
@@ -43,28 +44,31 @@ class _GestionUsuarioState extends State<GestionUsuario> {
       setState(() {
         _cargando = true;
       });
-
-      // Simular una operación de red
+      //esto del delayed debe cambiar cuando ponga una consulta bd real
       Future.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
         setState(() {
           _cargando = false;
         });
-
-        // elegir autenticación o registro
         if (_esRegistro) {
-          // En el caso de registro, se incluye el rol seleccionado
-          Utilidades.mostrarMensaje(
-            context,
-            context.tr(
-              'gestionUsuario.mensajes.registroExitoso',
-              namedArgs: {'rol': Utilidades.capitalizar(miRol.get())},
+          SnackBar(
+            content: Text(
+              context.tr('gestionUsuario.mensajes.registroExitoso'),
+            ),
+            backgroundColor: Estilos.verdePrincipal,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Estilos.radioBorde),
             ),
           );
         } else {
-          Utilidades.mostrarMensaje(
-            context,
-            context.tr('gestionUsuario.mensajes.loginExitoso'),
+          SnackBar(
+            content: Text(context.tr('gestionUsuario.mensajes.loginExitoso')),
+            backgroundColor: Estilos.verdePrincipal,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Estilos.radioBorde),
+            ),
           );
         }
 
@@ -78,127 +82,6 @@ class _GestionUsuarioState extends State<GestionUsuario> {
     }
   }
 
-  // Widget para el campo de texto del correo
-  Widget _campoCorreo() {
-    return CampoTextoPersonalizado(
-      controlador: _correoController,
-      etiqueta: context.tr('gestionUsuario.campos.correo'),
-      icono: Icons.email_outlined,
-      tipoTeclado: TextInputType.emailAddress,
-      validador: (value) {
-        if (value == null || value.isEmpty) {
-          return context.tr('gestionUsuario.validaciones.correoVacio');
-        }
-        if (!Utilidades.esCorreoValido(value)) {
-          return context.tr('gestionUsuario.validaciones.correoInvalido');
-        }
-        return null;
-      },
-    );
-  }
-
-  // Widget para el campo de texto de la contraseña
-  Widget _campoContrasena() {
-    return CampoTextoPersonalizado(
-      controlador: _contrasenaController,
-      etiqueta: context.tr('gestionUsuario.campos.contrasena'),
-      icono: Icons.lock_outlined,
-      esContrasena: true,
-      ocultarTexto: _ocultarContrasena,
-      onPressedIcono: () {
-        setState(() {
-          _ocultarContrasena = !_ocultarContrasena;
-        });
-      },
-      validador: (value) {
-        if (value == null || value.isEmpty) {
-          return context.tr('gestionUsuario.validaciones.contrasenaVacia');
-        }
-        if (!Utilidades.esContrasenaValida(value)) {
-          return context.tr('gestionUsuario.validaciones.contrasenaInvalida');
-        }
-        return null;
-      },
-    );
-  }
-
-  // Widget para el campo de texto del nombre (solo en registro)
-  Widget _campoNombre() {
-    if (!_esRegistro) return const SizedBox();
-
-    return CampoTextoPersonalizado(
-      controlador: _nombreController,
-      etiqueta: context.tr('gestionUsuario.campos.nombre'),
-      icono: Icons.person_outlined,
-      validador: (value) {
-        if (value == null || value.isEmpty) {
-          return context.tr('gestionUsuario.validaciones.nombreVacio');
-        }
-        return null;
-      },
-    );
-  }
-
-  // Widget para el campo de selección de rol (solo en registro)
-  Widget _campoRol() {
-    if (!_esRegistro) return const SizedBox();
-    final mapRoles = {
-      "Scientist": tr("gestionUsuario.roles.cientifico"),
-      "Administrator": tr("gestionUsuario.roles.admin"),
-      "No role": tr("gestionUsuario.roles.sinRol"),
-    };
-    final listaroles = mapRoles.values.toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          context.tr('gestionUsuario.campos.rol'),
-          style: TextStyle(
-            fontSize: Estilos.textoMedio,
-            color: Estilos.verdeOscuro,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(height: Estilos.paddingPequeno),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            border: Border.all(color: Estilos.grisMedio),
-            borderRadius: BorderRadius.circular(Estilos.radioBorde),
-            color: Estilos.blanco,
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: miRol.get(),
-              isExpanded: true,
-              icon: Icon(Icons.arrow_drop_down, color: Estilos.verdeOscuro),
-              items:
-                  listaroles.map((String rol) {
-                    return DropdownMenuItem<String>(
-                      value: rol,
-                      child: Text(
-                        rol,
-                        style: TextStyle(
-                          fontSize: Estilos.textoGrande,
-                          color: Estilos.negro,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-              onChanged: (String? nuevoRol) {
-                setState(() {
-                  miRol.set(nuevoRol!);
-                });
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   // Widget para el botón principal
   Widget _botonPrincipal() {
     return BotonPersonalizado(
@@ -207,7 +90,8 @@ class _GestionUsuarioState extends State<GestionUsuario> {
               ? context.tr('gestionUsuario.botones.registro')
               : context.tr('gestionUsuario.botones.login'),
       onPressed: _procesarFormulario,
-      cargando: _cargando,
+      icono: Icon(Icons.save, color: Estilos.blanco),
+      ancho: 200,
     );
   }
 
@@ -240,71 +124,136 @@ class _GestionUsuarioState extends State<GestionUsuario> {
       ],
     );
   }
-
+  /*
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: Estilos.decoracionCaja,
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(Estilos.paddingGrande),
-            child: TarjetaAnimada(
-              hijo: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Logo o título
-                    Icon(
-                      Icons.eco_outlined,
-                      size: 80,
-                      color: Estilos.verdePrincipal,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(Estilos.paddingGrande),
+          child: Container(
+            decoration: Estilos.decoracionCaja,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Logo o título
+                  Icon(
+                    Icons.eco_outlined,
+                    size: 80,
+                    color: Estilos.verdePrincipal,
+                  ),
+                  SizedBox(height: Estilos.paddingMedio),
+                  _esRegistro
+                      ? Text(context.tr('gestionUsuario.titulo.registro'))
+                      : Text(context.tr('gestionUsuario.titulo.login')),
+                  SizedBox(height: Estilos.paddingMuyGrande),
+
+                  // Campos del formulario
+                  (_esRegistro)
+                      ? CampoNombre(controladorN: _nombreController)
+                      : Text(''),
+                  SizedBox(height: Estilos.paddingMedio),
+                  (_esRegistro) ? CampoRol() : Text(''),
+                  SizedBox(height: Estilos.paddingMedio),
+                  CampoCorreo(controlador: _correoController),
+                  SizedBox(height: Estilos.paddingMedio),
+                  CampoContrasena(
+                    controladorC: _contrasenaController,
+                    ocultar: _ocultarContrasena,
+                    onCambiarVisibilidad: () {
+                      setState(() {
+                        _ocultarContrasena = !_ocultarContrasena;
+                      });
+                    },
+                  ),
+                  SizedBox(height: Estilos.paddingGrande),
+
+                  // Botón principal
+                  _botonPrincipal(),
+
+                  // Indicador de carga
+                  if (_cargando) ...[
+                    SizedBox(height: Estilos.paddingMedio),
+                    IndicadorCarga(
+                      mensaje: context.tr('gestionUsuario.mensajes.procesando'),
                     ),
+                  ] else ...[
                     SizedBox(height: Estilos.paddingMedio),
-                    TextoAnimado(
-                      texto:
-                          _esRegistro
-                              ? context.tr('gestionUsuario.titulo.registro')
-                              : context.tr('gestionUsuario.titulo.login'),
-                      estilo: TextStyle(
-                        fontSize: Estilos.textoMuyGrande,
-                        fontWeight: FontWeight.bold,
-                        color: Estilos.verdeOscuro,
-                      ),
-                    ),
-                    SizedBox(height: Estilos.paddingMuyGrande),
-
-                    // Campos del formulario
-                    _campoNombre(),
-                    SizedBox(height: Estilos.paddingMedio),
-                    _campoRol(),
-                    SizedBox(height: Estilos.paddingMedio),
-                    _campoCorreo(),
-                    SizedBox(height: Estilos.paddingMedio),
-                    _campoContrasena(),
-                    SizedBox(height: Estilos.paddingGrande),
-
-                    // Botón principal
-                    _botonPrincipal(),
-
-                    // Indicador de carga
-                    if (_cargando) ...[
-                      SizedBox(height: Estilos.paddingMedio),
-                      IndicadorCarga(
-                        mensaje: context.tr(
-                          'gestionUsuario.mensajes.procesando',
-                        ),
-                      ),
-                    ] else ...[
-                      SizedBox(height: Estilos.paddingMedio),
-                      // Texto para cambiar entre login y registro
-                      _textoCambioModo(),
-                    ],
+                    // Texto para cambiar entre login y registro
+                    _textoCambioModo(),
                   ],
-                ),
+                ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+*/
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // borde como en tu tarjeta
+      ),
+
+      // Título de la tarjeta (vacío)
+      title: Column(
+        children: [
+          Icon(Icons.eco_outlined, size: 80, color: Estilos.verdePrincipal),
+          SizedBox(height: Estilos.paddingMedio),
+          _esRegistro
+              ? Text(context.tr('gestionUsuario.titulo.registro'))
+              : Text(context.tr('gestionUsuario.titulo.login')),
+        ],
+      ),
+
+      // Contenido desplazable (vacío)
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Campos del formulario
+              (_esRegistro)
+                  ? CampoNombre(controladorN: _nombreController)
+                  : Text(''),
+              SizedBox(height: Estilos.paddingMedio),
+              (_esRegistro) ? CampoRol() : Text(''),
+              SizedBox(height: Estilos.paddingMedio),
+              CampoCorreo(controlador: _correoController),
+              SizedBox(height: Estilos.paddingMedio),
+              CampoContrasena(
+                controladorC: _contrasenaController,
+                ocultar: _ocultarContrasena,
+                onCambiarVisibilidad: () {
+                  setState(() {
+                    _ocultarContrasena = !_ocultarContrasena;
+                  });
+                },
+              ),
+              SizedBox(height: Estilos.paddingGrande),
+
+              // Botón principal
+              _botonPrincipal(),
+
+              // Indicador de carga
+              if (_cargando) ...[
+                SizedBox(height: Estilos.paddingMedio),
+                IndicadorCarga(
+                  mensaje: context.tr('gestionUsuario.mensajes.procesando'),
+                ),
+              ] else ...[
+                SizedBox(height: Estilos.paddingMedio),
+                // Texto para cambiar entre login y registro
+                _textoCambioModo(),
+              ],
+            ],
           ),
         ),
       ),

@@ -50,7 +50,8 @@ class EspecieModal extends StatelessWidget {
         ),
       ),
       actions: [
-        (!usuarioPrueba.validar('Científico'))
+        (!usuarioPrueba.validar('Scientist') &&
+                !usuarioPrueba.validar('Administrator'))
             ? Text(
               context.tr('bdInterfaz.lectura'),
               style: TextStyle(
@@ -65,6 +66,7 @@ class EspecieModal extends StatelessWidget {
                   icon: const Icon(Icons.edit),
                   label: Text(context.tr('buttons.update')),
                 ),
+                SizedBox(height: 20),
                 ElevatedButton.icon(
                   onPressed: onEliminar,
                   style: ElevatedButton.styleFrom(
