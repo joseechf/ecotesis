@@ -14,6 +14,7 @@ class RentalInventory extends StatefulWidget {
 
 class _RentalInventoryState extends State<RentalInventory> {
   final _form = <String, dynamic>{};
+  final _formKey = GlobalKey<FormState>();
 
   void _addProduct() {
     final nombreLatin = _form['nombreLatin'] as String? ?? '';
@@ -51,40 +52,72 @@ class _RentalInventoryState extends State<RentalInventory> {
                     builder:
                         (_) => AlertDialog(
                           title: const Text('Agregar Especies para Siembra'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Nombre Latino',
+                          content: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nombre Latino',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['nombreLatin'] = v,
                                 ),
-                                onChanged: (v) => _form['nombreLatin'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Cantidad',
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Cantidad',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  validator: (v) {
+                                    if (v == null || v.isEmpty) {
+                                      return 'La cantidad es obligatoria';
+                                    }
+                                    final numero = int.tryParse(v);
+                                    if (numero == null || numero <= 0) {
+                                      return 'Ingrese una cantidad valida';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved:
+                                      (v) => _form['cantidad'] = int.parse(v!),
                                 ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (v) => _form['cantidad'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Forma',
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Forma',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['forma'] = v,
                                 ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (v) => _form['forma'] = v,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+
                           actions: [
                             TextButton(
                               onPressed: Navigator.of(context).pop,
                               child: const Text('Cancelar'),
                             ),
                             TextButton(
-                              onPressed: _addProduct,
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  _addProduct();
+                                  Navigator.of(context).pop();
+                                }
+                              },
                               child: const Text('Agregar'),
                             ),
                           ],

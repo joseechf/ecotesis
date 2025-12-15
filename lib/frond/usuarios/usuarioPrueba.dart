@@ -28,7 +28,7 @@ class usuarioLogueado {
     return _nombre;
   }
 
-  String get() {
+  String getRol() {
     return _rolSeleccionado;
   }
 

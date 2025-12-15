@@ -99,11 +99,17 @@ class CampoNombre extends StatelessWidget {
 
 // Widget para el campo de selección de rol (solo en registro)
 class CampoRol extends StatelessWidget {
+  final String? rolSeleccionado;
+  final ValueChanged<String?> onChanged;
+
+  CampoRol({super.key, required this.rolSeleccionado, required this.onChanged});
+
   final mapRoles = {
     "Scientist": "Scientist",
     "Administrator": "Administrator",
     "No role": "No role",
   };
+
   final usuarioLogueado usuario = usuarioLogueado();
   @override
   Widget build(BuildContext context) {
@@ -130,7 +136,8 @@ class CampoRol extends StatelessWidget {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: usuario.get(),
+              //value: usuario.get(),
+              value: rolSeleccionado,
               isExpanded: true,
               icon: Icon(Icons.arrow_drop_down, color: Estilos.verdeOscuro),
               items:
@@ -146,9 +153,10 @@ class CampoRol extends StatelessWidget {
                       ),
                     );
                   }).toList(),
-              onChanged: (String? nuevoRol) {
+              onChanged: onChanged,
+              /*onChanged: (String? nuevoRol) {
                 usuario.set(nuevoRol);
-              },
+              },*/
             ),
           ),
         ),

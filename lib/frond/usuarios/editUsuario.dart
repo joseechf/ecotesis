@@ -22,20 +22,23 @@ class _EditUsuarioState extends State<EditUsuario> {
   late TextEditingController _nombreController = TextEditingController();
   bool _ocultarContrasena = true;
   bool _cargando = false;
-  usuarioLogueado miRol = usuarioLogueado();
+  usuarioLogueado miusuarioLogueado = usuarioLogueado();
+  String? _rolSeleccionado = 'No role';
+
   //String _rolSeleccionado = 'sin rol'; // Valor por defecto
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
     _nombreController = TextEditingController(
-      text: miRol.logueado() ? miRol.getNombre() : '',
+      text: miusuarioLogueado.logueado() ? miusuarioLogueado.getNombre() : '',
     );
     _correoController = TextEditingController(
-      text: miRol.logueado() ? miRol.getCorreo() : '',
+      text: miusuarioLogueado.logueado() ? miusuarioLogueado.getCorreo() : '',
     );
     _contrasenaController = TextEditingController(
-      text: miRol.logueado() ? miRol.getContrasena() : '',
+      text:
+          miusuarioLogueado.logueado() ? miusuarioLogueado.getContrasena() : '',
     );
   }
 
@@ -140,6 +143,7 @@ class _EditUsuarioState extends State<EditUsuario> {
 
   @override
   Widget build(BuildContext context) {
+    _rolSeleccionado = miusuarioLogueado.getRol();
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20), // borde como en tu tarjeta
@@ -175,7 +179,15 @@ class _EditUsuarioState extends State<EditUsuario> {
               },
             ),
             SizedBox(height: Estilos.paddingMedio),
-            CampoRol(),
+            CampoRol(
+              rolSeleccionado: _rolSeleccionado,
+              onChanged: (nuevoRol) {
+                setState(() {
+                  _rolSeleccionado = nuevoRol;
+                  miusuarioLogueado.set(nuevoRol);
+                });
+              },
+            ),
             SizedBox(height: Estilos.paddingGrande),
             _botonPrincipal(),
           ],

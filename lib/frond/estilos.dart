@@ -86,7 +86,7 @@ class Estilos {
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radioBordeGrande),

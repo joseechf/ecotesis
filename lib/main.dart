@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'amplify_outputs.dart';
+import 'package:provider/provider.dart';
+
 import 'frond/static/home.dart';
 import 'frond/estilos.dart';
-import 'package:provider/provider.dart';
-import 'frond/baseDatos/providers/especies_provider.dart'; // para la bd falsa, cambiar despues
+import 'frond/baseDatos/providers/especies_provider.dart'; // bd falsa, cambiar después
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,74 +16,20 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: const Locale('es'),
       saveLocale: true,
-      child: const SplashLoader(),
+      child: const AppLoader(),
     ),
   );
 }
 
-class SplashLoader extends StatefulWidget {
-  const SplashLoader({super.key});
-
-  @override
-  State<SplashLoader> createState() => _SplashLoaderState();
-}
-
-class _SplashLoaderState extends State<SplashLoader> {
-  bool _isReady = false;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeApp();
-  }
-
-  Future<void> _initializeApp() async {
-    try {
-      await Amplify.addPlugin(AmplifyAuthCognito());
-      await Amplify.configure(amplifyConfig);
-      safePrint('Amplify configured successfully');
-      setState(() {
-        _isReady = true;
-      });
-    } on AmplifyException catch (e) {
-      setState(() {
-        _error = e.message;
-      });
-    }
-  }
+class AppLoader extends StatelessWidget {
+  const AppLoader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (_error != null) {
-      return MaterialApp(
-        home: Scaffold(
-          body: Center(child: Text('Error configuring Amplify: $_error')),
-        ),
-      );
-    }
-
-    if (!_isReady) {
-      return MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 16),
-                Text('Cargando...'.tr()),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
     return ChangeNotifierProvider(
-      create: (_) => EspeciesProvider(), // mientras uso bd falsa, cambiar luego
+      create: (_) => EspeciesProvider(), // mientras uso bd falsa
       child: const MyApp(),
     );
-    //return const MyApp();
   }
 }
 

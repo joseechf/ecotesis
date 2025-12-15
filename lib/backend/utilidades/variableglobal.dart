@@ -1,4 +1,4 @@
-
+/*
 import 'package:intl/intl.dart';
 
 class Variableglobal {
@@ -21,4 +21,4 @@ class Variableglobal {
   setUltAct(String fecha){
     ultAct = DateFormat('yyyy-MM-dd HH:mm:ss').parse(fecha);
   }
-}
+}*/

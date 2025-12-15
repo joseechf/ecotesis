@@ -14,6 +14,8 @@ class SalesRecords extends StatefulWidget {
 
 class _SalesRecordsState extends State<SalesRecords> {
   final _form = <String, dynamic>{};
+  final _formKey = GlobalKey<FormState>();
+
   String cant = '';
   void _addRecord() {
     final especie = _form['especie'] as String? ?? '';
@@ -55,31 +57,56 @@ class _SalesRecordsState extends State<SalesRecords> {
                     builder:
                         (_) => AlertDialog(
                           title: const Text('Registrar Venta'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Especie',
+                          content: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Especie',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['especie'] = v,
                                 ),
-                                onChanged: (v) => _form['especie'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Cantidad',
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Cantidad',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  validator: (v) {
+                                    if (v == null || v.isEmpty) {
+                                      return 'La cantidad es obligatoria';
+                                    }
+                                    final numero = int.tryParse(v);
+                                    if (numero == null || numero <= 0) {
+                                      return 'Ingrese una cantidad valida';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['qty'] = int.parse(v!),
                                 ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (v) => _form['qty'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Cliente',
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Cliente',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['customer'] = v,
                                 ),
-                                onChanged: (v) => _form['customer'] = v,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           actions: [
                             TextButton(
@@ -87,8 +114,14 @@ class _SalesRecordsState extends State<SalesRecords> {
                               child: const Text('Cancelar'),
                             ),
                             TextButton(
-                              onPressed: _addRecord,
-                              child: const Text('Registrar'),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  _addRecord();
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: const Text('Agregar'),
                             ),
                           ],
                         ),

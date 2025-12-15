@@ -99,7 +99,7 @@ class _TablasAdministrativasState extends State<TablasAdministrativas> {
             ]
             : [
               // lista const de tabs (modo ancho)
-              Tab(text: context.tr('admin.tablas.invsiembra')),
+              Tab(text: context.tr('admin.tablas.inventas')),
               Tab(text: context.tr('admin.tablas.invsiembra')),
               Tab(text: context.tr('admin.tablas.regventas')),
               Tab(text: context.tr('admin.tablas.regsiembra')),

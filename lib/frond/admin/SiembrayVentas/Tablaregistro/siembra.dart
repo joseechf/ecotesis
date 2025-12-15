@@ -16,6 +16,7 @@ class _RentalRecordsState extends State<RentalRecords> {
   //final List<RSiembra> _sembrados = [];
 
   final _form = <String, dynamic>{};
+  final _formKey = GlobalKey<FormState>();
 
   void _addRecord() {
     final especie = _form['especie'] as String? ?? '';
@@ -60,37 +61,64 @@ class _RentalRecordsState extends State<RentalRecords> {
                     builder:
                         (_) => AlertDialog(
                           title: const Text('Registrar Siembra'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Nombre Latino',
+                          content: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nombre Latino',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['especie'] = v,
                                 ),
-                                onChanged: (v) => _form['especie'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Fecha Inicio',
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Fecha Inicio',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['start'] = v,
                                 ),
-                                onChanged: (v) => _form['start'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Fecha Fin',
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Fecha Fin',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['end'] = v,
                                 ),
-                                onChanged: (v) => _form['end'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Coordenadas JSON',
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'Coordenadas JSON',
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return 'no puede estar vacio';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (v) => _form['coordenadas'] = v,
                                 ),
-                                onChanged: (v) => _form['coordenadas'] = v,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           actions: [
                             TextButton(
@@ -98,8 +126,14 @@ class _RentalRecordsState extends State<RentalRecords> {
                               child: const Text('Cancelar'),
                             ),
                             TextButton(
-                              onPressed: _addRecord,
-                              child: const Text('Registrar'),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  _addRecord();
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: const Text('Agregar'),
                             ),
                           ],
                         ),

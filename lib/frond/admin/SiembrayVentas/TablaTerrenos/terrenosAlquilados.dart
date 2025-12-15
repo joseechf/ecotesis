@@ -14,6 +14,7 @@ class rentedLand extends StatefulWidget {
 
 class _rentedLandState extends State<rentedLand> {
   final _form = <String, dynamic>{};
+  final _formKey = GlobalKey<FormState>();
 
   void _addRecord() {
     final Caracterizacion = _form['Caracterizacion'] as String? ?? '';
@@ -62,44 +63,80 @@ class _rentedLandState extends State<rentedLand> {
                     builder:
                         (_) => AlertDialog(
                           title: const Text('Registrar Terreno'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Caracterizacion',
-                                ),
-                                onChanged: (v) => _form['Caracterizacion'] = v,
+                          content: SingleChildScrollView(
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Caracterizacion',
+                                    ),
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) {
+                                        return 'no puede estar vacio';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved:
+                                        (v) => _form['Caracterizacion'] = v,
+                                  ),
+                                  SizedBox(height: 5),
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Fecha Inicio',
+                                    ),
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) {
+                                        return 'no puede estar vacio';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (v) => _form['FechaInicio'] = v,
+                                  ),
+                                  SizedBox(height: 5),
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Fecha Fin',
+                                    ),
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) {
+                                        return 'no puede estar vacio';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (v) => _form['FechaFinal'] = v,
+                                  ),
+                                  SizedBox(height: 5),
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Direccion',
+                                    ),
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) {
+                                        return 'no puede estar vacio';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (v) => _form['Direccion'] = v,
+                                  ),
+                                  SizedBox(height: 5),
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Tamaño',
+                                    ),
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) {
+                                        return 'no puede estar vacio';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (v) => _form['Tamanio'] = v,
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Fecha Inicio',
-                                ),
-                                onChanged: (v) => _form['FechaInicio'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Fecha Fin',
-                                ),
-                                onChanged: (v) => _form['FechaFinal'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Direccion',
-                                ),
-                                onChanged: (v) => _form['Direccion'] = v,
-                              ),
-                              SizedBox(height: 5),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Tamaño',
-                                ),
-                                onChanged: (v) => _form['Tamanio'] = v,
-                              ),
-                            ],
+                            ),
                           ),
                           actions: [
                             TextButton(
@@ -107,8 +144,14 @@ class _rentedLandState extends State<rentedLand> {
                               child: const Text('Cancelar'),
                             ),
                             TextButton(
-                              onPressed: _addRecord,
-                              child: const Text('Registrar'),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  _addRecord();
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: const Text('Agregar'),
                             ),
                           ],
                         ),

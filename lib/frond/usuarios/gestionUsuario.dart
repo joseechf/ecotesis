@@ -21,12 +21,13 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
+  usuarioLogueado miusuarioLogueado = usuarioLogueado();
+  String? _rolSeleccionado = 'No role';
 
   // Variables de estado
   bool _esRegistro = false;
   bool _ocultarContrasena = true;
   bool _cargando = false;
-  usuarioLogueado miRol = usuarioLogueado();
   //String _rolSeleccionado = 'sin rol'; // Valor por defecto
   final _formKey = GlobalKey<FormState>();
 
@@ -97,8 +98,8 @@ class _GestionUsuarioState extends State<GestionUsuario> {
 
   // Widget para el texto de cambio entre login y registro
   Widget _textoCambioModo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      //mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           _esRegistro
@@ -124,78 +125,10 @@ class _GestionUsuarioState extends State<GestionUsuario> {
       ],
     );
   }
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(Estilos.paddingGrande),
-          child: Container(
-            decoration: Estilos.decoracionCaja,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Logo o título
-                  Icon(
-                    Icons.eco_outlined,
-                    size: 80,
-                    color: Estilos.verdePrincipal,
-                  ),
-                  SizedBox(height: Estilos.paddingMedio),
-                  _esRegistro
-                      ? Text(context.tr('gestionUsuario.titulo.registro'))
-                      : Text(context.tr('gestionUsuario.titulo.login')),
-                  SizedBox(height: Estilos.paddingMuyGrande),
-
-                  // Campos del formulario
-                  (_esRegistro)
-                      ? CampoNombre(controladorN: _nombreController)
-                      : Text(''),
-                  SizedBox(height: Estilos.paddingMedio),
-                  (_esRegistro) ? CampoRol() : Text(''),
-                  SizedBox(height: Estilos.paddingMedio),
-                  CampoCorreo(controlador: _correoController),
-                  SizedBox(height: Estilos.paddingMedio),
-                  CampoContrasena(
-                    controladorC: _contrasenaController,
-                    ocultar: _ocultarContrasena,
-                    onCambiarVisibilidad: () {
-                      setState(() {
-                        _ocultarContrasena = !_ocultarContrasena;
-                      });
-                    },
-                  ),
-                  SizedBox(height: Estilos.paddingGrande),
-
-                  // Botón principal
-                  _botonPrincipal(),
-
-                  // Indicador de carga
-                  if (_cargando) ...[
-                    SizedBox(height: Estilos.paddingMedio),
-                    IndicadorCarga(
-                      mensaje: context.tr('gestionUsuario.mensajes.procesando'),
-                    ),
-                  ] else ...[
-                    SizedBox(height: Estilos.paddingMedio),
-                    // Texto para cambiar entre login y registro
-                    _textoCambioModo(),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-*/
 
   @override
   Widget build(BuildContext context) {
+    _rolSeleccionado = miusuarioLogueado.getRol();
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20), // borde como en tu tarjeta
@@ -224,7 +157,17 @@ class _GestionUsuarioState extends State<GestionUsuario> {
                   ? CampoNombre(controladorN: _nombreController)
                   : Text(''),
               SizedBox(height: Estilos.paddingMedio),
-              (_esRegistro) ? CampoRol() : Text(''),
+              (_esRegistro)
+                  ? CampoRol(
+                    rolSeleccionado: _rolSeleccionado,
+                    onChanged: (nuevoRol) {
+                      setState(() {
+                        _rolSeleccionado = nuevoRol;
+                        miusuarioLogueado.set(nuevoRol);
+                      });
+                    },
+                  )
+                  : Text(''),
               SizedBox(height: Estilos.paddingMedio),
               CampoCorreo(controlador: _correoController),
               SizedBox(height: Estilos.paddingMedio),

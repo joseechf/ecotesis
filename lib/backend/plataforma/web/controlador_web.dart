@@ -1,3 +1,4 @@
+/*
 import 'package:ecoazuero/backend/utilidades/variableglobal.dart';
 
 import '../../utilidades/item.dart';
@@ -15,3 +16,4 @@ class crud {
   }
 
 }
+*/
