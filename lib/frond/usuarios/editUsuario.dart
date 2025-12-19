@@ -7,6 +7,7 @@ import '../static/home.dart';
 
 import 'validarEntradaCampos.dart';
 import 'usuarioPrueba.dart'; //este usuario es para pruebas
+import '../../backend/login/llamadasApi.dart';
 
 class EditUsuario extends StatefulWidget {
   const EditUsuario({Key? key}) : super(key: key);
@@ -81,20 +82,31 @@ class _EditUsuarioState extends State<EditUsuario> {
     }
   }
 
-  void _eliminarUsuario() {
+  Future<void> _eliminarUsuario() async {
     final usuarioLogueado usuario = usuarioLogueado();
-    usuario.set('No role');
-    usuario.setContrasena('');
-    usuario.setCorreo('');
-    usuario.setNombre('');
-    SnackBar(
-      content: Text('Usuario eliminado'),
-      backgroundColor: const Color.fromARGB(255, 255, 0, 0),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Estilos.radioBorde),
-      ),
-    );
+    try {
+      final resultado = delete();
+      print('resultado delete: $resultado');
+      usuario.clean();
+      SnackBar(
+        content: Text('Usuario eliminado'),
+        backgroundColor: const Color.fromARGB(255, 255, 0, 0),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Estilos.radioBorde),
+        ),
+      );
+    } catch (e) {
+      SnackBar(
+        content: Text('$e'),
+        backgroundColor: const Color.fromARGB(255, 238, 255, 0),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Estilos.radioBorde),
+        ),
+      );
+    }
+
     // Redirigir a la página principal después de iniciar sesión o registrarse
     Navigator.pushAndRemoveUntil(
       context,
@@ -117,7 +129,9 @@ class _EditUsuarioState extends State<EditUsuario> {
           SizedBox(height: 20),
           BotonPersonalizado(
             texto: context.tr('buttons.delete'),
-            onPressed: _eliminarUsuario,
+            onPressed: () async {
+              await _eliminarUsuario();
+            },
             icono: Icon(Icons.delete, color: Estilos.blanco),
             ancho: 200,
             color: 'rojo',
@@ -164,6 +178,9 @@ class _EditUsuarioState extends State<EditUsuario> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Campos del formulario
+            Wrap(
+              children: [Text('ID: '), Text(miusuarioLogueado.getIdUsuario())],
+            ),
             SizedBox(height: Estilos.paddingMedio),
             CampoNombre(controladorN: _nombreController),
             SizedBox(height: Estilos.paddingMedio),
@@ -184,7 +201,7 @@ class _EditUsuarioState extends State<EditUsuario> {
               onChanged: (nuevoRol) {
                 setState(() {
                   _rolSeleccionado = nuevoRol;
-                  miusuarioLogueado.set(nuevoRol);
+                  miusuarioLogueado.setRol(nuevoRol);
                 });
               },
             ),

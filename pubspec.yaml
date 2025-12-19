@@ -52,6 +52,8 @@ dependencies:
   flutter_map: # mapa base
   vector_map_tiles: # tiles vectoriales
   latlong2: # modelos de LatLng
+  # dependencia para login
+  universal_html: ^2.3.0
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,7 @@ class usuarioLogueado {
     return _instancia;
   }
 
+  String _idUsuario = '';
   String _rolSeleccionado = 'No role';
   String _nombre = '';
   String _contrasena = '';
@@ -14,6 +15,10 @@ class usuarioLogueado {
 
   bool logueado() {
     return _nombre.isNotEmpty ? true : false;
+  }
+
+  String getIdUsuario() {
+    return _idUsuario;
   }
 
   String getCorreo() {
@@ -32,23 +37,34 @@ class usuarioLogueado {
     return _rolSeleccionado;
   }
 
-  bool validar(rol) {
+  bool validar(String rol) {
     return _rolSeleccionado == rol ? true : false;
   }
 
-  void setContrasena(value) {
+  void setIdUsuario(String value) {
+    _idUsuario = value;
+  }
+
+  void setContrasena(String value) {
     _contrasena = value;
   }
 
-  void setCorreo(value) {
+  void setCorreo(String value) {
     _correo = value;
   }
 
-  void set(nuevoRol) {
-    _rolSeleccionado = nuevoRol;
+  void setRol(String? nuevoRol) {
+    _rolSeleccionado = (nuevoRol == null) ? 'No role' : nuevoRol;
   }
 
-  void setNombre(value) {
+  void setNombre(String value) {
     _nombre = value;
+  }
+
+  void clean() {
+    _nombre = '';
+    _contrasena = '';
+    _correo = '';
+    _rolSeleccionado = 'No role';
   }
 }

@@ -74,6 +74,27 @@ class CampoContrasena extends StatelessWidget {
   }
 }
 
+class CampoId extends StatelessWidget {
+  final TextEditingController controllerId;
+  const CampoId({Key? key, required this.controllerId}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final usuarioLogueado usuario = usuarioLogueado();
+    return CampoTextoPersonalizado(
+      controlador: controllerId,
+      etiqueta: 'idUsuario',
+      icono: Icons.privacy_tip,
+      validador: (value) {
+        if (value == null || value.isEmpty) {
+          return 'el id no puede ser vacio';
+        }
+        usuario.setIdUsuario(value);
+        return null;
+      },
+    );
+  }
+}
+
 // Widget para el campo de texto del nombre (solo en registro)
 class CampoNombre extends StatelessWidget {
   final TextEditingController controladorN;
