@@ -192,12 +192,36 @@
     "nuevoRegistro": "New Registration",
     "sinEspecies": "No species found",
     "nuevaEspecie": "Add New Species",
-    "insert": {
+   "insert":{
       "Nlatin": "Latin Name",
       "Ncomun": "Common Name",
-      "establecido": "Established in",
-      "ubicacion": "Location",
-      "Polinizador": "Pollinator"
+      "daSombra":"does it give shade?",
+      "saludSuelo":"Soil Health?",
+      "pionero":"Is a Pioneer?",
+      "nativoAmericano":"Is Native to America?",
+      "nativoPanama":"Is Native to Panama?",
+      "nativoAzuero":"Is Native to Azuero?",
+      "florDistintiva": "Distinctive Flower",
+      "frutaDistintiva":"Distinctive Fruit",
+      "huespedes":"Guests",
+      "Ave":"Bird",
+      "Insecto":"Insect",
+      "formaCrecimiento":"Growth Form",
+      "Rapido":"Fast",
+      "Lento":"Slow",
+      "polinizador":"Pollinator",
+      "Mariposa":"Butterfly",
+      "Abeja":"Bee",
+      "Mixto":"Mixed",
+      "ambiente":"Environment",
+      "Seco":"Dry",
+      "Humedo":"Humid",
+      "estrato":"stratum",
+      "Utilidad": "Utility",
+      "Ubicacion": "Location"
+    },
+    "buttons":{
+      "addEspecie":"Add Species"
     }
   },
   "admin": {

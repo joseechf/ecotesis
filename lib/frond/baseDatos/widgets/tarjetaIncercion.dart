@@ -6,32 +6,54 @@ import 'package:easy_localization/easy_localization.dart';
 import '../providers/especies_provider.dart';
 import 'package:provider/provider.dart';
 
-Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
+Future<Especie?> mostrarTarjetaDialog(
+  BuildContext context,
+  Especie nuevaEspecie,
+) async {
   final nombreCientifico = TextEditingController();
   final florDistintiva = TextEditingController();
   final frutaDistintiva = TextEditingController();
   final estrato = TextEditingController();
 
-  bool daSombra = false;
-  bool saludSuelo = false;
-  bool pionero = false;
-  bool nativoAmerica = false;
-  bool nativoPanama = false;
-  bool nativoAzuero = false;
+  bool daSombra = nuevaEspecie.daSombra == 1 ? true : false;
+  bool saludSuelo = nuevaEspecie.saludSuelo == 1 ? true : false;
+  bool pionero = nuevaEspecie.pionero == 1 ? true : false;
+  bool nativoAmerica = nuevaEspecie.nativoAmerica == 1 ? true : false;
+  bool nativoPanama = nuevaEspecie.nativoPanama == 1 ? true : false;
+  bool nativoAzuero = nuevaEspecie.nativoAzuero == 1 ? true : false;
 
-  String huespedes = 'vacio';
-  String formaCrecimiento = 'vacio';
-  String polinizador = 'vacio';
-  String ambiente = 'vacio';
+  String? huespedes =
+      (nuevaEspecie.huespedes != null && nuevaEspecie.huespedes != '')
+          ? nuevaEspecie.huespedes
+          : 'vacio';
+  String? formaCrecimiento =
+      (nuevaEspecie.formaCrecimiento != null &&
+              nuevaEspecie.formaCrecimiento != '')
+          ? nuevaEspecie.formaCrecimiento
+          : 'vacio';
+  String? polinizador =
+      (nuevaEspecie.polinizador != null && nuevaEspecie.polinizador != '')
+          ? nuevaEspecie.polinizador
+          : 'vacio';
+  String? ambiente =
+      (nuevaEspecie.ambiente != null && nuevaEspecie.ambiente != '')
+          ? nuevaEspecie.ambiente
+          : 'vacio';
+  print('huesed: $huespedes || ${nuevaEspecie.huespedes}');
+  print(
+    'formaCrecimiento: $formaCrecimiento || ${nuevaEspecie.formaCrecimiento}',
+  );
+  print('polinizador: $polinizador || ${nuevaEspecie.polinizador}');
+  print('ambiente: $ambiente || ${nuevaEspecie.ambiente}');
 
   /// 👇 MODELO CENTRAL
-  final nuevaEspecie = Especie(
+  /* final nuevaEspecie = Especie(
     nombreCientifico: '',
     nombresComunes: [NombreComun(nombres: '')],
     utilidades: [Utilidad(utilpara: '')],
     origenes: [Origen(origen: '')],
     //imagenes: [Imagen(urlFoto: '', estado: '')],
-  );
+  );*/
 
   return await showDialog<Especie>(
     context: context,
@@ -59,178 +81,180 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                       ),
                     ),
                     SizedBox(height: 20),
-                    CheckboxListTile(
-                      title: Text(context.tr('bdInterfaz.insert.daSombra')),
-                      value: daSombra,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          daSombra = nuevoValor!;
-                        });
-                      },
+                    Wrap(
+                      children: [
+                        Text('Da sombra ?: '),
+                        Checkbox(
+                          value: daSombra,
+                          onChanged: (nuevoValor) {
+                            setState(() {
+                              daSombra = nuevoValor!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Wrap(
+                      children: [
+                        Text('Da salud al suelo ?: '),
+                        Checkbox(
+                          value: saludSuelo,
+                          onChanged: (nuevoValor) {
+                            setState(() {
+                              saludSuelo = nuevoValor!;
+                            });
+                          },
+                        ),
+                      ],
                     ),
 
-                    SizedBox(height: 20),
-                    CheckboxListTile(
-                      title: Text(context.tr('bdInterfaz.insert.saludSuelo')),
-                      value: saludSuelo,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          saludSuelo = nuevoValor!;
-                        });
-                      },
-                    ),
                     SizedBox(height: 20),
                     TextField(
                       controller: florDistintiva,
                       decoration: InputDecoration(
-                        labelText: context.tr(
-                          'bdInterfaz.insert.florDistintiva',
-                        ),
+                        labelText: context.tr('bdInterfaz.insert.Ncomun'),
                       ),
                     ),
                     SizedBox(height: 20),
                     TextField(
                       controller: frutaDistintiva,
                       decoration: InputDecoration(
-                        labelText: context.tr(
-                          'bdInterfaz.insert.frutaDistintiva',
-                        ),
+                        labelText: context.tr('bdInterfaz.insert.Ncomun'),
                       ),
                     ),
                     SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: huespedes,
-                      items: [
+                      items: const [
                         DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(
-                          value: 'Ave',
-                          child: Text(context.tr('bdInterfaz.insert.Ave')),
-                        ),
+                        DropdownMenuItem(value: 'Ave', child: Text('Ave')),
                         DropdownMenuItem(
                           value: 'Insecto',
-                          child: Text(context.tr('bdInterfaz.insert.Insecto')),
+                          child: Text('Insecto'),
                         ),
                       ],
                       onChanged: (val) => setState(() => huespedes = val!),
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.huespedes'),
+                        labelText: context.tr('bdInterfaz.insert.establecido'),
                       ),
                     ),
                     SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: formaCrecimiento,
-                      items: [
+                      items: const [
                         DropdownMenuItem(value: 'vacio', child: Text('')),
                         DropdownMenuItem(
                           value: 'Rapido',
-                          child: Text(context.tr('bdInterfaz.insert.Rapido')),
+                          child: Text('Rapido'),
                         ),
-                        DropdownMenuItem(
-                          value: 'Lento',
-                          child: Text(context.tr('bdInterfaz.insert.Lento')),
-                        ),
+                        DropdownMenuItem(value: 'Lento', child: Text('Lento')),
                       ],
                       onChanged:
                           (val) => setState(() => formaCrecimiento = val!),
                       decoration: InputDecoration(
-                        labelText: context.tr(
-                          'bdInterfaz.insert.formaCrecimiento',
-                        ),
+                        labelText: context.tr('bdInterfaz.insert.establecido'),
                       ),
                     ),
                     SizedBox(height: 20),
-                    CheckboxListTile(
-                      title: Text(context.tr('bdInterfaz.insert.pionero')),
-                      value: pionero,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          pionero = nuevoValor!;
-                        });
-                      },
+                    Wrap(
+                      children: [
+                        Text('Es pionero ?: '),
+                        Checkbox(
+                          value: pionero,
+                          onChanged: (nuevoValor) {
+                            setState(() {
+                              pionero = nuevoValor!;
+                            });
+                          },
+                        ),
+                      ],
                     ),
+
                     SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: polinizador,
-                      items: [
+                      items: const [
                         DropdownMenuItem(value: 'vacio', child: Text('')),
                         DropdownMenuItem(
                           value: 'Mariposa',
-                          child: Text(context.tr('bdInterfaz.insert.Mariposa')),
+                          child: Text('Mariposa'),
                         ),
-                        DropdownMenuItem(
-                          value: 'Abeja',
-                          child: Text(context.tr('bdInterfaz.insert.Abeja')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Mixto',
-                          child: Text(context.tr('bdInterfaz.insert.Mixto')),
-                        ),
+                        DropdownMenuItem(value: 'Abeja', child: Text('Abeja')),
+                        DropdownMenuItem(value: 'Mixto', child: Text('Mixto')),
                       ],
                       onChanged: (val) => setState(() => polinizador = val!),
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.polinizador'),
+                        labelText: context.tr('bdInterfaz.insert.establecido'),
                       ),
                     ),
                     SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: ambiente,
-                      items: [
+                      items: const [
                         DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(
-                          value: 'Seco',
-                          child: Text(context.tr('bdInterfaz.insert.Seco')),
-                        ),
+                        DropdownMenuItem(value: 'Seco', child: Text('Seco')),
                         DropdownMenuItem(
                           value: 'Humedo',
-                          child: Text(context.tr('bdInterfaz.insert.Humedo')),
+                          child: Text('Humedo'),
                         ),
-                        DropdownMenuItem(
-                          value: 'Mixto',
-                          child: Text(context.tr('bdInterfaz.insert.Mixto')),
-                        ),
+                        DropdownMenuItem(value: 'Mixto', child: Text('Mixto')),
                       ],
                       onChanged: (val) => setState(() => ambiente = val!),
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.ambiente'),
+                        labelText: context.tr('bdInterfaz.insert.establecido'),
                       ),
                     ),
                     SizedBox(height: 20),
-                    CheckboxListTile(
-                      title: Text(
-                        context.tr('bdInterfaz.insert.nativoAmericano'),
-                      ),
-                      value: nativoAmerica,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          nativoAmerica = nuevoValor!;
-                        });
-                      },
+                    Wrap(
+                      children: [
+                        Text('Nativo Americano ?: '),
+                        Checkbox(
+                          value: nativoAmerica,
+                          onChanged: (nuevoValor) {
+                            setState(() {
+                              nativoAmerica = nuevoValor!;
+                            });
+                          },
+                        ),
+                      ],
                     ),
+
                     SizedBox(height: 20),
-                    CheckboxListTile(
-                      title: Text(context.tr('bdInterfaz.insert.nativoPanama')),
-                      value: nativoPanama,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          nativoPanama = nuevoValor!;
-                        });
-                      },
+                    Wrap(
+                      children: [
+                        Text('Nativo Panameño ?: '),
+                        Checkbox(
+                          value: nativoPanama,
+                          onChanged: (nuevoValor) {
+                            setState(() {
+                              nativoPanama = nuevoValor!;
+                            });
+                          },
+                        ),
+                      ],
                     ),
+
                     SizedBox(height: 20),
-                    CheckboxListTile(
-                      title: Text(context.tr('bdInterfaz.insert.nativoAzuero')),
-                      value: nativoAzuero,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          nativoAzuero = nuevoValor!;
-                        });
-                      },
+                    Wrap(
+                      children: [
+                        Text('Nativo Azuero ?: '),
+                        Checkbox(
+                          value: nativoAzuero,
+                          onChanged: (nuevoValor) {
+                            setState(() {
+                              nativoAzuero = nuevoValor!;
+                            });
+                          },
+                        ),
+                      ],
                     ),
+
                     SizedBox(height: 20),
                     TextField(
                       controller: estrato,
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.estrato'),
+                        labelText: context.tr('bdInterfaz.insert.Ncomun'),
                       ),
                     ),
 
@@ -238,7 +262,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                     campoVectorGenerico<NombreComun>(
                       items: nuevaEspecie.nombresComunes,
                       setState: setState,
-                      label: context.tr('bdInterfaz.insert.Ncomun'),
+                      label: 'Nombre común',
                       getValor: (n) => n.nombres,
                       setValor: (n, v) => n.nombres = v,
                       crearVacio: () => NombreComun(nombres: ''),
@@ -248,7 +272,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                     campoVectorGenerico<Utilidad>(
                       items: nuevaEspecie.utilidades,
                       setState: setState,
-                      label: context.tr('bdInterfaz.insert.Utilidad'),
+                      label: 'Utilidad',
                       getValor: (u) => u.utilpara,
                       setValor: (u, v) => u.utilpara = v,
                       crearVacio: () => Utilidad(utilpara: ''),
@@ -259,7 +283,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                     campoVectorGenerico<Origen>(
                       items: nuevaEspecie.origenes,
                       setState: setState,
-                      label: context.tr('bdInterfaz.insert.Ubicacion'),
+                      label: 'Ubicación',
                       getValor: (o) => o.origen,
                       setValor: (o, v) => o.origen = v,
                       crearVacio: () => Origen(origen: ''),
@@ -312,7 +336,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                     Navigator.pop(context, nuevaEspecie);
                   },
 
-                  child: Text(context.tr('bdInterfaz.buttons.addEspecie')),
+                  child: const Text('Agregar especie'),
                 ),
               ],
             );
@@ -357,18 +381,18 @@ Widget campoVectorGenerico<T>({
                         });
                       },
             ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  items.add(crearVacio());
-                });
-              },
-              icon: const Icon(Icons.add),
-              tooltip: 'Agregar',
-            ),
           ],
         );
       }),
+
+      ElevatedButton(
+        onPressed: () {
+          setState(() {
+            items.add(crearVacio());
+          });
+        },
+        child: const Text('Agregar otro'),
+      ),
     ],
   );
 }

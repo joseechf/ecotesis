@@ -45,45 +45,59 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   //  validar y procesar el formulario
   Future<void> _procesarFormulario() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _cargando = true;
-      });
-      setState(() {
-        _cargando = false;
-      });
       if (_esRegistro) {
         try {
-          final respuesta = registro();
+          setState(() => _cargando = true);
+
+          final respuesta = await registro();
+
+          setState(() => _cargando = false);
+
           print('respuesta del registro: $respuesta');
         } catch (e) {
           print('registro jodido $e');
-          SnackBar(content: Text('$e'));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$e')));
         }
-        SnackBar(
-          content: Text(context.tr('gestionUsuario.mensajes.registroExitoso')),
-          backgroundColor: Estilos.verdePrincipal,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Estilos.radioBorde),
-          ),
-        );
-      } else {
-        try {
-          print('antes del login');
-          final respuesta = login();
-          print('respuesta del login: $respuesta');
-
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.tr('gestionUsuario.mensajes.loginExitoso')),
+            content: Text(
+              context.tr('gestionUsuario.mensajes.registroExitoso'),
+            ),
             backgroundColor: Estilos.verdePrincipal,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(Estilos.radioBorde),
             ),
+          ),
+        );
+      } else {
+        try {
+          setState(() => _cargando = true);
+
+          final respuesta = await login();
+
+          setState(() => _cargando = false);
+          print('respuesta: $respuesta');
+          if (!respuesta) {
+            throw Error();
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.tr('gestionUsuario.mensajes.loginExitoso')),
+              backgroundColor: Estilos.verdePrincipal,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(Estilos.radioBorde),
+              ),
+            ),
           );
         } catch (e) {
           print('login jodido $e');
-          SnackBar(content: Text('$e'));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$e')));
         }
       }
 

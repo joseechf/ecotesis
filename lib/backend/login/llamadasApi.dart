@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:universal_html/html.dart' as html;
-import 'elegirUrldeArranque.dart';
+import '../utilidades/elegirUrldeArranque.dart';
 
 usuarioLogueado usuarioActual = usuarioLogueado();
 
@@ -55,7 +55,7 @@ Future<bool> login() async {
     final data = resultado['respuesta'];
     usuarioActual.setNombre(data['nombre']);
     usuarioActual.setCorreo(data['correo']);
-    usuarioActual.setContrasena(data['password']);
+    //usuarioActual.setContrasena(data['password']);
     usuarioActual.setRol(data['rol']);
     return true;
   } catch (e) {

@@ -13,12 +13,32 @@ import '../../iureutilizables/custom_appbar.dart';
 
 import '../../usuarios/usuarioPrueba.dart';
 
-class CatalogoPage extends StatelessWidget {
+import '../../../backend/llamadasRemotas/llamadasFlora.dart';
+import '../widgets/tarjetaIncercion.dart';
+
+class CatalogoPage extends StatefulWidget {
   const CatalogoPage({super.key});
+
+  @override
+  State<CatalogoPage> createState() => _CatalogoPageState();
+}
+
+class _CatalogoPageState extends State<CatalogoPage> {
+  //const CatalogoPage({super.key});
+
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<EspeciesProvider>().cargarFlora();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<EspeciesProvider>(context);
+    if (provider.cargandoData) {
+      return const Center(child: CircularProgressIndicator());
+    }
     double anchoPantalla = MediaQuery.of(context).size.width;
     usuarioLogueado usuarioPrueba = usuarioLogueado();
     final isMobile = anchoPantalla < 800;
@@ -108,12 +128,15 @@ class CatalogoPage extends StatelessWidget {
                                         return SizedBox(
                                           width: 300,
                                           height: 400,
-                                          child: EspecieCard(
-                                            especie: especie,
-                                            onTap:
-                                                () => _mostrarModal(
-                                                  context,
-                                                  especie,
+                                          child: Builder(
+                                            builder:
+                                                (context) => EspecieCard(
+                                                  especie: especie,
+                                                  onTap:
+                                                      () => _mostrarModal(
+                                                        context,
+                                                        especie,
+                                                      ),
                                                 ),
                                           ),
                                         );
@@ -136,11 +159,15 @@ class CatalogoPage extends StatelessWidget {
   void _mostrarModal(BuildContext context, Especie especie) {
     final provider = Provider.of<EspeciesProvider>(context, listen: false);
     showDialog(
+      useRootNavigator: true,
+      barrierDismissible: true,
       context: context,
       builder:
           (_) => EspecieModal(
             especie: especie,
-            onEditar: () {
+            onEditar: () async {
+              final nueva = await mostrarTarjetaDialog(context, especie);
+              if (nueva != null) provider.insertar(nueva);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(context.tr('buttons.update'))),
@@ -148,7 +175,7 @@ class CatalogoPage extends StatelessWidget {
             },
             onEliminar: () {
               Navigator.pop(context);
-              provider.eliminar(especie.nombreLatino);
+              provider.eliminar(especie.nombreCientifico);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(context.tr('buttons.delete')),

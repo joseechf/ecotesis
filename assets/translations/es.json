@@ -194,9 +194,33 @@
     "insert": {
       "Nlatin": "Nombre Latino",
       "Ncomun": "Nombre Comun",
-      "establecido": "establecido a",
-      "ubicacion": "Ubicación",
-      "Polinizador": "Polinizador"
+      "daSombra":"da sombra ?",
+      "saludSuelo":"salud del suelo ?",
+      "pionero":"Es pionero ?",
+      "nativoAmericano":"Es nativo de America ?",
+      "nativoPanama":"Es nativo de Panamá ?",
+      "nativoAzuero":"Es nativo de Azuero ?",
+      "florDistintiva": "Flor Distintiva",
+      "frutaDistintiva":"Fruta Distintiva",
+      "huespedes":"huespedes",
+      "Ave":"Ave",
+      "Insecto":"Insecto",
+      "formaCrecimiento":"formaCrecimiento",
+      "Rapido":"Rapido",
+      "Lento":"Lento",
+      "polinizador":"polinizador",
+      "Mariposa":"Mariposa",
+      "Abeja":"Abeja",
+      "Mixto":"Mixto",
+      "ambiente":"ambiente",
+      "Seco":"Seco",
+      "Humedo":"Humedo",
+      "estrato":"estrato",
+      "Utilidad": "Utilidad",
+      "Ubicacion": "Ubicación"
+    },
+    "buttons":{
+      "addEspecie":"agregar especie"
     }
   },
   "admin": {

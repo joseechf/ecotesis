@@ -22,17 +22,23 @@ class EspecieCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(Estilos.radioBordeGrande),
-              ),
-              child: Image.asset(
-                especie.imagen,
-                height: 160,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+            SizedBox(
+              height: 200,
+              child:
+                  especie.imagenes.isNotEmpty
+                      ? ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          Estilos.radioBordeGrande,
+                        ),
+                        child: Image.asset(
+                          especie.imagenes.first.urlFoto,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                      : const Center(child: Text('Sin imágenes')),
             ),
+
             Padding(
               padding: const EdgeInsets.all(Estilos.paddingMedio),
               child: Column(
@@ -43,7 +49,9 @@ class EspecieCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          especie.nombre,
+                          especie.nombreCientifico,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: Estilos.textoGrande,
                             fontWeight: FontWeight.bold,
@@ -61,13 +69,16 @@ class EspecieCard extends StatelessWidget {
                             Estilos.radioBorde,
                           ),
                         ),
-                        child: Text(
-                          especie.establecido,
-                          style: const TextStyle(
-                            fontSize: Estilos.textoPequeno,
-                            color: Estilos.verdeOscuro,
-                          ),
-                        ),
+                        child:
+                            (especie.ambiente != null)
+                                ? Text(
+                                  especie.ambiente!,
+                                  style: const TextStyle(
+                                    fontSize: Estilos.textoPequeno,
+                                    color: Estilos.verdeOscuro,
+                                  ),
+                                )
+                                : const SizedBox.shrink(),
                       ),
                     ],
                   ),

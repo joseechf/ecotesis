@@ -20,35 +20,94 @@ class EspecieModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    usuarioLogueado usuarioPrueba = usuarioLogueado();
+    final usuarioPrueba =
+        usuarioLogueado(); //esto debo quitarlo de aqui y usar cookies o inyectarlo
     return AlertDialog(
       shape: RoundedRectangleBorder(
         //modificar forma de tarjeta
         borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
       ),
-      title: Text(especie.nombre),
+      title: Text(especie.nombreCientifico),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              //para que la imagen quede redondeada y ocupando el mismo tamaño q el dialog
-              borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
-              child: Image.asset(
-                especie.imagen,
-                height: 200,
-                //width: double.infinity,
-                width: 300,
-                fit: BoxFit.cover,
-              ),
+            /*SizedBox(
+              height: 200,
+              child:
+                  especie.imagenes.isNotEmpty
+                      ? ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: especie.imagenes.length,
+                        itemBuilder: (context, index) {
+                          final imagen = especie.imagenes[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                Estilos.radioBordeGrande,
+                              ),
+                              child: Image.asset(
+                                imagen.urlFoto,
+                                width: 300,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                      : const Center(child: Text('Sin imágenes')),
+            ),*/
+            /*SizedBox(
+              height: 200,
+              //width: double.infinity,
+              child:
+                  especie.imagenes.isEmpty
+                      ? const Center(child: Text('Sin imágenes'))
+                      : ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          Estilos.radioBordeGrande,
+                        ),
+                        child: Image.asset(
+                          especie.imagenes.first.urlFoto,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+            ),*/
+            SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: const Center(child: Text('Sin imágenes')),
             ),
             const SizedBox(height: Estilos.paddingMedio),
-            _fila(Icons.label, 'establecido a', especie.establecido),
-            _fila(Icons.location_on, 'Ubicación', especie.ubicacion),
-            _fila(Icons.grass, 'Familia', especie.polinizador),
+
+            if (especie.saludSuelo == 1)
+              _fila(Icons.label, 'Ayuda a la salud del suelo', 'Sí'),
+
+            if (especie.frutaDistintiva != null &&
+                especie.frutaDistintiva!.isNotEmpty)
+              _fila(Icons.label, 'Fruta distintiva', especie.frutaDistintiva!)
+            else if (especie.florDistintiva != null)
+              _fila(Icons.label, 'Flor distintiva', especie.florDistintiva!),
+
+            _fila(
+              Icons.location_on,
+              'Ubicación',
+              especie.origenes.isNotEmpty &&
+                      especie.origenes.first.origen.isNotEmpty
+                  ? especie.origenes.first.origen
+                  : 'No disponible',
+            ),
+
+            if (especie.estrato != null)
+              _fila(Icons.grass, 'Estrato', especie.estrato!),
           ],
         ),
       ),
+
       actions: [
         (!usuarioPrueba.validar('Scientist') &&
                 !usuarioPrueba.validar('Administrator'))
