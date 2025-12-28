@@ -1,10 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:image/image.dart' as img;
 
 import '../utilidades/elegirUrldeArranque.dart';
 
 //import '../../frond/baseDatos/providers/especies_provider.dart';
 import '../../frond/baseDatos/models/especie.dart';
+import 'dart:typed_data';
+
+import 'package:http_parser/http_parser.dart';
 
 //EspeciesProvider especieActual = EspeciesProvider();
 
@@ -54,6 +58,45 @@ Future<bool> insertFlora(Especie especie) async {
   } catch (e) {
     print(e);
     return false;
+  }
+}
+
+Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
+  // 1. Fuerza JPG: convierte cualquier entrada a JPEG
+  final decoded = img.decodeImage(bytes);
+  if (decoded == null) throw Exception('Imagen no válida');
+  final jpgBytes = img.encodeJpg(decoded, quality: 90);
+
+  // 2. Validaciones
+  final url = Uri.parse('$baseUrl/insertImagen');
+  if (nombreCientifico.trim().isEmpty) {
+    throw Exception('Nombre científico obligatorio');
+  }
+
+  // 3. Petición siempre JPG
+  try {
+    final request = http.MultipartRequest('POST', url);
+    request.fields['nombreCientifico'] = nombreCientifico;
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'imagen',
+        jpgBytes,
+        filename: '$nombreCientifico.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      ),
+    );
+
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+    final resp = jsonDecode(body);
+
+    if (resp['ok'] != true) throw Exception('Error al subir imagen');
+
+    print('la url: ${resp['url']}');
+    return resp['url'];
+  } catch (e) {
+    print(e);
+    return '';
   }
 }
 

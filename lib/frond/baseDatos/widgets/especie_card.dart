@@ -31,7 +31,7 @@ class EspecieCard extends StatelessWidget {
                           Estilos.radioBordeGrande,
                         ),
                         child: Image.asset(
-                          especie.imagenes.first.urlFoto,
+                          especie.imagenes.first.urlFoto!,
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),

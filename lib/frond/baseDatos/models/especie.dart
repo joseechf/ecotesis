@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class Especie {
   String nombreCientifico;
   int? daSombra;
@@ -123,9 +125,9 @@ class Imagen {
   String urlFoto;
   String estado;
 
-  Imagen({required this.urlFoto, required this.estado});
+  Uint8List? bytes;
 
-  Map<String, dynamic> toJson() {
-    return {'urlFoto': urlFoto, 'estado': estado};
-  }
+  Imagen({required this.urlFoto, required this.estado, this.bytes});
+
+  Map<String, dynamic> toJson() => {'urlFoto': urlFoto, 'estado': estado};
 }

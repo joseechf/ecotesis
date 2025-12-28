@@ -85,7 +85,7 @@ class EspeciesProvider with ChangeNotifier {
     }
   }
 
-  Future<void> insertar(Especie nueva) async {
+  /*Future<void> insertar(Especie nueva) async {
     try {
       final resp = await insertFlora(nueva);
       if (resp) {
@@ -98,6 +98,33 @@ class EspeciesProvider with ChangeNotifier {
       print('$e');
     }
     notifyListeners();
+  }*/
+
+  Future<void> insertar(Especie nueva) async {
+    try {
+      for (final img in nueva.imagenes) {
+        if (img.bytes != null) {
+          print('llamando a imagen');
+          final url = await insertImagen(img.bytes!, nueva.nombreCientifico);
+          img.urlFoto = url;
+          img.bytes = null;
+        } else {
+          print('bytes = null');
+          throw Exception('La imagen no se selecciono correctamente');
+        }
+      }
+
+      final resp = await insertFlora(nueva);
+
+      if (resp) {
+        _especies.add(nueva);
+        print('datos insertados en bd');
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    notifyListeners();
   }
 
   void limpiarVectores(Especie especie) {
@@ -107,6 +134,8 @@ class EspeciesProvider with ChangeNotifier {
 
     especie.origenes.removeWhere((e) => e.origen.trim().isEmpty);
 
-    especie.imagenes.removeWhere((e) => e.urlFoto.trim().isEmpty);
+    especie.imagenes.removeWhere(
+      (e) => e.bytes == null && e.urlFoto.trim().isEmpty,
+    );
   }
 }

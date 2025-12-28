@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/especie.dart';
 import '../../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
 
 import '../providers/especies_provider.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +32,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
     nombresComunes: [NombreComun(nombres: '')],
     utilidades: [Utilidad(utilpara: '')],
     origenes: [Origen(origen: '')],
-    //imagenes: [Imagen(urlFoto: '', estado: '')],
+    imagenes: [Imagen(urlFoto: '', estado: '')],
   );
 
   return await showDialog<Especie>(
@@ -264,6 +266,13 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                       setValor: (o, v) => o.origen = v,
                       crearVacio: () => Origen(origen: ''),
                     ),
+
+                    SizedBox(height: 20),
+
+                    campoVectorImagenes(
+                      items: nuevaEspecie.imagenes,
+                      setState: setState,
+                    ),
                   ],
                 ),
               ),
@@ -297,18 +306,26 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                     nuevaEspecie.nativoAzuero = nativoAzuero ? 1 : 0;
                     nuevaEspecie.estrato =
                         estrato.text != '' ? estrato.text : null;
-                    nuevaEspecie.imagenes.add(
-                      Imagen(
-                        urlFoto: 'assets/images/casaVieja.jpg',
-                        estado: 'tentativo',
-                      ),
-                    );
+
                     context.read<EspeciesProvider>().limpiarVectores(
                       nuevaEspecie,
                     );
-                    await context.read<EspeciesProvider>().insertar(
-                      nuevaEspecie,
-                    );
+                    try {
+                      await context.read<EspeciesProvider>().insertar(
+                        nuevaEspecie,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Especie guardada correctamente'),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+
                     Navigator.pop(context, nuevaEspecie);
                   },
 
@@ -365,6 +382,86 @@ Widget campoVectorGenerico<T>({
               },
               icon: const Icon(Icons.add),
               tooltip: 'Agregar',
+            ),
+          ],
+        );
+      }),
+    ],
+  );
+}
+
+Widget campoVectorImagenes({
+  required List<Imagen> items,
+  required void Function(VoidCallback fn) setState,
+}) {
+  final picker = ImagePicker();
+
+  Future<void> seleccionarImagen(int index) async {
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+
+    final bytes = await picked.readAsBytes();
+
+    setState(() {
+      items[index].bytes = bytes;
+      items[index].estado = 'tentativo';
+      items[index].urlFoto = ''; // aún no existe
+    });
+  }
+
+  return Column(
+    children: [
+      ...items.asMap().entries.map((entry) {
+        final index = entry.key;
+        final imagen = entry.value;
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // PREVIEW
+            Container(
+              width: 80,
+              height: 80,
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+              child:
+                  imagen.bytes != null
+                      ? Image.memory(imagen.bytes!, fit: BoxFit.cover)
+                      : imagen.urlFoto.isEmpty
+                      ? const Icon(Icons.image)
+                      : imagen.urlFoto.startsWith('assets/')
+                      ? Image.asset(imagen.urlFoto, fit: BoxFit.cover)
+                      : Image.network(imagen.urlFoto, fit: BoxFit.cover),
+            ),
+
+            // BOTÓN SELECCIONAR
+            ElevatedButton.icon(
+              onPressed: () => seleccionarImagen(index),
+              icon: const Icon(Icons.upload),
+              label: const Text('Seleccionar'),
+            ),
+
+            // ELIMINAR
+            IconButton(
+              icon: const Icon(Icons.remove_circle),
+              onPressed:
+                  items.length == 1
+                      ? null
+                      : () {
+                        setState(() {
+                          items.removeAt(index);
+                        });
+                      },
+            ),
+
+            // AGREGAR
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                setState(() {
+                  items.add(Imagen(urlFoto: '', estado: 'tentativo'));
+                });
+              },
             ),
           ],
         );

@@ -166,8 +166,7 @@ class _CatalogoPageState extends State<CatalogoPage> {
           (_) => EspecieModal(
             especie: especie,
             onEditar: () async {
-              final nueva = await mostrarTarjetaDialog(context, especie);
-              if (nueva != null) provider.insertar(nueva);
+              await mostrarTarjetaDialog(context, especie);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(context.tr('buttons.update'))),
