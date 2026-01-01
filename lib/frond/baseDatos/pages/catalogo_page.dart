@@ -13,7 +13,6 @@ import '../../iureutilizables/custom_appbar.dart';
 
 import '../../usuarios/usuarioPrueba.dart';
 
-import '../../../backend/llamadasRemotas/llamadasFlora.dart';
 import '../widgets/tarjetaIncercion.dart';
 
 class CatalogoPage extends StatefulWidget {
@@ -25,11 +24,13 @@ class CatalogoPage extends StatefulWidget {
 
 class _CatalogoPageState extends State<CatalogoPage> {
   //const CatalogoPage({super.key});
-
+  @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      context.read<EspeciesProvider>().cargarFlora();
+      if (mounted) {
+        context.read<EspeciesProvider>().cargarFlora();
+      }
     });
   }
 
@@ -166,11 +167,14 @@ class _CatalogoPageState extends State<CatalogoPage> {
           (_) => EspecieModal(
             especie: especie,
             onEditar: () async {
-              await mostrarTarjetaDialog(context, especie);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(context.tr('buttons.update'))),
-              );
+              //await mostrarTarjetaDialog(context, especie);
+              await mostrarEditarDialog(context, especie);
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(context.tr('buttons.update'))),
+                );
+              }
             },
             onEliminar: () {
               Navigator.pop(context);

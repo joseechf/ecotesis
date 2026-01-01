@@ -93,7 +93,7 @@ class _TablasAdministrativasState extends State<TablasAdministrativas> {
               Tab(
                 child: Tooltip(
                   message: context.tr('admin.tablas.terrenos'),
-                  child: Icon(Icons.area_chart),
+                  child: Icon(Icons.terrain),
                 ),
               ),
             ]

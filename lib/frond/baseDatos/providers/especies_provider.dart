@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/especie.dart';
+import 'dart:async';
 
 import '../../../backend/llamadasRemotas/llamadasFlora.dart';
 
@@ -15,24 +16,30 @@ class EspeciesProvider with ChangeNotifier {
   Future<void> cargarFlora() async {
     _cargandoData = true;
     notifyListeners();
-    final especiesBD = await getFlora().timeout(Duration(seconds: 20));
-    _especies.clear();
+    try {
+      final especiesBD = await getFlora().timeout(Duration(seconds: 20));
+      _especies.clear();
 
-    if (especiesBD['ok'] == true) {
-      final List<Especie> resultadoFormateado =
-          (especiesBD['respuesta'] as List<dynamic>)
-              .map<Especie>((fila) => Especie.jsonToEspecie(fila))
-              .toList();
-      print('El resultado  del get: ${resultadoFormateado}');
-      //resultadoFormateado.map((fila) => _especies.addAll(fila));
-      _especies.addAll(resultadoFormateado);
-    } else {
-      print('La consulta GET salio mal');
-      print('$especiesBD');
+      if (especiesBD['ok'] == true) {
+        final List<Especie> resultadoFormateado =
+            (especiesBD['respuesta'] as List<dynamic>)
+                .map<Especie>((fila) => Especie.jsonToEspecie(fila))
+                .toList();
+        print('El resultado  del get: ${resultadoFormateado}');
+        //resultadoFormateado.map((fila) => _especies.addAll(fila));
+        _especies.addAll(resultadoFormateado);
+      } else {
+        print('La consulta GET salio mal');
+        print('$especiesBD');
+      }
+
+      _cargandoData = false;
+      notifyListeners();
+    } on TimeoutException catch (_) {
+      print('La operación tardó demasiado');
+      _cargandoData = false;
+      notifyListeners();
     }
-
-    _cargandoData = false;
-    notifyListeners();
   }
 
   List<Especie> get especiesFiltradas {
@@ -73,32 +80,37 @@ class EspeciesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> update(Especie nueva) async {
-    final Map<String, dynamic> fila = nueva.toJson();
+  Future<bool> update(Map<String, dynamic> fila) async {
+    print(fila);
+
     try {
-      print(fila);
+      if ((fila['imagenes'] != null) && (fila['imagenes'] as List).isNotEmpty) {
+        for (final img in fila['imagenes']) {
+          if (img.bytes != null) {
+            print('llamando a imagen');
+            final url = await insertImagen(
+              img.bytes!,
+              fila['nombreCientifico'],
+            );
+            img.urlFoto = url;
+            img.bytes = null;
+          }
+        }
+      }
+
       final resp = await updateFlora(fila);
-      return resp;
+
+      if (resp) {
+        //_especies.add(nueva);
+        print('datos actualizados en bd');
+      }
+      notifyListeners();
+      return true;
     } catch (e) {
-      print('$e');
+      print(e);
       return false;
     }
   }
-
-  /*Future<void> insertar(Especie nueva) async {
-    try {
-      final resp = await insertFlora(nueva);
-      if (resp) {
-        print('datos insertados en bd');
-        _especies.add(nueva);
-      } else {
-        print('no se inserto en bd');
-      }
-    } catch (e) {
-      print('$e');
-    }
-    notifyListeners();
-  }*/
 
   Future<void> insertar(Especie nueva) async {
     try {

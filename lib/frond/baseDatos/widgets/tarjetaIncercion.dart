@@ -2,58 +2,45 @@ import 'package:flutter/material.dart';
 import '../models/especie.dart';
 import '../../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../providers/especies_provider.dart';
 import 'package:provider/provider.dart';
 
-Future<Especie?> mostrarTarjetaDialog(
+Future<Especie?> mostrarEditarDialog(
   BuildContext context,
-  Especie nuevaEspecie,
+  Especie especieActual,
 ) async {
-  final nombreCientifico = TextEditingController();
-  final florDistintiva = TextEditingController();
-  final frutaDistintiva = TextEditingController();
-  final estrato = TextEditingController();
-
-  bool daSombra = nuevaEspecie.daSombra == 1 ? true : false;
-  bool saludSuelo = nuevaEspecie.saludSuelo == 1 ? true : false;
-  bool pionero = nuevaEspecie.pionero == 1 ? true : false;
-  bool nativoAmerica = nuevaEspecie.nativoAmerica == 1 ? true : false;
-  bool nativoPanama = nuevaEspecie.nativoPanama == 1 ? true : false;
-  bool nativoAzuero = nuevaEspecie.nativoAzuero == 1 ? true : false;
-
-  String? huespedes =
-      (nuevaEspecie.huespedes != null && nuevaEspecie.huespedes != '')
-          ? nuevaEspecie.huespedes
-          : 'vacio';
-  String? formaCrecimiento =
-      (nuevaEspecie.formaCrecimiento != null &&
-              nuevaEspecie.formaCrecimiento != '')
-          ? nuevaEspecie.formaCrecimiento
-          : 'vacio';
-  String? polinizador =
-      (nuevaEspecie.polinizador != null && nuevaEspecie.polinizador != '')
-          ? nuevaEspecie.polinizador
-          : 'vacio';
-  String? ambiente =
-      (nuevaEspecie.ambiente != null && nuevaEspecie.ambiente != '')
-          ? nuevaEspecie.ambiente
-          : 'vacio';
-  print('huesed: $huespedes || ${nuevaEspecie.huespedes}');
-  print(
-    'formaCrecimiento: $formaCrecimiento || ${nuevaEspecie.formaCrecimiento}',
+  final Map<String, dynamic> cambios = {};
+  cambios['nombreCientifico'] = especieActual.nombreCientifico;
+  final florDistintiva = TextEditingController(
+    text: especieActual.florDistintiva ?? '',
   );
-  print('polinizador: $polinizador || ${nuevaEspecie.polinizador}');
-  print('ambiente: $ambiente || ${nuevaEspecie.ambiente}');
+  final frutaDistintiva = TextEditingController(
+    text: especieActual.frutaDistintiva ?? '',
+  );
+  final estrato = TextEditingController(text: especieActual.estrato ?? '');
 
-  /// 👇 MODELO CENTRAL
-  /* final nuevaEspecie = Especie(
-    nombreCientifico: '',
-    nombresComunes: [NombreComun(nombres: '')],
-    utilidades: [Utilidad(utilpara: '')],
-    origenes: [Origen(origen: '')],
-    //imagenes: [Imagen(urlFoto: '', estado: '')],
-  );*/
+  bool daSombra = especieActual.daSombra == 1;
+  bool saludSuelo = especieActual.saludSuelo == 1;
+  bool pionero = especieActual.pionero == 1;
+  bool nativoAmerica = especieActual.nativoAmerica == 1;
+  bool nativoPanama = especieActual.nativoPanama == 1;
+  bool nativoAzuero = especieActual.nativoAzuero == 1;
+
+  String huespedes = especieActual.huespedes ?? 'vacio';
+  String formaCrecimiento = especieActual.formaCrecimiento ?? 'vacio';
+  String polinizador = especieActual.polinizador ?? 'vacio';
+  String ambiente = especieActual.ambiente ?? 'vacio';
+
+  final nombresComunes = List<NombreComun>.from(especieActual.nombresComunes);
+  final utilidades = List<Utilidad>.from(especieActual.utilidades);
+  final origenes = List<Origen>.from(especieActual.origenes);
+  final imagenes = List<Imagen>.from(
+    especieActual.imagenes.map(
+      (img) => Imagen(urlFoto: img.urlFoto, estado: img.estado),
+    ),
+  );
 
   return await showDialog<Especie>(
     context: context,
@@ -65,7 +52,7 @@ Future<Especie?> mostrarTarjetaDialog(
                 borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
               ),
               title: Text(
-                context.tr('bdInterfaz.nuevaEspecie'),
+                context.tr('bdInterfaz.editarEspecie'),
                 style: TextStyle(
                   color: Estilos.verdeOscuro,
                   fontSize: Estilos.textoMedio,
@@ -74,220 +61,309 @@ Future<Especie?> mostrarTarjetaDialog(
               content: SingleChildScrollView(
                 child: Column(
                   children: [
-                    TextField(
-                      controller: nombreCientifico,
-                      decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.Nlatin'),
-                      ),
+                    const SizedBox(height: 20),
+                    Text(
+                      especieActual.nombreCientifico,
+                      style: TextStyle(color: Estilos.verdePrincipal),
                     ),
-                    SizedBox(height: 20),
-                    Wrap(
-                      children: [
-                        Text('Da sombra ?: '),
-                        Checkbox(
-                          value: daSombra,
-                          onChanged: (nuevoValor) {
-                            setState(() {
-                              daSombra = nuevoValor!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Wrap(
-                      children: [
-                        Text('Da salud al suelo ?: '),
-                        Checkbox(
-                          value: saludSuelo,
-                          onChanged: (nuevoValor) {
-                            setState(() {
-                              saludSuelo = nuevoValor!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 20),
 
-                    SizedBox(height: 20),
+                    CheckboxListTile(
+                      title: Text(context.tr('bdInterfaz.insert.daSombra')),
+                      value: daSombra,
+                      onChanged: (valor) {
+                        setState(() {
+                          if (valor != daSombra) {
+                            cambios['daSombra'] = valor;
+                          } else {
+                            cambios.remove('daSombra');
+                          }
+                          daSombra = valor!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    CheckboxListTile(
+                      title: Text(context.tr('bdInterfaz.insert.saludSuelo')),
+                      value: saludSuelo,
+                      onChanged: (valor) {
+                        setState(() {
+                          if (valor != saludSuelo) {
+                            cambios['saludSuelo'] = valor;
+                          } else {
+                            cambios.remove('saludSuelo');
+                          }
+                          saludSuelo = valor!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
                     TextField(
                       controller: florDistintiva,
+                      onChanged: (valor) {
+                        if (valor != florDistintiva.text) {
+                          cambios['florDistintiva'] = valor;
+                        } else {
+                          cambios.remove('florDistintiva');
+                        }
+                      },
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.Ncomun'),
+                        labelText: context.tr(
+                          'bdInterfaz.insert.florDistintiva',
+                        ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+
                     TextField(
                       controller: frutaDistintiva,
+                      onChanged: (valor) {
+                        if (valor != frutaDistintiva.text) {
+                          cambios['frutaDistintiva'] = valor;
+                        } else {
+                          cambios.remove('frutaDistintiva');
+                        }
+                      },
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.Ncomun'),
+                        labelText: context.tr(
+                          'bdInterfaz.insert.frutaDistintiva',
+                        ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+
                     DropdownButtonFormField<String>(
                       initialValue: huespedes,
-                      items: const [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(value: 'Ave', child: Text('Ave')),
+                      items: [
+                        DropdownMenuItem(value: 'vacio', child: const Text('')),
                         DropdownMenuItem(
-                          value: 'Insecto',
-                          child: Text('Insecto'),
+                          value: 'Aves',
+                          child: Text(context.tr('bdInterfaz.insert.Ave')),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Mono',
+                          child: Text(context.tr('bdInterfaz.insert.Mono')),
                         ),
                       ],
-                      onChanged: (val) => setState(() => huespedes = val!),
+                      onChanged: (valor) {
+                        if (valor != huespedes) {
+                          cambios['huespedes'] = valor;
+                        } else {
+                          cambios.remove('huespedes');
+                        }
+                      },
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.establecido'),
+                        labelText: context.tr('bdInterfaz.insert.huespedes'),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+
                     DropdownButtonFormField<String>(
                       initialValue: formaCrecimiento,
-                      items: const [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
+                      items: [
+                        DropdownMenuItem(value: 'vacio', child: const Text('')),
                         DropdownMenuItem(
                           value: 'Rapido',
-                          child: Text('Rapido'),
+                          child: Text(context.tr('bdInterfaz.insert.Rapido')),
                         ),
-                        DropdownMenuItem(value: 'Lento', child: Text('Lento')),
+                        DropdownMenuItem(
+                          value: 'Lento',
+                          child: Text(context.tr('bdInterfaz.insert.Lento')),
+                        ),
                       ],
-                      onChanged:
-                          (val) => setState(() => formaCrecimiento = val!),
+                      onChanged: (valor) {
+                        if (valor != formaCrecimiento) {
+                          cambios['formaCrecimiento'] = valor;
+                        } else {
+                          cambios.remove('formaCrecimiento');
+                        }
+                      },
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.establecido'),
+                        labelText: context.tr(
+                          'bdInterfaz.insert.formaCrecimiento',
+                        ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Wrap(
-                      children: [
-                        Text('Es pionero ?: '),
-                        Checkbox(
-                          value: pionero,
-                          onChanged: (nuevoValor) {
-                            setState(() {
-                              pionero = nuevoValor!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 20),
 
-                    SizedBox(height: 20),
+                    CheckboxListTile(
+                      title: Text(context.tr('bdInterfaz.insert.pionero')),
+                      value: pionero,
+                      onChanged: (valor) {
+                        setState(() {
+                          if (valor != pionero) {
+                            cambios['pionero'] = valor;
+                          } else {
+                            cambios.remove('pionero');
+                          }
+                          pionero = valor!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
                     DropdownButtonFormField<String>(
                       initialValue: polinizador,
-                      items: const [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
+                      items: [
+                        DropdownMenuItem(value: 'vacio', child: const Text('')),
                         DropdownMenuItem(
                           value: 'Mariposa',
-                          child: Text('Mariposa'),
+                          child: Text(context.tr('bdInterfaz.insert.Mariposa')),
                         ),
-                        DropdownMenuItem(value: 'Abeja', child: Text('Abeja')),
-                        DropdownMenuItem(value: 'Mixto', child: Text('Mixto')),
+                        DropdownMenuItem(
+                          value: 'Abeja',
+                          child: Text(context.tr('bdInterfaz.insert.Abeja')),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Mixto',
+                          child: Text(context.tr('bdInterfaz.insert.Mixto')),
+                        ),
                       ],
-                      onChanged: (val) => setState(() => polinizador = val!),
+                      onChanged: (valor) {
+                        if (valor != polinizador) {
+                          cambios['polinizador'] = valor;
+                        } else {
+                          cambios.remove('polinizador');
+                        }
+                      },
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.establecido'),
+                        labelText: context.tr('bdInterfaz.insert.polinizador'),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+
                     DropdownButtonFormField<String>(
                       initialValue: ambiente,
-                      items: const [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(value: 'Seco', child: Text('Seco')),
+                      items: [
+                        DropdownMenuItem(value: 'vacio', child: const Text('')),
+                        DropdownMenuItem(
+                          value: 'Seco',
+                          child: Text(context.tr('bdInterfaz.insert.Seco')),
+                        ),
                         DropdownMenuItem(
                           value: 'Humedo',
-                          child: Text('Humedo'),
+                          child: Text(context.tr('bdInterfaz.insert.Humedo')),
                         ),
-                        DropdownMenuItem(value: 'Mixto', child: Text('Mixto')),
+                        DropdownMenuItem(
+                          value: 'Mixto',
+                          child: Text(context.tr('bdInterfaz.insert.Mixto')),
+                        ),
                       ],
-                      onChanged: (val) => setState(() => ambiente = val!),
+                      onChanged: (valor) {
+                        if (valor != ambiente) {
+                          cambios['ambiente'] = valor;
+                        } else {
+                          cambios.remove('ambiente');
+                        }
+                      },
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.establecido'),
+                        labelText: context.tr('bdInterfaz.insert.ambiente'),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Wrap(
-                      children: [
-                        Text('Nativo Americano ?: '),
-                        Checkbox(
-                          value: nativoAmerica,
-                          onChanged: (nuevoValor) {
-                            setState(() {
-                              nativoAmerica = nuevoValor!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 20),
 
-                    SizedBox(height: 20),
-                    Wrap(
-                      children: [
-                        Text('Nativo Panameño ?: '),
-                        Checkbox(
-                          value: nativoPanama,
-                          onChanged: (nuevoValor) {
-                            setState(() {
-                              nativoPanama = nuevoValor!;
-                            });
-                          },
-                        ),
-                      ],
+                    CheckboxListTile(
+                      title: Text(
+                        context.tr('bdInterfaz.insert.nativoAmericano'),
+                      ),
+                      value: nativoAmerica,
+                      onChanged: (valor) {
+                        setState(() {
+                          if (valor != nativoAmerica) {
+                            cambios['nativoAmerica'] = valor;
+                          } else {
+                            cambios.remove('nativoAmerica');
+                          }
+                          nativoAmerica = valor!;
+                        });
+                      },
                     ),
+                    const SizedBox(height: 20),
 
-                    SizedBox(height: 20),
-                    Wrap(
-                      children: [
-                        Text('Nativo Azuero ?: '),
-                        Checkbox(
-                          value: nativoAzuero,
-                          onChanged: (nuevoValor) {
-                            setState(() {
-                              nativoAzuero = nuevoValor!;
-                            });
-                          },
-                        ),
-                      ],
+                    CheckboxListTile(
+                      title: Text(context.tr('bdInterfaz.insert.nativoPanama')),
+                      value: nativoPanama,
+                      onChanged: (valor) {
+                        setState(() {
+                          if (valor != nativoPanama) {
+                            cambios['nativoPanama'] = valor;
+                          } else {
+                            cambios.remove('nativoPanama');
+                          }
+                          nativoPanama = valor!;
+                        });
+                      },
                     ),
+                    const SizedBox(height: 20),
 
-                    SizedBox(height: 20),
+                    CheckboxListTile(
+                      title: Text(context.tr('bdInterfaz.insert.nativoAzuero')),
+                      value: nativoAzuero,
+                      onChanged: (valor) {
+                        setState(() {
+                          if (valor != nativoAzuero) {
+                            cambios['nativoAzuero'] = valor;
+                          } else {
+                            cambios.remove('nativoAzuero');
+                          }
+                          nativoAzuero = valor!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
                     TextField(
                       controller: estrato,
+                      onChanged: (valor) {
+                        if (valor != estrato.text) {
+                          cambios['estrato'] = valor;
+                        } else {
+                          cambios.remove('estrato');
+                        }
+                      },
                       decoration: InputDecoration(
-                        labelText: context.tr('bdInterfaz.insert.Ncomun'),
+                        labelText: context.tr('bdInterfaz.insert.estrato'),
                       ),
                     ),
+                    const SizedBox(height: 20),
 
-                    SizedBox(height: 20),
                     campoVectorGenerico<NombreComun>(
-                      items: nuevaEspecie.nombresComunes,
+                      items: nombresComunes,
                       setState: setState,
-                      label: 'Nombre común',
+                      label: context.tr('bdInterfaz.insert.Ncomun'),
                       getValor: (n) => n.nombres,
                       setValor: (n, v) => n.nombres = v,
                       crearVacio: () => NombreComun(nombres: ''),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     campoVectorGenerico<Utilidad>(
-                      items: nuevaEspecie.utilidades,
+                      items: utilidades,
                       setState: setState,
-                      label: 'Utilidad',
+                      label: context.tr('bdInterfaz.insert.Utilidad'),
                       getValor: (u) => u.utilpara,
                       setValor: (u, v) => u.utilpara = v,
                       crearVacio: () => Utilidad(utilpara: ''),
                     ),
-
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     campoVectorGenerico<Origen>(
-                      items: nuevaEspecie.origenes,
+                      items: origenes,
                       setState: setState,
-                      label: 'Ubicación',
+                      label: context.tr('bdInterfaz.insert.Ubicacion'),
                       getValor: (o) => o.origen,
                       setValor: (o, v) => o.origen = v,
                       crearVacio: () => Origen(origen: ''),
                     ),
+                    const SizedBox(height: 20),
+
+                    campoVectorImagenesEditable(
+                      items: imagenes,
+                      setState: setState,
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -298,45 +374,73 @@ Future<Especie?> mostrarTarjetaDialog(
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    nuevaEspecie.nombreCientifico = nombreCientifico.text;
-                    nuevaEspecie.daSombra = daSombra ? 1 : 0;
-                    nuevaEspecie.saludSuelo = saludSuelo ? 1 : 0;
-                    nuevaEspecie.florDistintiva =
-                        florDistintiva.text != '' ? florDistintiva.text : null;
-                    nuevaEspecie.frutaDistintiva =
-                        frutaDistintiva.text != ''
-                            ? frutaDistintiva.text
-                            : null;
-                    nuevaEspecie.huespedes =
-                        huespedes != 'vacio' ? huespedes : null;
-                    nuevaEspecie.formaCrecimiento =
-                        formaCrecimiento != 'vacio' ? formaCrecimiento : null;
-                    nuevaEspecie.pionero = pionero ? 1 : 0;
-                    nuevaEspecie.polinizador =
-                        polinizador != 'vacio' ? polinizador : null;
-                    nuevaEspecie.ambiente =
-                        ambiente != 'vacio' ? ambiente : null;
-                    nuevaEspecie.nativoAmerica = nativoAmerica ? 1 : 0;
-                    nuevaEspecie.nativoPanama = nativoPanama ? 1 : 0;
-                    nuevaEspecie.nativoAzuero = nativoAzuero ? 1 : 0;
-                    nuevaEspecie.estrato =
-                        estrato.text != '' ? estrato.text : null;
-                    nuevaEspecie.imagenes.add(
-                      Imagen(
-                        urlFoto: 'assets/images/casaVieja.jpg',
-                        estado: 'tentativo',
-                      ),
-                    );
-                    context.read<EspeciesProvider>().limpiarVectores(
-                      nuevaEspecie,
-                    );
-                    await context.read<EspeciesProvider>().insertar(
-                      nuevaEspecie,
-                    );
-                    Navigator.pop(context, nuevaEspecie);
-                  },
+                    especieActual
+                      ..nombreCientifico = especieActual.nombreCientifico
+                      ..daSombra = daSombra ? 1 : 0
+                      ..saludSuelo = saludSuelo ? 1 : 0
+                      ..florDistintiva =
+                          florDistintiva.text.isEmpty
+                              ? null
+                              : florDistintiva.text
+                      ..frutaDistintiva =
+                          frutaDistintiva.text.isEmpty
+                              ? null
+                              : frutaDistintiva.text
+                      ..huespedes = huespedes == 'vacio' ? null : huespedes
+                      ..formaCrecimiento =
+                          formaCrecimiento == 'vacio' ? null : formaCrecimiento
+                      ..pionero = pionero ? 1 : 0
+                      ..polinizador =
+                          polinizador == 'vacio' ? null : polinizador
+                      ..ambiente = ambiente == 'vacio' ? null : ambiente
+                      ..nativoAmerica = nativoAmerica ? 1 : 0
+                      ..nativoPanama = nativoPanama ? 1 : 0
+                      ..nativoAzuero = nativoAzuero ? 1 : 0
+                      ..estrato = estrato.text.isEmpty ? null : estrato.text
+                      ..nombresComunes = nombresComunes
+                      ..utilidades = utilidades
+                      ..origenes = origenes
+                      ..imagenes = imagenes;
+                    cambios['NombreComun'] = nombresComunes;
+                    cambios['Utilidad'] = utilidades;
+                    cambios['Imagen'] = imagenes;
+                    cambios['Origen'] = origenes;
 
-                  child: const Text('Agregar especie'),
+                    try {
+                      final res = await context.read<EspeciesProvider>().update(
+                        cambios,
+                      );
+                      if (res) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Especie actualizada correctamente',
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('NO SE ACTUALIZO !!!!!'),
+                            ),
+                          );
+                        }
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      }
+                    }
+                    if (context.mounted) {
+                      Navigator.pop(context, especieActual);
+                    }
+                  },
+                  child: Text(context.tr('bdInterfaz.buttons.updateEspecie')),
                 ),
               ],
             );
@@ -354,45 +458,132 @@ Widget campoVectorGenerico<T>({
   required T Function() crearVacio,
 }) {
   return Column(
-    children: [
-      ...items.asMap().entries.map((entry) {
-        final index = entry.key;
-        final item = entry.value;
+    children:
+        items.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
 
-        return Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                initialValue: getValor(item),
-                decoration: InputDecoration(labelText: label),
-                onChanged: (value) {
-                  setValor(item, value);
-                },
+          return Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: getValor(item),
+                  decoration: InputDecoration(labelText: label),
+                  onChanged: (value) => setValor(item, value),
+                ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.remove_circle),
-              onPressed:
-                  items.length == 1
-                      ? null
-                      : () {
-                        setState(() {
-                          items.removeAt(index);
-                        });
-                      },
-            ),
-          ],
-        );
-      }),
+              IconButton(
+                icon: const Icon(Icons.remove_circle),
+                onPressed:
+                    items.length == 1
+                        ? null
+                        : () => setState(() => items.removeAt(index)),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                tooltip: 'Agregar',
+                onPressed: () => setState(() => items.add(crearVacio())),
+              ),
+            ],
+          );
+        }).toList(),
+  );
+}
 
-      ElevatedButton(
-        onPressed: () {
-          setState(() {
-            items.add(crearVacio());
-          });
-        },
-        child: const Text('Agregar otro'),
-      ),
-    ],
+Widget campoVectorImagenesEditable({
+  required List<Imagen> items,
+  required void Function(VoidCallback fn) setState,
+}) {
+  final picker = ImagePicker();
+
+  Future<void> seleccionarImagen(int index) async {
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+
+    final bytes = await picked.readAsBytes();
+    setState(() {
+      items[index].bytes = bytes;
+      items[index].estado = 'tentativo';
+      items[index].urlFoto = '';
+    });
+  }
+
+  return Column(
+    children:
+        items.asMap().entries.map((entry) {
+          final index = entry.key;
+          final imagen = entry.value;
+
+          return Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child:
+                        imagen.bytes != null
+                            ? Image.memory(imagen.bytes!, fit: BoxFit.cover)
+                            : imagen.urlFoto.isEmpty
+                            ? const Icon(Icons.image)
+                            : imagen.urlFoto.startsWith('assets/')
+                            ? Image.asset(imagen.urlFoto, fit: BoxFit.cover)
+                            : Image.network(imagen.urlFoto, fit: BoxFit.cover),
+                  ),
+
+                  IconButton(
+                    onPressed: () => seleccionarImagen(index),
+                    icon: const Icon(Icons.upload),
+                    tooltip: 'Seleccionar',
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove_circle),
+                        onPressed:
+                            items.length == 1
+                                ? null
+                                : () => setState(() => items.removeAt(index)),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed:
+                            () => setState(
+                              () => items.add(
+                                Imagen(urlFoto: '', estado: 'tentativo'),
+                              ),
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                initialValue: imagen.estado,
+                items: const [
+                  DropdownMenuItem(
+                    value: 'tentativo',
+                    child: Text('Tentativo'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'comprobado',
+                    child: Text('comprobado'),
+                  ),
+                ],
+                onChanged: (val) => setState(() => imagen.estado = val!),
+                decoration: const InputDecoration(
+                  labelText: 'Estado de la imagen',
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          );
+        }).toList(),
   );
 }

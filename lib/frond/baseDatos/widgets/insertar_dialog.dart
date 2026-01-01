@@ -3,7 +3,6 @@ import '../models/especie.dart';
 import '../../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:typed_data';
 
 import '../providers/especies_provider.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +25,6 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
   String polinizador = 'vacio';
   String ambiente = 'vacio';
 
-  /// 👇 MODELO CENTRAL
   final nuevaEspecie = Especie(
     nombreCientifico: '',
     nombresComunes: [NombreComun(nombres: '')],
@@ -105,12 +103,12 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                       items: [
                         DropdownMenuItem(value: 'vacio', child: Text('')),
                         DropdownMenuItem(
-                          value: 'Ave',
+                          value: 'Aves',
                           child: Text(context.tr('bdInterfaz.insert.Ave')),
                         ),
                         DropdownMenuItem(
-                          value: 'Insecto',
-                          child: Text(context.tr('bdInterfaz.insert.Insecto')),
+                          value: 'Mono',
+                          child: Text(context.tr('bdInterfaz.insert.Mono')),
                         ),
                       ],
                       onChanged: (val) => setState(() => huespedes = val!),
@@ -314,19 +312,23 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                       await context.read<EspeciesProvider>().insertar(
                         nuevaEspecie,
                       );
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Especie guardada correctamente'),
-                        ),
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Especie guardada correctamente'),
+                          ),
+                        );
+                      }
                     } catch (e) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      }
                     }
-
-                    Navigator.pop(context, nuevaEspecie);
+                    if (context.mounted) {
+                      Navigator.pop(context, nuevaEspecie);
+                    }
                   },
 
                   child: Text(context.tr('bdInterfaz.buttons.addEspecie')),
@@ -435,12 +437,16 @@ Widget campoVectorImagenes({
             ),
 
             // BOTÓN SELECCIONAR
-            ElevatedButton.icon(
+            /*ElevatedButton.icon(
               onPressed: () => seleccionarImagen(index),
               icon: const Icon(Icons.upload),
               label: const Text('Seleccionar'),
+            ),*/
+            IconButton(
+              onPressed: () => seleccionarImagen(index),
+              icon: const Icon(Icons.upload),
+              tooltip: 'Seleccionar',
             ),
-
             // ELIMINAR
             IconButton(
               icon: const Icon(Icons.remove_circle),

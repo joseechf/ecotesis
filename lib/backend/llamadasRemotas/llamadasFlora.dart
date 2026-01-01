@@ -121,15 +121,19 @@ Future<bool> deleteFlora(String nombreCientifico) async {
 
 Future<bool> updateFlora(Map<String, dynamic> especie) async {
   final url = Uri.parse('$baseUrl/update/${especie['nombreCientifico']}');
-  final Payload = [especie];
+  final payload = {
+    'filas': [especie],
+  };
   try {
     final response = await http
-        .put(
+        .patch(
           url,
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(Payload),
+          body: jsonEncode(payload),
         )
         .timeout(const Duration(seconds: 10));
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
     final resp = jsonDecode(response.body);
     if (resp['ok'] != true) {
       print('update mal');

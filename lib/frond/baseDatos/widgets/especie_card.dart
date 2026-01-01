@@ -30,8 +30,8 @@ class EspecieCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                           Estilos.radioBordeGrande,
                         ),
-                        child: Image.asset(
-                          especie.imagenes.first.urlFoto!,
+                        child: Image.network(
+                          especie.imagenes.first.urlFoto,
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),
@@ -82,6 +82,25 @@ class EspecieCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Nombres comunes: '),
+                      Expanded(
+                        // ocupa el ancho restante
+                        child: ListView.builder(
+                          shrinkWrap:
+                              true, // solo ocupa el espacio que necesita
+                          physics:
+                              const ClampingScrollPhysics(), // scroll dentro del Row
+                          itemCount: especie.nombresComunes.length,
+                          itemBuilder:
+                              (_, i) => Text(especie.nombresComunes[i].nombres),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(especie.frutaDistintiva!),
                 ],
               ),
             ),

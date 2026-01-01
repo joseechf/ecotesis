@@ -46,24 +46,52 @@ class Especie {
        imagenes = imagenes ?? [];
 
   factory Especie.jsonToEspecie(Map<String, dynamic> fila) {
+    // split de cadenas (pueden ser null si no hay datos)
+    List<String> split(String? s) =>
+        s == null || s.trim().isEmpty
+            ? <String>[]
+            : s.split('|').map((e) => e.trim()).toList();
+    // construye los vectores
+    final nombresComunes =
+        split(
+          fila['nombres_comunes'],
+        ).map((nom) => NombreComun(nombres: nom)).toList();
+
+    final origenes =
+        split(fila['origenes']).map((orig) => Origen(origen: orig)).toList();
+
+    final utilidades =
+        split(
+          fila['utilidades'],
+        ).map((util) => Utilidad(utilpara: util)).toList();
+
+    final imagenes =
+        split(fila['imagenes']).map((chunk) {
+          final parts = chunk.split('@@');
+          return Imagen(
+            urlFoto: parts[0],
+            estado: parts.length > 1 ? parts[1] : '',
+          );
+        }).toList();
     return Especie(
       nombreCientifico: fila['nombrecientifico'],
-      daSombra: fila['daSombra'] == '1' ? 1 : 0,
-      saludSuelo: fila['saludSuelo'] == '1' ? 1 : 0,
-      florDistintiva: fila['florDistintiva'] ?? '',
-      frutaDistintiva: fila['frutaDistintiva'] ?? '',
+      daSombra: _parseBool(fila['dasombra']) ? 1 : 0,
+      saludSuelo: _parseBool(fila['saludsuelo']) ? 1 : 0,
+      pionero: _parseBool(fila['pionero']) ? 1 : 0,
+      nativoAmerica: _parseBool(fila['nativoamerica:']) ? 1 : 0,
+      nativoPanama: _parseBool(fila['nativopanama']) ? 1 : 0,
+      nativoAzuero: _parseBool(fila['nativoazuero']) ? 1 : 0,
+      florDistintiva: fila['flordistintiva:'] ?? '',
+      frutaDistintiva: fila['frutadistintiva'] ?? '',
       huespedes: fila['huespedes'] ?? '',
-      formaCrecimiento: fila['formaCrecimiento'] ?? '',
-      pionero: fila['pionero'] == '1' ? 1 : 0,
+      formaCrecimiento: fila['formacrecimiento'] ?? '',
       polinizador: fila['polinizador'] ?? '',
       ambiente: fila['ambiente'] ?? '',
-      nativoAmerica: fila['nativoAmerica'] == '1' ? 1 : 0,
-      nativoPanama: fila['nativoPanama'] == '1' ? 1 : 0,
-      nativoAzuero: fila['nativoAzuero'] == '1' ? 1 : 0,
       estrato: fila['estrato'] ?? '',
-      /* imagenes.add(
-        Imagen(urlFoto: 'assets/images/calabazo.jpeg', estado: 'tentativo'),
-      ),*/
+      nombresComunes: nombresComunes,
+      utilidades: utilidades,
+      origenes: origenes,
+      imagenes: imagenes,
     );
   }
 
@@ -88,6 +116,12 @@ class Especie {
       'origenes': origenes.map((e) => e.toJson()).toList(),
       'imagenes': imagenes.map((e) => e.toJson()).toList(),
     };
+  }
+
+  static bool _parseBool(dynamic value) {
+    if (value is int) return value == 1;
+    if (value is String) return value == '1';
+    return false;
   }
 }
 
