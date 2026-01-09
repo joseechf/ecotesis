@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../provider/ejemplo.dart';
+import '../../provider/ejemplo.dart';
 import 'package:ecoazuero/frond/estilos.dart';
-import '../provider/bdFake/models.dart';
+import '../../model/models.dart';
 import 'package:flutter/gestures.dart';
 import '../widgetReutilizables.dart';
 
@@ -25,7 +25,7 @@ class _RentalInventoryState extends State<RentalInventory> {
 
     setState(() {
       paraSiembra.add(
-        Siembra(
+        Sembrable(
           idSiembra: '3',
           nombreLatino: nombreLatin,
           cantDisponible: cantidad,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../provider/bdFake/models.dart';
+import '../../model/models.dart';
 import 'package:ecoazuero/frond/estilos.dart';
-import '../provider/ejemplo.dart';
+import '../../provider/ejemplo.dart';
 import '../widgetReutilizables.dart';
 import 'package:flutter/gestures.dart';
 

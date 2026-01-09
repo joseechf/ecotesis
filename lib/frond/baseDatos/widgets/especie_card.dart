@@ -34,9 +34,15 @@ class EspecieCard extends StatelessWidget {
                           especie.imagenes.first.urlFoto,
                           width: double.infinity,
                           fit: BoxFit.cover,
+                          errorBuilder:
+                              (_, __, ___) => Image.asset(
+                                'assets/placeholder.png',
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                         ),
                       )
-                      : const Center(child: Text('Sin imágenes')),
+                      : const Center(child: Icon(Icons.broken_image, size: 50)),
             ),
 
             Padding(

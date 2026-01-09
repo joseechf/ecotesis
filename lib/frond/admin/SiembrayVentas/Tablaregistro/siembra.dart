@@ -1,9 +1,13 @@
 import 'package:ecoazuero/frond/admin/SiembrayVentas/widgetReutilizables.dart';
 import 'package:flutter/material.dart';
-import '../provider/bdFake/models.dart';
-import '../provider/ejemplo.dart';
+import '../../model/models.dart';
 import 'package:ecoazuero/frond/estilos.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import '../../provider/admin_providers.dart';
+import 'insert_dialog.dart';
 
 class RentalRecords extends StatefulWidget {
   const RentalRecords({super.key});
@@ -13,205 +17,129 @@ class RentalRecords extends StatefulWidget {
 }
 
 class _RentalRecordsState extends State<RentalRecords> {
-  //final List<RSiembra> _sembrados = [];
-
-  final _form = <String, dynamic>{};
-  final _formKey = GlobalKey<FormState>();
-
-  void _addRecord() {
-    final especie = _form['especie'] as String? ?? '';
-    final start = _form['start'] as String? ?? '';
-    final end = _form['end'] as String? ?? '';
-    final coordenadas = _form['coordenadas'] as String? ?? '';
-
-    if (especie.isEmpty || start.isEmpty || end.isEmpty || coordenadas.isEmpty)
-      return;
-
-    setState(() {
-      sembrados.add(
-        RSiembra(
-          idRegistro: DateTime.now().millisecondsSinceEpoch.toString(),
-          idSiembra: '2',
-          nombreLatino: especie,
-          idUsuario: '1',
-          nombreUsuario: 'juan',
-          fechaPlantacion: start,
-          fechaBrote: end,
-          cantidad: 1,
-          coordenadas: coordenadas,
-        ),
-      );
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<RegSiembraProvider>().cargarRegSiembra();
     });
-    _form.clear();
-    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<RegSiembraProvider>();
+
+    if (provider.cargandoData) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       body: ListView(
+        padding: const EdgeInsets.all(8),
         children: [
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
+
+          /// BOTÓN INSERTAR
           Align(
             alignment: Alignment.centerLeft,
             child: ElevatedButton.icon(
-              onPressed:
-                  () => showDialog(
-                    context: context,
-                    builder:
-                        (_) => AlertDialog(
-                          title: const Text('Registrar Siembra'),
-                          content: Form(
-                            key: _formKey,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Nombre Latino',
-                                  ),
-                                  validator: (v) {
-                                    if (v == null || v.trim().isEmpty) {
-                                      return 'no puede estar vacio';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (v) => _form['especie'] = v,
-                                ),
-                                SizedBox(height: 5),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Fecha Inicio',
-                                  ),
-                                  validator: (v) {
-                                    if (v == null || v.trim().isEmpty) {
-                                      return 'no puede estar vacio';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (v) => _form['start'] = v,
-                                ),
-                                SizedBox(height: 5),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Fecha Fin',
-                                  ),
-                                  validator: (v) {
-                                    if (v == null || v.trim().isEmpty) {
-                                      return 'no puede estar vacio';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (v) => _form['end'] = v,
-                                ),
-                                SizedBox(height: 5),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Coordenadas JSON',
-                                  ),
-                                  validator: (v) {
-                                    if (v == null || v.trim().isEmpty) {
-                                      return 'no puede estar vacio';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (v) => _form['coordenadas'] = v,
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: Navigator.of(context).pop,
-                              child: const Text('Cancelar'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  _formKey.currentState!.save();
-                                  _addRecord();
-                                  Navigator.of(context).pop();
-                                }
-                              },
-                              child: const Text('Agregar'),
-                            ),
-                          ],
-                        ),
-                  ),
               icon: const Icon(Icons.add, color: Estilos.blanco),
               label: const Text(
-                'Insert',
-                style: TextStyle(color: Estilos.blanco),
+                'Insertar siembra',
+                style: TextStyle(
+                  color: Estilos.blanco,
+                  fontFamily: Estilos.tipografia,
+                ),
               ),
               style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(
+                backgroundColor: WidgetStateProperty.all(
                   Estilos.verdePrincipal,
                 ),
               ),
+              onPressed: () async {
+                final nuevo = await mostrarInsertarRSiembraDialog(context);
+
+                if (nuevo != null && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Registro de siembra guardado'),
+                    ),
+                  );
+                }
+              },
             ),
           ),
+
+          const SizedBox(height: 12),
+
+          /// TABLA RESPONSIVA (SOLO SCROLL HORIZONTAL)
           ScrollConfiguration(
             behavior: ScrollConfiguration.of(context).copyWith(
               dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
             ),
             child: Center(
-              // ← CENTRA TODO EN PANTALLA
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Container(
-                    padding: const EdgeInsets.all(Estilos.paddingMedio),
-                    decoration: BoxDecoration(
-                      color: Estilos.blanco, // fondo de la tabla
-                      borderRadius: BorderRadius.circular(
-                        Estilos.radioBordeGrande, // bordes redondeados
-                      ),
-                      boxShadow:
-                          Estilos
-                              .sombraSuave, // sombra suave del archivo estilos.dart
+                child: Container(
+                  padding: const EdgeInsets.all(Estilos.paddingMedio),
+                  decoration: BoxDecoration(
+                    color: Estilos.blanco,
+                    borderRadius: BorderRadius.circular(
+                      Estilos.radioBordeGrande,
                     ),
-                    child: DataTable(
-                      headingRowColor: WidgetStateProperty.all(
-                        Estilos.grisClaro, // color de encabezado
-                      ),
-                      dataRowColor: WidgetStateProperty.all(
-                        Estilos.blanco, // color de filas normales
-                      ),
-                      columnSpacing: 24,
-                      headingRowHeight: 48,
-                      dataRowMinHeight: 56,
-                      dataRowMaxHeight: 64,
-                      columns: [
-                        dataColumn('idRegistro'),
-                        dataColumn('idSiembra'),
-                        dataColumn('nombreLatino'),
-                        dataColumn('idUsuario'),
-                        dataColumn('nombreUsuario'),
-                        dataColumn('fechaPlantacion'),
-                        dataColumn('fechaBrote'),
-                        dataColumn('cantidad'),
-                        dataColumn('coordenadas'),
-                        dataColumn('acciones'),
-                      ],
-                      rows:
-                          sembrados.map((row) {
-                            return DataRow(
-                              cells: [
-                                DataCell(Text(row.idRegistro)),
-                                DataCell(Text(row.idSiembra)),
-                                DataCell(Text(row.nombreLatino)),
-                                DataCell(Text(row.idUsuario)),
-                                DataCell(Text(row.nombreUsuario)),
-                                DataCell(Text(row.fechaPlantacion)),
-                                DataCell(Text(row.fechaBrote)),
-                                DataCell(Text(row.cantidad.toString())),
-                                DataCell(Text(row.coordenadas)),
-                                DataCell(MenuUpdateDelete(row)),
-                              ],
-                            );
-                          }).toList(),
-                    ),
+                    boxShadow: Estilos.sombraSuave,
+                  ),
+                  child: DataTable(
+                    headingRowColor: WidgetStateProperty.all(Estilos.grisClaro),
+                    dataRowColor: WidgetStateProperty.all(Estilos.blanco),
+                    //columnSpacing: 24,
+                    dataRowMinHeight: 60, // altura mínima
+                    dataRowMaxHeight: double.infinity, // permite crecer
+
+                    columns: [
+                      dataColumn('idRegistro'),
+                      dataColumn('Usuario'),
+                      dataColumn('Fecha'),
+                      dataColumn('Plantas (Cantidad × Especie × Estado)'),
+                      dataColumn('Acciones'),
+                    ],
+
+                    rows:
+                        provider.rsiembra.map((row) {
+                          return DataRow(
+                            cells: [
+                              DataCell(
+                                Text(
+                                  row.idRegistro ?? '-',
+                                  style: const TextStyle(
+                                    fontFamily: Estilos.tipografia,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  row.nombreUsuario ?? '-',
+                                  style: const TextStyle(
+                                    fontFamily: Estilos.tipografia,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  '${row.fechaPlantacion.day}/${row.fechaPlantacion.month}/${row.fechaPlantacion.year}',
+                                  style: const TextStyle(
+                                    fontFamily: Estilos.tipografia,
+                                  ),
+                                ),
+                              ),
+
+                              /// COLUMNA VECTOR ESTABLE
+                              DataCell(vectorCantidadEstado(row.relacion)),
+
+                              DataCell(MenuUpdateDelete(row)),
+                            ],
+                          );
+                        }).toList(),
                   ),
                 ),
               ),
@@ -222,33 +150,162 @@ class _RentalRecordsState extends State<RentalRecords> {
     );
   }
 
-  Widget MenuUpdateDelete(row) {
+  Widget vectorCantidadEstado(List<SembrableRegistro> relacion) {
+    if (relacion.isEmpty) {
+      return const Text('-');
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:
+          relacion.map((e) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Estilos.verdeClaro,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${e.cantidadSembrado}',
+                      style: const TextStyle(color: Estilos.verdeOscuro),
+                    ),
+                    const Text(
+                      ' × ',
+                      style: TextStyle(color: Estilos.verdeOscuro),
+                    ),
+                    Text(
+                      e.nombreCientifico,
+                      style: const TextStyle(
+                        color: Estilos.verdeOscuro,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Text(
+                      ' × ',
+                      style: TextStyle(color: Estilos.verdeOscuro),
+                    ),
+                    Text(
+                      e.estado,
+                      style: const TextStyle(color: Estilos.verdeOscuro),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+    );
+  }
+
+  Widget MenuUpdateDelete(RSiembra row) {
     return PopupMenuButton<String>(
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(
-        minWidth: 30, // ancho del menú
-      ),
       icon: const Icon(Icons.more_vert),
       onSelected: (value) {
         if (value == 'edit') {
-          () => setState(() => {});
+          // abrir diálogo
         } else if (value == 'delete') {
-          () => setState(() => terrenos.remove(row));
+          context.read<RegSiembraProvider>().eliminarRegistro(row);
         }
       },
       itemBuilder:
-          (context) => [
-            const PopupMenuItem(
+          (_) => const [
+            PopupMenuItem(
               value: 'edit',
-              child: Row(children: [Icon(Icons.edit, size: 18)]),
+              child: Row(
+                children: [
+                  Icon(Icons.edit, size: 18),
+                  SizedBox(width: 8),
+                  Text('Editar'),
+                ],
+              ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'delete',
               child: Row(
-                children: [Icon(Icons.delete, color: Colors.red, size: 18)],
+                children: [
+                  Icon(Icons.delete, color: Colors.red, size: 18),
+                  SizedBox(width: 8),
+                  Text('Eliminar'),
+                ],
               ),
             ),
           ],
+    );
+  }
+
+  Future<LatLng?> _abrirMapa(BuildContext context) async {
+    return await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const SeleccionarUbicacionPage()),
+    );
+  }
+}
+
+// pantalla del mapa
+
+class SeleccionarUbicacionPage extends StatefulWidget {
+  const SeleccionarUbicacionPage({super.key});
+
+  @override
+  State<SeleccionarUbicacionPage> createState() =>
+      _SeleccionarUbicacionPageState();
+}
+
+class _SeleccionarUbicacionPageState extends State<SeleccionarUbicacionPage> {
+  LatLng? puntoSeleccionado;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Seleccionar ubicación'),
+        actions: [
+          TextButton(
+            onPressed:
+                puntoSeleccionado == null
+                    ? null
+                    : () => Navigator.pop(context, puntoSeleccionado),
+            child: const Text(
+              'CONFIRMAR',
+              style: TextStyle(color: Estilos.blanco),
+            ),
+          ),
+        ],
+      ),
+      body: FlutterMap(
+        options: MapOptions(
+          initialCenter: const LatLng(40.4168, -3.7038),
+          initialZoom: 12,
+          onTap: (_, latLng) {
+            setState(() {
+              puntoSeleccionado = latLng;
+            });
+          },
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          ),
+          if (puntoSeleccionado != null)
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: puntoSeleccionado!,
+                  width: 40,
+                  height: 40,
+                  child: const Icon(Icons.place, color: Colors.red),
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 }

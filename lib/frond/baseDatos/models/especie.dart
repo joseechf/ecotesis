@@ -111,10 +111,10 @@ class Especie {
       'nativoPanama': nativoPanama,
       'nativoAzuero': nativoAzuero,
       'estrato': estrato,
-      'nombresComunes': nombresComunes.map((e) => e.toJson()).toList(),
-      'utilidades': utilidades.map((e) => e.toJson()).toList(),
-      'origenes': origenes.map((e) => e.toJson()).toList(),
-      'imagenes': imagenes.map((e) => e.toJson()).toList(),
+      'NombreComun': nombresComunes.map((e) => e.toJson()).toList(),
+      'Utilidad': utilidades.map((e) => e.toJson()).toList(),
+      'Origen': origenes.map((e) => e.toJson()).toList(),
+      'Imagen': imagenes.map((e) => e.toJson()).toList(),
     };
   }
 

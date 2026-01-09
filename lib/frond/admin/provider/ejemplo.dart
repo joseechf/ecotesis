@@ -1,13 +1,13 @@
-import 'bdFake/models.dart';
+import '../model/models.dart';
 
-final List<Siembra> paraSiembra = [
-  Siembra(
+final List<Sembrable> paraSiembra = [
+  Sembrable(
     idSiembra: '1',
     nombreLatino: 'Especie A',
     cantDisponible: 10,
     forma: 'semilla',
   ),
-  Siembra(
+  Sembrable(
     idSiembra: '2',
     nombreLatino: 'Especie B',
     cantDisponible: 2,
@@ -27,20 +27,6 @@ final List<Vendibles> paraVenta = [
     nombreLatino: 'Especie Y',
     cantDisponible: 2,
     forma: 'planta',
-  ),
-];
-
-final List<RSiembra> sembrados = [
-  RSiembra(
-    idRegistro: 'siembra1',
-    idSiembra: '1',
-    nombreLatino: 'Especie A',
-    idUsuario: '1',
-    nombreUsuario: 'Juan',
-    fechaPlantacion: '10-11-2025',
-    fechaBrote: '10-12-2026',
-    cantidad: 2,
-    coordenadas: '{Lat: 123,123, Lon: 456,654}',
   ),
 ];
 

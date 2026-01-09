@@ -23,7 +23,6 @@ class CatalogoPage extends StatefulWidget {
 }
 
 class _CatalogoPageState extends State<CatalogoPage> {
-  //const CatalogoPage({super.key});
   @override
   void initState() {
     super.initState();

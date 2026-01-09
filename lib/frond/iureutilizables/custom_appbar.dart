@@ -147,7 +147,7 @@ class _DesktopMenu extends StatelessWidget {
   ];
 
   List<PopupMenuEntry<String>> _recursosItems(BuildContext ctx) => [
-    _popup(ctx, 'buttons.mapa', () => _go(ctx, mappAzuero())),
+    _popup(ctx, 'buttons.mapa', () => _go(ctx, MappAzuero())),
     _popup(ctx, 'buttons.ecoguias', () => _go(ctx, Ecoguias())),
     _popup(ctx, 'buttons.basedatos', () => _go(ctx, const CatalogoPage())),
     if (kIsWeb)
@@ -325,7 +325,7 @@ class MobileMenu extends StatelessWidget {
                 _drawerTile(context, 'buttons.conservref', Conservrefor()),
                 _drawerTile(context, 'buttons.educacion', Educacion()),
                 _drawerTile(context, 'buttons.comunidad', Comunidad()),
-                _drawerTile(context, 'buttons.mapa', mappAzuero()),
+                _drawerTile(context, 'buttons.mapa', MappAzuero()),
                 _drawerTile(context, 'buttons.ecoguias', Ecoguias()),
                 _drawerTile(context, 'buttons.basedatos', CatalogoPage()),
                 if (kIsWeb)

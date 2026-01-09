@@ -28,7 +28,7 @@ class EspecieModal extends StatelessWidget {
             // Imagen
             especie.imagenes.isNotEmpty
                 ? Center(child: Text(especie.imagenes.first.urlFoto))
-                : const Center(child: Text('Sin imágenes')),
+                : const Center(child: Icon(Icons.broken_image, size: 50)),
 
             const SizedBox(height: Estilos.paddingMedio),
 

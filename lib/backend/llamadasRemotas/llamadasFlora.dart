@@ -4,13 +4,10 @@ import 'package:image/image.dart' as img;
 
 import '../utilidades/elegirUrldeArranque.dart';
 
-//import '../../frond/baseDatos/providers/especies_provider.dart';
 import '../../frond/baseDatos/models/especie.dart';
 import 'dart:typed_data';
 
 import 'package:http_parser/http_parser.dart';
-
-//EspeciesProvider especieActual = EspeciesProvider();
 
 Future<Map<String, dynamic>> getFlora() async {
   final url = Uri.parse('$baseUrl/getflora');
@@ -62,18 +59,15 @@ Future<bool> insertFlora(Especie especie) async {
 }
 
 Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
-  // 1. Fuerza JPG: convierte cualquier entrada a JPEG
   final decoded = img.decodeImage(bytes);
   if (decoded == null) throw Exception('Imagen no válida');
   final jpgBytes = img.encodeJpg(decoded, quality: 90);
 
-  // 2. Validaciones
   final url = Uri.parse('$baseUrl/insertImagen');
   if (nombreCientifico.trim().isEmpty) {
     throw Exception('Nombre científico obligatorio');
   }
 
-  // 3. Petición siempre JPG
   try {
     final request = http.MultipartRequest('POST', url);
     request.fields['nombreCientifico'] = nombreCientifico;
@@ -100,6 +94,23 @@ Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
   }
 }
 
+Future<void> deleteImagen(String url) async {
+  if (url.isEmpty) return;
+  try {
+    final uri = Uri.parse('$baseUrl/deleteImagen');
+    final resp = await http.delete(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'url': url}),
+    );
+    if (resp.statusCode != 200 || jsonDecode(resp.body)['ok'] != true) {
+      print('No se pudo borrar la imagen $url');
+    }
+  } catch (e) {
+    print('Error llamando a deleteImagen: $e');
+  }
+}
+
 Future<bool> deleteFlora(String nombreCientifico) async {
   final url = Uri.parse('$baseUrl/delete/$nombreCientifico');
   try {
@@ -119,10 +130,10 @@ Future<bool> deleteFlora(String nombreCientifico) async {
   }
 }
 
-Future<bool> updateFlora(Map<String, dynamic> especie) async {
-  final url = Uri.parse('$baseUrl/update/${especie['nombreCientifico']}');
+Future<bool> updateFlora(Especie especie) async {
+  final url = Uri.parse('$baseUrl/update/${especie.nombreCientifico}');
   final payload = {
-    'filas': [especie],
+    'filas': [especie.toJson()],
   };
   try {
     final response = await http

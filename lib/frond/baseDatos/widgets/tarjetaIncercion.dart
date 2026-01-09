@@ -28,19 +28,55 @@ Future<Especie?> mostrarEditarDialog(
   bool nativoPanama = especieActual.nativoPanama == 1;
   bool nativoAzuero = especieActual.nativoAzuero == 1;
 
-  String huespedes = especieActual.huespedes ?? 'vacio';
-  String formaCrecimiento = especieActual.formaCrecimiento ?? 'vacio';
-  String polinizador = especieActual.polinizador ?? 'vacio';
-  String ambiente = especieActual.ambiente ?? 'vacio';
+  String huespedes = _normalizarDropdown(especieActual.huespedes, [
+    'vacio',
+    'Aves',
+    'Mono',
+  ]);
 
-  final nombresComunes = List<NombreComun>.from(especieActual.nombresComunes);
-  final utilidades = List<Utilidad>.from(especieActual.utilidades);
-  final origenes = List<Origen>.from(especieActual.origenes);
-  final imagenes = List<Imagen>.from(
-    especieActual.imagenes.map(
-      (img) => Imagen(urlFoto: img.urlFoto, estado: img.estado),
-    ),
+  String formaCrecimiento = _normalizarDropdown(
+    especieActual.formaCrecimiento,
+    ['vacio', 'Rapido', 'Lento'],
   );
+
+  String polinizador = _normalizarDropdown(especieActual.polinizador, [
+    'vacio',
+    'Mariposa',
+    'Abeja',
+    'Mixto',
+  ]);
+
+  String ambiente = _normalizarDropdown(especieActual.ambiente, [
+    'vacio',
+    'Seco',
+    'Humedo',
+    'Mixto',
+  ]);
+
+  final nombresComunes =
+      especieActual.nombresComunes.isNotEmpty
+          ? especieActual.nombresComunes
+              .map((n) => NombreComun(nombres: n.nombres))
+              .toList()
+          : [NombreComun(nombres: '')];
+
+  final utilidades =
+      especieActual.utilidades.isNotEmpty
+          ? especieActual.utilidades
+              .map((u) => Utilidad(utilpara: u.utilpara))
+              .toList()
+          : [Utilidad(utilpara: '')];
+
+  final origenes =
+      especieActual.origenes.isNotEmpty
+          ? especieActual.origenes.map((u) => Origen(origen: u.origen)).toList()
+          : [Origen(origen: '')];
+  final imagenes =
+      especieActual.imagenes.isNotEmpty
+          ? especieActual.imagenes
+              .map((img) => Imagen(urlFoto: img.urlFoto, estado: img.estado))
+              .toList()
+          : [Imagen(urlFoto: '', estado: 'tentativo')];
 
   return await showDialog<Especie>(
     context: context,
@@ -374,41 +410,77 @@ Future<Especie?> mostrarEditarDialog(
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    final nombresComunesFinal =
+                        nombresComunes
+                            .where((n) => n.nombres.trim().isNotEmpty)
+                            .toList();
+                    final utilidadesFinal =
+                        utilidades
+                            .where((n) => n.utilpara.trim().isNotEmpty)
+                            .toList();
+                    final origenesFinal =
+                        origenes
+                            .where((n) => n.origen.trim().isNotEmpty)
+                            .toList();
+                    final imagenesParaInsertar =
+                        imagenes
+                            .where(
+                              (img) => img.bytes != null || img.urlFoto != '',
+                            )
+                            .toList();
                     especieActual
                       ..nombreCientifico = especieActual.nombreCientifico
-                      ..daSombra = daSombra ? 1 : 0
-                      ..saludSuelo = saludSuelo ? 1 : 0
-                      ..florDistintiva =
-                          florDistintiva.text.isEmpty
-                              ? null
-                              : florDistintiva.text
-                      ..frutaDistintiva =
-                          frutaDistintiva.text.isEmpty
-                              ? null
-                              : frutaDistintiva.text
-                      ..huespedes = huespedes == 'vacio' ? null : huespedes
-                      ..formaCrecimiento =
-                          formaCrecimiento == 'vacio' ? null : formaCrecimiento
-                      ..pionero = pionero ? 1 : 0
-                      ..polinizador =
-                          polinizador == 'vacio' ? null : polinizador
-                      ..ambiente = ambiente == 'vacio' ? null : ambiente
-                      ..nativoAmerica = nativoAmerica ? 1 : 0
-                      ..nativoPanama = nativoPanama ? 1 : 0
-                      ..nativoAzuero = nativoAzuero ? 1 : 0
-                      ..estrato = estrato.text.isEmpty ? null : estrato.text
-                      ..nombresComunes = nombresComunes
-                      ..utilidades = utilidades
-                      ..origenes = origenes
-                      ..imagenes = imagenes;
-                    cambios['NombreComun'] = nombresComunes;
+                      ..daSombra = _boolToInt(cambios['daSombra'] ?? daSombra)
+                      ..saludSuelo = _boolToInt(
+                        cambios['saludSuelo'] ?? saludSuelo,
+                      )
+                      ..florDistintiva = _nullIfEmpty(
+                        cambios['florDistintiva'] ?? florDistintiva.text,
+                      )
+                      ..frutaDistintiva = _nullIfEmpty(
+                        cambios['frutaDistintiva'] ?? frutaDistintiva.text,
+                      )
+                      ..huespedes = _normalizarDropdownDB(
+                        cambios['huespedes'] ?? huespedes,
+                        ['Aves', 'Mono'],
+                      )
+                      ..formaCrecimiento = _normalizarDropdownDB(
+                        cambios['formaCrecimiento'] ?? formaCrecimiento,
+                        ['Rapido', 'Lento'],
+                      )
+                      ..pionero = _boolToInt(cambios['pionero'] ?? pionero)
+                      ..polinizador = _normalizarDropdownDB(
+                        cambios['polinizador'] ?? polinizador,
+                        ['Mariposa', 'Abeja', 'Mixto'],
+                      )
+                      ..ambiente = _normalizarDropdownDB(
+                        cambios['ambiente'] ?? ambiente,
+                        ['Seco', 'Humedo', 'Mixto'],
+                      )
+                      ..nativoAmerica = _boolToInt(
+                        cambios['nativoAmerica'] ?? nativoAmerica,
+                      )
+                      ..nativoPanama = _boolToInt(
+                        cambios['nativoPanama'] ?? nativoPanama,
+                      )
+                      ..nativoAzuero = _boolToInt(
+                        cambios['nativoAzuero'] ?? nativoAzuero,
+                      )
+                      ..estrato = _nullIfEmpty(
+                        cambios['estrato'] ?? estrato.text,
+                      )
+                      ..nombresComunes = nombresComunesFinal
+                      ..utilidades = utilidadesFinal
+                      ..origenes = origenesFinal
+                      ..imagenes = imagenesParaInsertar;
+                    /*cambios['NombreComun'] = nombresComunes;
                     cambios['Utilidad'] = utilidades;
                     cambios['Imagen'] = imagenes;
-                    cambios['Origen'] = origenes;
+                    cambios['Origen'] = origenes;*/
 
                     try {
                       final res = await context.read<EspeciesProvider>().update(
-                        cambios,
+                        especieActual,
                       );
                       if (res) {
                         if (context.mounted) {
@@ -587,3 +659,18 @@ Widget campoVectorImagenesEditable({
         }).toList(),
   );
 }
+
+//validaciones para insertar datos en bd o en el formulario
+String _normalizarDropdown(String? valor, List<String> validos) {
+  if (valor == null || !validos.contains(valor)) return 'vacio';
+  return valor;
+}
+
+int _boolToInt(bool? v) => (v ?? false) ? 1 : 0;
+
+String? _normalizarDropdownDB(String? valor, List<String> permitidos) {
+  if (valor == null || valor.isEmpty || valor == 'vacio') return null;
+  return permitidos.contains(valor) ? valor : null;
+}
+
+String? _nullIfEmpty(String? s) => (s?.trim().isEmpty ?? true) ? null : s;

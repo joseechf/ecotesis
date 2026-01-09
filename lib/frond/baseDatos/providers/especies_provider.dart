@@ -80,18 +80,19 @@ class EspeciesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> update(Map<String, dynamic> fila) async {
-    print(fila);
-
+  Future<bool> update(Especie fila) async {
+    final List<String> urlsSubidas = [];
     try {
-      if ((fila['imagenes'] != null) && (fila['imagenes'] as List).isNotEmpty) {
-        for (final img in fila['imagenes']) {
+      if (fila.imagenes.isNotEmpty) {
+        for (final img in fila.imagenes) {
           if (img.bytes != null) {
             print('llamando a imagen');
-            final url = await insertImagen(
+            final String url = await insertImagen(
               img.bytes!,
-              fila['nombreCientifico'],
+              fila.nombreCientifico,
             );
+            if (url.isEmpty) throw Exception('Error al subir imagen');
+            urlsSubidas.add(url);
             img.urlFoto = url;
             img.bytes = null;
           }
@@ -99,43 +100,50 @@ class EspeciesProvider with ChangeNotifier {
       }
 
       final resp = await updateFlora(fila);
-
+      if (!resp) throw Exception('Falló la inserción en BD');
       if (resp) {
-        //_especies.add(nueva);
+        //_especies.add(fila);
         print('datos actualizados en bd');
       }
       notifyListeners();
-      return true;
+      return resp;
     } catch (e) {
       print(e);
+      for (final u in urlsSubidas) {
+        await deleteImagen(u);
+      }
       return false;
     }
   }
 
   Future<void> insertar(Especie nueva) async {
+    final List<String> urlsSubidas = [];
     try {
       for (final img in nueva.imagenes) {
-        if (img.bytes != null) {
-          print('llamando a imagen');
-          final url = await insertImagen(img.bytes!, nueva.nombreCientifico);
-          img.urlFoto = url;
-          img.bytes = null;
-        } else {
-          print('bytes = null');
-          throw Exception('La imagen no se selecciono correctamente');
+        if (img.bytes == null) {
+          throw Exception('Imagen no seleccionada correctamente');
         }
+        final String url = await insertImagen(
+          img.bytes!,
+          nueva.nombreCientifico,
+        );
+        if (url.isEmpty) throw Exception('Error al subir imagen');
+        urlsSubidas.add(url);
+        img.urlFoto = url;
+        img.bytes = null;
       }
 
       final resp = await insertFlora(nueva);
-
-      if (resp) {
-        _especies.add(nueva);
-        print('datos insertados en bd');
-      }
+      if (!resp) throw Exception('Falló la inserción en BD');
+      _especies.add(nueva);
+      print('datos insertados en bd');
     } catch (e) {
-      print(e);
+      print('Error en insertar: $e');
+      for (final u in urlsSubidas) {
+        await deleteImagen(u);
+      }
+      rethrow;
     }
-
     notifyListeners();
   }
 

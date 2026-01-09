@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'frond/static/home.dart';
 import 'frond/estilos.dart';
 import 'frond/baseDatos/providers/especies_provider.dart'; // bd falsa, cambiar después
+import 'frond/admin/provider/admin_providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,8 +27,15 @@ class AppLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
+    /*return ChangeNotifierProvider(
       create: (_) => EspeciesProvider(), // mientras uso bd falsa
+      child: const MyApp(),
+    );*/
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => EspeciesProvider()),
+        ChangeNotifierProvider(create: (_) => RegSiembraProvider()),
+      ],
       child: const MyApp(),
     );
   }
