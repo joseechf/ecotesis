@@ -305,7 +305,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                     nuevaEspecie.estrato =
                         estrato.text != '' ? estrato.text : null;
 
-                    context.read<EspeciesProvider>().limpiarVectores(
+                    context.read<EspeciesProvider>().normalizarEspecie(
                       nuevaEspecie,
                     );
                     try {

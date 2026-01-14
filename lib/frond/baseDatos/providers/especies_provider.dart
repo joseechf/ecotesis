@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import '../models/especie.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
+//debug
+import 'package:flutter/foundation.dart';
 
 import '../../../backend/llamadasRemotas/llamadasFlora.dart';
+import '../../../backend/llamadasLocales/llamadasFlora.dart';
+
+import '../../../validarRed.dart';
 
 class EspeciesProvider with ChangeNotifier {
   final List<Especie> _especies = [];
@@ -13,7 +20,52 @@ class EspeciesProvider with ChangeNotifier {
   String _filtro = 'all';
   String get filtro => _filtro;
 
+  /*Future<void> cargarFlora() async {
+    if (kIsWeb) {
+      await cargarFloraR();
+    } else if (Platform.isAndroid || Platform.isIOS) {
+      await cargarFloraL();
+    } else {
+      await cargarFloraR();
+    }
+  }*/
   Future<void> cargarFlora() async {
+    // 🌐 Web siempre usa remoto
+    if (kIsWeb) {
+      await cargarFloraR();
+      return;
+    }
+
+    // 📱 Mobile
+    if (Platform.isAndroid || Platform.isIOS) {
+      final bool hayInternet = await validarRed();
+
+      if (hayInternet) {
+        debugPrint('[FLORA] cargando remoto');
+        await cargarFloraR();
+      } else {
+        debugPrint('[FLORA] cargando local');
+        await cargarFloraL();
+      }
+      return;
+    }
+
+    // 🖥️ Otros (desktop, fallback)
+    await cargarFloraR();
+  }
+
+  Future<void> insertar(Especie nueva) async {
+    if (kIsWeb) {
+      await insertarR(nueva);
+    } else if (Platform.isAndroid || Platform.isIOS) {
+      await insertarL(nueva);
+
+      // Aquí podrías añadir una validación de internet para
+      // disparar la sincronización inmediatamente si hay red
+    }
+  }
+
+  Future<void> cargarFloraR() async {
     _cargandoData = true;
     notifyListeners();
     try {
@@ -26,7 +78,6 @@ class EspeciesProvider with ChangeNotifier {
                 .map<Especie>((fila) => Especie.jsonToEspecie(fila))
                 .toList();
         print('El resultado  del get: ${resultadoFormateado}');
-        //resultadoFormateado.map((fila) => _especies.addAll(fila));
         _especies.addAll(resultadoFormateado);
       } else {
         print('La consulta GET salio mal');
@@ -37,6 +88,23 @@ class EspeciesProvider with ChangeNotifier {
       notifyListeners();
     } on TimeoutException catch (_) {
       print('La operación tardó demasiado');
+      _cargandoData = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> cargarFloraL() async {
+    _cargandoData = true;
+    notifyListeners();
+    try {
+      final respuesta = await cargarFloraLocal();
+      _especies.clear();
+      for (var mapa in respuesta) {
+        _especies.add(Especie.fromLocal(mapa));
+      }
+    } catch (e) {
+      print(e);
+    } finally {
       _cargandoData = false;
       notifyListeners();
     }
@@ -116,7 +184,7 @@ class EspeciesProvider with ChangeNotifier {
     }
   }
 
-  Future<void> insertar(Especie nueva) async {
+  Future<void> insertarR(Especie nueva) async {
     final List<String> urlsSubidas = [];
     try {
       for (final img in nueva.imagenes) {
@@ -133,7 +201,7 @@ class EspeciesProvider with ChangeNotifier {
         img.bytes = null;
       }
 
-      final resp = await insertFlora(nueva);
+      final resp = await insertFloraRemoto(nueva);
       if (!resp) throw Exception('Falló la inserción en BD');
       _especies.add(nueva);
       print('datos insertados en bd');
@@ -147,15 +215,40 @@ class EspeciesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void limpiarVectores(Especie especie) {
-    especie.nombresComunes.removeWhere((e) => e.nombres.trim().isEmpty);
+  //insert offline-first
 
-    especie.utilidades.removeWhere((e) => e.utilpara.trim().isEmpty);
+  Future<void> insertarL(Especie nuevaEspecie) async {
+    try {
+      bool guardadoLocal = await insertFloraLocal([nuevaEspecie.toJson()]);
 
-    especie.origenes.removeWhere((e) => e.origen.trim().isEmpty);
+      if (guardadoLocal) {
+        cargarFloraL();
 
-    especie.imagenes.removeWhere(
-      (e) => e.bytes == null && e.urlFoto.trim().isEmpty,
-    );
+        // 2. INTENTAR SINCRONIZAR (Opcional/Segundo plano)
+        // No bloqueamos al usuario. Si hay internet, se envía; si no, queda en SQLite.
+        //_intentarSincronizarRemoto(nuevaEspecie);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void normalizarEspecie(Especie especie) {
+    // Creamos nuevas listas filtradas (Inmutabilidad)
+    especie.nombresComunes =
+        especie.nombresComunes
+            .where((e) => e.nombres.trim().isNotEmpty)
+            .toList();
+
+    especie.utilidades =
+        especie.utilidades.where((e) => e.utilpara.trim().isNotEmpty).toList();
+
+    especie.origenes =
+        especie.origenes.where((e) => e.origen.trim().isNotEmpty).toList();
+
+    especie.imagenes =
+        especie.imagenes
+            .where((e) => e.bytes != null || e.urlFoto.trim().isNotEmpty)
+            .toList();
   }
 }

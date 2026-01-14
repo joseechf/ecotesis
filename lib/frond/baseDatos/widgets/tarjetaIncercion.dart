@@ -410,24 +410,6 @@ Future<Especie?> mostrarEditarDialog(
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    final nombresComunesFinal =
-                        nombresComunes
-                            .where((n) => n.nombres.trim().isNotEmpty)
-                            .toList();
-                    final utilidadesFinal =
-                        utilidades
-                            .where((n) => n.utilpara.trim().isNotEmpty)
-                            .toList();
-                    final origenesFinal =
-                        origenes
-                            .where((n) => n.origen.trim().isNotEmpty)
-                            .toList();
-                    final imagenesParaInsertar =
-                        imagenes
-                            .where(
-                              (img) => img.bytes != null || img.urlFoto != '',
-                            )
-                            .toList();
                     especieActual
                       ..nombreCientifico = especieActual.nombreCientifico
                       ..daSombra = _boolToInt(cambios['daSombra'] ?? daSombra)
@@ -469,15 +451,14 @@ Future<Especie?> mostrarEditarDialog(
                       ..estrato = _nullIfEmpty(
                         cambios['estrato'] ?? estrato.text,
                       )
-                      ..nombresComunes = nombresComunesFinal
-                      ..utilidades = utilidadesFinal
-                      ..origenes = origenesFinal
-                      ..imagenes = imagenesParaInsertar;
-                    /*cambios['NombreComun'] = nombresComunes;
-                    cambios['Utilidad'] = utilidades;
-                    cambios['Imagen'] = imagenes;
-                    cambios['Origen'] = origenes;*/
+                      ..nombresComunes = nombresComunes
+                      ..utilidades = utilidades
+                      ..origenes = origenes
+                      ..imagenes = imagenes;
 
+                    context.read<EspeciesProvider>().normalizarEspecie(
+                      especieActual,
+                    );
                     try {
                       final res = await context.read<EspeciesProvider>().update(
                         especieActual,

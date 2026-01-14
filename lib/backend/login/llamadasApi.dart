@@ -1,65 +1,116 @@
 import '../../frond/usuarios/usuarioPrueba.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
+// SOLO se usa en WEB
 import 'package:universal_html/html.dart' as html;
+import './seguridad/token_storage.dart';
+
 import '../utilidades/elegirUrldeArranque.dart';
 
 usuarioLogueado usuarioActual = usuarioLogueado();
 
+/// ==========================
+/// REGISTRO
+/// ==========================
 Future<bool> registro() async {
   try {
-    final response = await html.HttpRequest.request(
-      '$baseUrl/registrar',
-      method: 'POST',
-      withCredentials: true, // 🔥 GUARDA LA COOKIE
-      requestHeaders: {'Content-Type': 'application/json'},
-      sendData: jsonEncode({
+    // 🌐 WEB → cookies
+    if (kIsWeb) {
+      final response = await html.HttpRequest.request(
+        '$baseUrl/registrar',
+        method: 'POST',
+        withCredentials: true,
+        requestHeaders: {'Content-Type': 'application/json'},
+        sendData: jsonEncode({
+          'nombre': usuarioActual.getNombre(),
+          'correo': usuarioActual.getCorreo(),
+          'password': usuarioActual.getContrasena(),
+          'rol': usuarioActual.getRol(),
+        }),
+      );
+
+      final resultado = jsonDecode(response.responseText!);
+      if (!resultado['ok']) return false;
+
+      final data = resultado['respuesta']['fila'];
+      usuarioActual.setIdUsuario(data['idusuario']);
+      return true;
+    }
+
+    // 📱 MÓVIL → tokens
+    final response = await http.post(
+      Uri.parse('$baseUrl/registrar'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
         'nombre': usuarioActual.getNombre(),
         'correo': usuarioActual.getCorreo(),
         'password': usuarioActual.getContrasena(),
         'rol': usuarioActual.getRol(),
       }),
     );
-    final resultado = jsonDecode(response.responseText!);
-    if (!resultado['ok']) {
-      print('llamada registro mal');
-      return false;
-    } else {
-      print('llamada registro bien');
-    }
+
+    final resultado = jsonDecode(response.body);
+    if (!resultado['ok']) return false;
+
     final data = resultado['respuesta']['fila'];
     usuarioActual.setIdUsuario(data['idusuario']);
     return true;
   } catch (e) {
+    print('ERROR REGISTRO: $e');
     return false;
   }
 }
 
+/// ==========================
+/// LOGIN
+/// ==========================
 Future<bool> login() async {
   try {
-    final response = await html.HttpRequest.request(
-      '$baseUrl/login',
-      method: 'POST',
-      withCredentials: true,
-      requestHeaders: {'Content-Type': 'application/json'},
-      sendData: jsonEncode({'idUsuario': usuarioActual.getIdUsuario()}),
-    );
-    final resultado = jsonDecode(response.responseText!);
-    if (!resultado['ok']) {
-      print('llamada login mal');
-      return false;
-    } else {
-      print('llamada login bien');
+    // 🌐 WEB → cookies HttpOnly
+    if (kIsWeb) {
+      final response = await html.HttpRequest.request(
+        '$baseUrl/login',
+        method: 'POST',
+        withCredentials: true,
+        requestHeaders: {'Content-Type': 'application/json'},
+        sendData: jsonEncode({'idUsuario': usuarioActual.getIdUsuario()}),
+      );
+
+      final resultado = jsonDecode(response.responseText!);
+      if (!resultado['ok']) return false;
+
+      final data = resultado['respuesta'];
+      usuarioActual.setNombre(data['nombre']);
+      usuarioActual.setCorreo(data['correo']);
+      usuarioActual.setRol(data['rol']);
+
+      return true;
     }
-    final data = resultado['respuesta'];
-    usuarioActual.setNombre(data['nombre']);
-    usuarioActual.setCorreo(data['correo']);
-    //usuarioActual.setContrasena(data['password']);
-    usuarioActual.setRol(data['rol']);
+
+    // 📱 MÓVIL → JWT en body
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'idUsuario': usuarioActual.getIdUsuario()}),
+    );
+
+    final resultado = jsonDecode(response.body);
+    if (!resultado['ok']) return false;
+
+    // 🔐 guardar tokens (aquí o en un servicio)
+    tokenStorage.saveAccessToken(resultado['accessToken']);
+    tokenStorage.saveRefreshToken(resultado['refreshToken']);
+
+    final usuario = resultado['usuario'];
+    usuarioActual.setNombre(usuario['nombre']);
+    usuarioActual.setCorreo(usuario['correo']);
+    usuarioActual.setRol(usuario['rol']);
+
     return true;
   } catch (e) {
-    print(e);
+    print('ERROR LOGIN: $e');
     return false;
   }
 }

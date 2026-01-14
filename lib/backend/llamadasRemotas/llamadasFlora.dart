@@ -29,7 +29,7 @@ Future<Map<String, dynamic>> getFlora() async {
   }
 }
 
-Future<bool> insertFlora(Especie especie) async {
+Future<bool> insertFloraRemoto(Especie especie) async {
   final url = Uri.parse('$baseUrl/insertflora');
   try {
     final Payload = {

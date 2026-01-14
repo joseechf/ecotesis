@@ -78,10 +78,10 @@ class Especie {
       daSombra: _parseBool(fila['dasombra']) ? 1 : 0,
       saludSuelo: _parseBool(fila['saludsuelo']) ? 1 : 0,
       pionero: _parseBool(fila['pionero']) ? 1 : 0,
-      nativoAmerica: _parseBool(fila['nativoamerica:']) ? 1 : 0,
+      nativoAmerica: _parseBool(fila['nativoamerica']) ? 1 : 0,
       nativoPanama: _parseBool(fila['nativopanama']) ? 1 : 0,
       nativoAzuero: _parseBool(fila['nativoazuero']) ? 1 : 0,
-      florDistintiva: fila['flordistintiva:'] ?? '',
+      florDistintiva: fila['flordistintiva'] ?? '',
       frutaDistintiva: fila['frutadistintiva'] ?? '',
       huespedes: fila['huespedes'] ?? '',
       formaCrecimiento: fila['formacrecimiento'] ?? '',
@@ -92,6 +92,45 @@ class Especie {
       utilidades: utilidades,
       origenes: origenes,
       imagenes: imagenes,
+    );
+  }
+
+  factory Especie.fromLocal(Map<String, dynamic> fila) {
+    return Especie(
+      nombreCientifico: fila['nombreCientifico'],
+      daSombra: fila['daSombra'],
+      florDistintiva: fila['florDistintiva'],
+      frutaDistintiva: fila['frutaDistintiva'],
+      saludSuelo: fila['saludSuelo'],
+      huespedes: fila['huespedes'],
+      formaCrecimiento: fila['formaCrecimiento'],
+      pionero: fila['pionero'],
+      polinizador: fila['polinizador'],
+      ambiente: fila['ambiente'],
+      nativoAmerica: fila['nativoAmerica'],
+      nativoPanama: fila['nativoPanama'],
+      nativoAzuero: fila['nativoAzuero'],
+      estrato: fila['estrato'],
+
+      nombresComunes:
+          (fila['NombreComun'] as List<Map<String, dynamic>>?)
+              ?.map((e) => NombreComun(nombres: e['nombreComun']))
+              .toList() ??
+          [],
+
+      utilidades:
+          (fila['Utilidad'] as List<Map<String, dynamic>>?)
+              ?.map((e) => Utilidad(utilpara: e['utilidad']))
+              .toList() ??
+          [],
+
+      origenes:
+          (fila['Origen'] as List<Map<String, dynamic>>?)
+              ?.map((e) => Origen(origen: e['origen']))
+              .toList() ??
+          [],
+
+      imagenes: [],
     );
   }
 

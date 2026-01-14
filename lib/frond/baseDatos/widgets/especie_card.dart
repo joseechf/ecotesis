@@ -106,7 +106,7 @@ class EspecieCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Text(especie.frutaDistintiva!),
+                  Text(especie.estrato ?? '—'),
                 ],
               ),
             ),

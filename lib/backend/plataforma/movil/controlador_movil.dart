@@ -1,4 +1,3 @@
-
 /*
 class Sincronizar {
   final LocalDatabase _localBD = LocalDatabase.instance;
@@ -81,13 +80,13 @@ class crud {
   }
 
     //verificar si hay internet
-  Future<int> _conectar() async {
+  Future<bool> verificarRed() async {
     final resultados = await Connectivity().checkConnectivity(); // List<ConnectivityResult>
 
     if (resultados.contains(ConnectivityResult.none) || resultados.isEmpty) {
-      return 0; // Sin conexión
+      return false; // Sin conexión
     } else {
-      return 1; // Hay alguna conexión
+      return true; // Hay alguna conexión
     }
   }
 }
