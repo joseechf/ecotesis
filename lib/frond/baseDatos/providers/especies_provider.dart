@@ -20,49 +20,55 @@ class EspeciesProvider with ChangeNotifier {
   String _filtro = 'all';
   String get filtro => _filtro;
 
-  /*Future<void> cargarFlora() async {
+  Future<String> _elegirBD() async {
     if (kIsWeb) {
-      await cargarFloraR();
-    } else if (Platform.isAndroid || Platform.isIOS) {
-      await cargarFloraL();
-    } else {
-      await cargarFloraR();
-    }
-  }*/
-  Future<void> cargarFlora() async {
-    // 🌐 Web siempre usa remoto
-    if (kIsWeb) {
-      await cargarFloraR();
-      return;
+      return 'remoto';
     }
 
-    // 📱 Mobile
     if (Platform.isAndroid || Platform.isIOS) {
-      final bool hayInternet = await validarRed();
-
-      if (hayInternet) {
-        debugPrint('[FLORA] cargando remoto');
-        await cargarFloraR();
-      } else {
-        debugPrint('[FLORA] cargando local');
-        await cargarFloraL();
-      }
-      return;
+      final hayInternet = await validarRed();
+      return hayInternet ? 'remoto' : 'local';
     }
 
-    // 🖥️ Otros (desktop, fallback)
-    await cargarFloraR();
+    return 'remoto';
+  }
+
+  Future<void> cargarFlora() async {
+    String respuesta = await _elegirBD();
+    if (respuesta.contains('remoto')) {
+      debugPrint('[FLORA] cargando remoto');
+      await cargarFloraR();
+    }
+    if (respuesta.contains('local')) {
+      debugPrint('[FLORA] cargando local');
+      await cargarFloraL();
+    }
   }
 
   Future<void> insertar(Especie nueva) async {
-    if (kIsWeb) {
+    String respuesta = await _elegirBD();
+    if (respuesta.contains('remoto')) {
+      debugPrint('[FLORA] insertar Remoto');
       await insertarR(nueva);
-    } else if (Platform.isAndroid || Platform.isIOS) {
-      await insertarL(nueva);
-
-      // Aquí podrías añadir una validación de internet para
-      // disparar la sincronización inmediatamente si hay red
     }
+    if (respuesta.contains('local')) {
+      debugPrint('[FLORA] insertar local');
+      await insertarL(nueva);
+    }
+  }
+
+  Future<bool> update(Especie nueva) async {
+    String respuesta = await _elegirBD();
+    bool res = false;
+    if (respuesta.contains('remoto')) {
+      debugPrint('[FLORA] update Remoto');
+      res = await updateFloraR(nueva);
+    }
+    if (respuesta.contains('local')) {
+      debugPrint('[FLORA] update local');
+      res = await updateFloraL(nueva);
+    }
+    return res;
   }
 
   Future<void> cargarFloraR() async {
@@ -148,7 +154,7 @@ class EspeciesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> update(Especie fila) async {
+  Future<bool> updateFloraR(Especie fila) async {
     final List<String> urlsSubidas = [];
     try {
       if (fila.imagenes.isNotEmpty) {
@@ -180,6 +186,34 @@ class EspeciesProvider with ChangeNotifier {
       for (final u in urlsSubidas) {
         await deleteImagen(u);
       }
+      return false;
+    }
+  }
+
+  Future<bool> updateFloraL(Especie fila) async {
+    try {
+      debugPrint('[FLORA] update SQLite (delegado)');
+
+      final bool resp = await updateFloraLocal(fila);
+
+      if (!resp) {
+        throw Exception('Falló update en SQLite');
+      }
+
+      /// Actualizar la lista en memoria
+      final index = _especies.indexWhere(
+        (e) => e.nombreCientifico == fila.nombreCientifico,
+      );
+
+      if (index != -1) {
+        _especies[index] = fila;
+      }
+
+      notifyListeners();
+      return true;
+    } catch (e, s) {
+      debugPrint('[FLORA] error update local: $e');
+      debugPrintStack(stackTrace: s);
       return false;
     }
   }

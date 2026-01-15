@@ -410,8 +410,8 @@ Future<Especie?> mostrarEditarDialog(
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    // 1️⃣ Aplicar cambios al modelo
                     especieActual
-                      ..nombreCientifico = especieActual.nombreCientifico
                       ..daSombra = _boolToInt(cambios['daSombra'] ?? daSombra)
                       ..saludSuelo = _boolToInt(
                         cambios['saludSuelo'] ?? saludSuelo,
@@ -459,40 +459,22 @@ Future<Especie?> mostrarEditarDialog(
                     context.read<EspeciesProvider>().normalizarEspecie(
                       especieActual,
                     );
+
                     try {
-                      final res = await context.read<EspeciesProvider>().update(
+                      final ok = await context.read<EspeciesProvider>().update(
                         especieActual,
                       );
-                      if (res) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Especie actualizada correctamente',
-                              ),
-                            ),
-                          );
-                        }
-                      } else {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('NO SE ACTUALIZO !!!!!'),
-                            ),
-                          );
-                        }
-                      }
+
+                      if (!context.mounted) return;
+
+                      // 2️⃣ Cerrar dialog y devolver resultado
+                      Navigator.pop(context, ok ? especieActual : null);
                     } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(e.toString())));
-                      }
-                    }
-                    if (context.mounted) {
-                      Navigator.pop(context, especieActual);
+                      if (!context.mounted) return;
+                      Navigator.pop(context, null);
                     }
                   },
+
                   child: Text(context.tr('bdInterfaz.buttons.updateEspecie')),
                 ),
               ],

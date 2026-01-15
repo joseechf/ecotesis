@@ -167,11 +167,20 @@ class _CatalogoPageState extends State<CatalogoPage> {
             especie: especie,
             onEditar: () async {
               //await mostrarTarjetaDialog(context, especie);
-              await mostrarEditarDialog(context, especie);
-              if (context.mounted) {
-                Navigator.pop(context);
+              final especieEditada = await mostrarEditarDialog(
+                context,
+                especie,
+              );
+              if (!context.mounted) return;
+              if (especieEditada != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(context.tr('buttons.update'))),
+                  const SnackBar(
+                    content: Text('Especie actualizada correctamente'),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No se pudo actualizar')),
                 );
               }
             },

@@ -1,6 +1,7 @@
 import '../../frond/baseDatos/models/especie.dart';
 import 'package:sqflite/sqflite.dart';
 import 'sqliteHelper.dart';
+import 'package:flutter/foundation.dart';
 
 Future<List<Map<String, dynamic>>> cargarFloraLocal() async {
   final Database db = await dbLocal.instancia;
@@ -140,5 +141,91 @@ Future<void> _insertAuxiliar({
       filaParaInsertar,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+}
+
+Future<bool> updateFloraLocal(Especie especie) async {
+  final Database db = await dbLocal.instancia;
+
+  try {
+    await db.transaction((txn) async {
+      /// 1️⃣ UPDATE tabla Flora (solo campos simples)
+      final Map<String, Object?> floraUpdate = {};
+
+      void put(String key, Object? value) {
+        if (value != null) floraUpdate[key] = value;
+      }
+
+      put('daSombra', especie.daSombra);
+      put('florDistintiva', especie.florDistintiva);
+      put('frutaDistintiva', especie.frutaDistintiva);
+      put('saludSuelo', especie.saludSuelo);
+      put('huespedes', especie.huespedes);
+      put('formaCrecimiento', especie.formaCrecimiento);
+      put('pionero', especie.pionero);
+      put('polinizador', especie.polinizador);
+      put('ambiente', especie.ambiente);
+      put('nativoAmerica', especie.nativoAmerica);
+      put('nativoPanama', especie.nativoPanama);
+      put('nativoAzuero', especie.nativoAzuero);
+      put('estrato', especie.estrato);
+
+      if (floraUpdate.isNotEmpty) {
+        await txn.update(
+          'Flora',
+          floraUpdate,
+          where: 'nombreCientifico = ?',
+          whereArgs: [especie.nombreCientifico],
+        );
+      }
+
+      /// 2️⃣ NombreComun
+      await txn.delete(
+        'NombreComun',
+        where: 'nombreCientifico = ?',
+        whereArgs: [especie.nombreCientifico],
+      );
+
+      for (final n in especie.nombresComunes) {
+        await txn.insert('NombreComun', {
+          'nombreComun': n.nombres,
+          'nombreCientifico': especie.nombreCientifico,
+        });
+      }
+
+      /// 3️⃣ Utilidad
+      await txn.delete(
+        'Utilidad',
+        where: 'nombreCientifico = ?',
+        whereArgs: [especie.nombreCientifico],
+      );
+
+      for (final u in especie.utilidades) {
+        await txn.insert('Utilidad', {
+          'utilidad': u.utilpara,
+          'nombreCientifico': especie.nombreCientifico,
+        });
+      }
+
+      /// 4️⃣ Origen
+      await txn.delete(
+        'Origen',
+        where: 'nombreCientifico = ?',
+        whereArgs: [especie.nombreCientifico],
+      );
+
+      for (final o in especie.origenes) {
+        await txn.insert('Origen', {
+          'origen': o.origen,
+          'nombreCientifico': especie.nombreCientifico,
+        });
+      }
+    });
+
+    return true;
+  } catch (e, s) {
+    debugPrint('[SQLite] error updateFloraLocal: $e');
+    debugPrintStack(stackTrace: s);
+    return false;
   }
 }
