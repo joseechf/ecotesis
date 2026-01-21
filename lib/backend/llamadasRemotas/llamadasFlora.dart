@@ -1,95 +1,167 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:image/image.dart' as img;
-
 import '../utilidades/elegirUrldeArranque.dart';
 
-import '../../frond/baseDatos/models/especie.dart';
+import '../../../data/models/especie_dto.dart'; // ← DTO
 import 'dart:typed_data';
-
 import 'package:http_parser/http_parser.dart';
+import 'package:flutter/foundation.dart';
 
-Future<Map<String, dynamic>> getFlora() async {
+/* =========================================================
+   1.  LECTURA  →  devuelve List<EspecieDto>
+   ========================================================= */
+Future<List<EspecieDto>> getFloraRemoto() async {
   final url = Uri.parse('$baseUrl/getflora');
   try {
-    final response = await http.get(url);
-    final resp = jsonDecode(response.body);
-    if (resp['ok'] != true) {
-      print('llamada Flora mal');
-      return resp;
-    } else {
-      print('llamada Flora bien');
-      print('datos: $resp');
+    final resp = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json'},
+    );
+    final json = jsonDecode(resp.body);
+    if (json['ok'] != true) {
+      debugPrint('getFloraRemoto error');
+      return [];
     }
-
-    return resp;
+    return (json['respuesta'] as List)
+        .map((j) => EspecieDto.fromJson(j))
+        .toList();
   } catch (e) {
-    print(e);
-    return {'ok': false, 'Error': e};
+    debugPrint('getFloraRemoto excepción: $e');
+    return [];
   }
 }
 
-Future<bool> insertFloraRemoto(Especie especie) async {
+Future<List<Map<String, dynamic>>> getFloraRemoteSincronizacion(
+  String ultSinc,
+) async {
+  final url = Uri.parse('$baseUrl/sincronizacion/cambios');
+
+  try {
+    final resp = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'ultSinc': ultSinc}),
+    );
+
+    final json = jsonDecode(resp.body);
+    if (json['ok'] != true) return [];
+
+    return List<Map<String, dynamic>>.from(json['respuesta']);
+  } catch (e) {
+    debugPrint('getFloraRemoteCambiosDesde error: $e');
+    return [];
+  }
+}
+
+Future<List<EspecieDto>> getFloraRemotoPorIds(List<String> ids) async {
+  if (ids.isEmpty) return [];
+
+  final url = Uri.parse('$baseUrl/getflora/porids');
+
+  try {
+    final resp = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'ids': ids}),
+    );
+
+    final json = jsonDecode(resp.body);
+    if (json['ok'] != true) return [];
+
+    return (json['respuesta'] as List)
+        .map((e) => EspecieDto.fromJson(e))
+        .toList();
+  } catch (e) {
+    debugPrint('getFloraRemotoPorIds error: $e');
+    return [];
+  }
+}
+
+/* =========================================================
+   2.  ESCRITURA  →  recibe EspecieDto
+   ========================================================= */
+Future<bool> insertFloraRemoto(EspecieDto dto) async {
   final url = Uri.parse('$baseUrl/insertflora');
   try {
-    final Payload = {
-      'filas': [especie.toJson()],
-    };
     final response = await http
         .post(
           url,
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(Payload),
+          body: jsonEncode({
+            'filas': [dto.toJson()],
+          }),
         )
         .timeout(const Duration(seconds: 10));
-    final resp = jsonDecode(response.body);
-    if (resp['ok'] != true) {
-      print('insercion Flora mal');
-      return false;
-    } else {
-      print('datos: $resp');
-      print('insercion Flora bien');
-    }
-
-    return true;
+    return jsonDecode(response.body)['ok'] == true;
   } catch (e) {
-    print(e);
+    print('insertFloraRemoto: $e');
     return false;
   }
 }
 
+Future<bool> updateFloraRemoto(EspecieDto dto) async {
+  final url = Uri.parse('$baseUrl/update/${dto.nombreCientifico}');
+  try {
+    final response = await http
+        .patch(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          //body: jsonEncode({'fila': dto.toJson()}),
+          body: jsonEncode({
+            'filas': [dto.toJson()],
+          }),
+        )
+        .timeout(const Duration(seconds: 10));
+    return jsonDecode(response.body)['ok'] == true;
+  } catch (e) {
+    print('updateFlora: $e');
+    return false;
+  }
+}
+
+Future<bool> deleteFloraRemoto(String nombreCientifico) async {
+  try {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/delete/$nombreCientifico'),
+    );
+    return jsonDecode(response.body)['ok'] == true;
+  } catch (e) {
+    print('deleteFlora: $e');
+    return false;
+  }
+}
+
+/* =========================================================
+   3.  IMÁGENES
+   ========================================================= */
 Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
   final decoded = img.decodeImage(bytes);
   if (decoded == null) throw Exception('Imagen no válida');
   final jpgBytes = img.encodeJpg(decoded, quality: 90);
 
   final url = Uri.parse('$baseUrl/insertImagen');
-  if (nombreCientifico.trim().isEmpty) {
-    throw Exception('Nombre científico obligatorio');
-  }
+  if (nombreCientifico.trim().isEmpty)
+    throw Exception('Nombre científico vacío');
 
   try {
-    final request = http.MultipartRequest('POST', url);
-    request.fields['nombreCientifico'] = nombreCientifico;
-    request.files.add(
-      http.MultipartFile.fromBytes(
-        'imagen',
-        jpgBytes,
-        filename: '$nombreCientifico.jpg',
-        contentType: MediaType('image', 'jpeg'),
-      ),
-    );
-
+    final request =
+        http.MultipartRequest('POST', url)
+          ..fields['nombreCientifico'] = nombreCientifico
+          ..files.add(
+            http.MultipartFile.fromBytes(
+              'imagen',
+              jpgBytes,
+              filename: '$nombreCientifico.jpg',
+              contentType: MediaType('image', 'jpeg'),
+            ),
+          );
     final response = await request.send();
     final body = await response.stream.bytesToString();
     final resp = jsonDecode(body);
-
-    if (resp['ok'] != true) throw Exception('Error al subir imagen');
-
-    print('la url: ${resp['url']}');
-    return resp['url'];
+    return resp['ok'] == true ? (resp['url'] ?? '') : '';
   } catch (e) {
-    print(e);
+    print('insertImagen: $e');
     return '';
   }
 }
@@ -97,9 +169,8 @@ Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
 Future<void> deleteImagen(String url) async {
   if (url.isEmpty) return;
   try {
-    final uri = Uri.parse('$baseUrl/deleteImagen');
     final resp = await http.delete(
-      uri,
+      Uri.parse('$baseUrl/deleteImagen'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'url': url}),
     );
@@ -107,55 +178,6 @@ Future<void> deleteImagen(String url) async {
       print('No se pudo borrar la imagen $url');
     }
   } catch (e) {
-    print('Error llamando a deleteImagen: $e');
-  }
-}
-
-Future<bool> deleteFlora(String nombreCientifico) async {
-  final url = Uri.parse('$baseUrl/delete/$nombreCientifico');
-  try {
-    final response = await http.delete(url);
-    final resp = jsonDecode(response.body);
-    if (resp['ok'] != true) {
-      print('llamada Flora mal');
-      return resp;
-    } else {
-      print('llamada Flora bien');
-      print('datos: $resp');
-    }
-    return true;
-  } catch (e) {
-    print(e);
-    return false;
-  }
-}
-
-Future<bool> updateFlora(Especie especie) async {
-  final url = Uri.parse('$baseUrl/update/${especie.nombreCientifico}');
-  final payload = {
-    'filas': [especie.toJson()],
-  };
-  try {
-    final response = await http
-        .patch(
-          url,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(payload),
-        )
-        .timeout(const Duration(seconds: 10));
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    final resp = jsonDecode(response.body);
-    if (resp['ok'] != true) {
-      print('update mal');
-      return false;
-    } else {
-      print('update bien');
-      print('datos: $resp');
-      return true;
-    }
-  } catch (e) {
-    print(e);
-    return false;
+    print('deleteImagen: $e');
   }
 }

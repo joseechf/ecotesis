@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/especie.dart';
+//import '../models/especie.dart';
+import '../../../domain/entities/especie.dart';
 import '../../estilos.dart';
+import '../../../domain/value_objects.dart';
 
 class EspecieModal extends StatelessWidget {
   final Especie especie;
@@ -16,6 +18,8 @@ class EspecieModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imagenPrincipal =
+        especie.imagenes.isNotEmpty ? especie.imagenes.first : null;
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
@@ -25,10 +29,11 @@ class EspecieModal extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen
-            especie.imagenes.isNotEmpty
-                ? Center(child: Text(especie.imagenes.first.urlFoto))
-                : const Center(child: Icon(Icons.broken_image, size: 50)),
+            /* ---------- imagen ---------- */
+            ClipRRect(
+              borderRadius: BorderRadius.circular(Estilos.radioBorde),
+              child: _imagenWidget(imagenPrincipal),
+            ),
 
             const SizedBox(height: Estilos.paddingMedio),
 
@@ -37,7 +42,7 @@ class EspecieModal extends StatelessWidget {
               _fila(
                 Icons.label,
                 'Nombres comunes',
-                especie.nombresComunes.map((n) => n.nombres).join(', '),
+                especie.nombresComunes.map((n) => n.nombreComun).join(', '),
               ),
 
             // ¿Da sombra?
@@ -127,7 +132,7 @@ class EspecieModal extends StatelessWidget {
               _fila(
                 Icons.build,
                 'Utilidades',
-                especie.utilidades.map((u) => u.utilpara).join(', '),
+                especie.utilidades.map((u) => u.utilidad).join(', '),
               ),
 
             // Orígenes
@@ -191,5 +196,36 @@ class EspecieModal extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Decide cómo renderizar la imagen principal
+  Widget _imagenWidget(ImagenTemp? img) {
+    if (img == null) {
+      return const Center(child: Icon(Icons.broken_image, size: 50));
+    }
+
+    if (img.bytes != null) {
+      return Image.memory(
+        img.bytes!,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      );
+    }
+
+    if (img.urlFoto.isNotEmpty) {
+      return Image.network(
+        img.urlFoto,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder:
+            (_, __, ___) => Image.asset(
+              'assets/placeholder.png',
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+      );
+    }
+
+    return const Center(child: Icon(Icons.broken_image, size: 50));
   }
 }

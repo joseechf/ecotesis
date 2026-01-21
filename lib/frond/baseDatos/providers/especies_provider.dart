@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import '../models/especie.dart';
+import '../../../domain/entities/especie.dart';
+import '../../../data/mappers/especie_mapper.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
-//debug
 import 'package:flutter/foundation.dart';
 
 import '../../../backend/llamadasRemotas/llamadasFlora.dart';
 import '../../../backend/llamadasLocales/llamadasFlora.dart';
-
 import '../../../validarRed.dart';
+import '../../../domain/value_objects.dart';
 
 class EspeciesProvider with ChangeNotifier {
   final List<Especie> _especies = [];
   bool _cargandoData = false;
+  bool _insertando = false;
   bool get cargandoData => _cargandoData;
   List<Especie> get especies => _especies;
 
@@ -21,268 +22,258 @@ class EspeciesProvider with ChangeNotifier {
   String get filtro => _filtro;
 
   Future<String> _elegirBD() async {
-    if (kIsWeb) {
-      return 'remoto';
-    }
-
+    if (kIsWeb) return 'remoto';
     if (Platform.isAndroid || Platform.isIOS) {
       final hayInternet = await validarRed();
       return hayInternet ? 'remoto' : 'local';
     }
-
     return 'remoto';
   }
 
   Future<void> cargarFlora() async {
-    String respuesta = await _elegirBD();
-    if (respuesta.contains('remoto')) {
-      debugPrint('[FLORA] cargando remoto');
-      await cargarFloraR();
-    }
-    if (respuesta.contains('local')) {
-      debugPrint('[FLORA] cargando local');
-      await cargarFloraL();
-    }
-  }
-
-  Future<void> insertar(Especie nueva) async {
-    String respuesta = await _elegirBD();
-    if (respuesta.contains('remoto')) {
-      debugPrint('[FLORA] insertar Remoto');
-      await insertarR(nueva);
-    }
-    if (respuesta.contains('local')) {
-      debugPrint('[FLORA] insertar local');
-      await insertarL(nueva);
-    }
-  }
-
-  Future<bool> update(Especie nueva) async {
-    String respuesta = await _elegirBD();
-    bool res = false;
-    if (respuesta.contains('remoto')) {
-      debugPrint('[FLORA] update Remoto');
-      res = await updateFloraR(nueva);
-    }
-    if (respuesta.contains('local')) {
-      debugPrint('[FLORA] update local');
-      res = await updateFloraL(nueva);
-    }
-    return res;
-  }
-
-  Future<void> cargarFloraR() async {
+    final destino = await _elegirBD();
     _cargandoData = true;
     notifyListeners();
     try {
-      final especiesBD = await getFlora().timeout(Duration(seconds: 20));
-      _especies.clear();
-
-      if (especiesBD['ok'] == true) {
-        final List<Especie> resultadoFormateado =
-            (especiesBD['respuesta'] as List<dynamic>)
-                .map<Especie>((fila) => Especie.jsonToEspecie(fila))
-                .toList();
-        print('El resultado  del get: ${resultadoFormateado}');
-        _especies.addAll(resultadoFormateado);
+      if (destino == 'remoto') {
+        final dtos = await getFloraRemoto().timeout(
+          const Duration(seconds: 20),
+        );
+        _especies.clear();
+        _especies.addAll(
+          dtos.map((dto) => EspecieMapper.fromDto(dto)).toList(),
+        );
       } else {
-        print('La consulta GET salio mal');
-        print('$especiesBD');
-      }
-
-      _cargandoData = false;
-      notifyListeners();
-    } on TimeoutException catch (_) {
-      print('La operación tardó demasiado');
-      _cargandoData = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> cargarFloraL() async {
-    _cargandoData = true;
-    notifyListeners();
-    try {
-      final respuesta = await cargarFloraLocal();
-      _especies.clear();
-      for (var mapa in respuesta) {
-        _especies.add(Especie.fromLocal(mapa));
+        final especies = await cargarFloraLocal();
+        _especies.clear();
+        _especies.addAll(especies);
       }
     } catch (e) {
-      print(e);
+      debugPrint('[Provider] error al cargar: $e');
     } finally {
       _cargandoData = false;
       notifyListeners();
     }
   }
 
+  Future<void> insertar(Especie nueva, {List<Uint8List>? imgsBytes}) async {
+    if (_insertando) {
+      debugPrint(' insertar bloqueado: ya en progreso');
+      return;
+    }
+
+    _insertando = true;
+    debugPrint(' insertar iniciado');
+
+    try {
+      final destino = await _elegirBD();
+      if (destino == 'remoto') {
+        await _insertarRemoto(nueva, imgsBytes ?? []);
+      } else {
+        await _insertarLocal(nueva);
+      }
+    } finally {
+      _insertando = false;
+      debugPrint('⏹ insertar finalizado');
+    }
+  }
+
+  Future<bool> update(Especie nueva, {List<Uint8List>? imgsBytes}) async {
+    final destino = await _elegirBD();
+    return destino == 'remoto'
+        ? await _updateRemoto(nueva, imgsBytes ?? [])
+        : await _updateLocal(nueva);
+  }
+
+  Future<void> eliminar(String nombreCientifico) async {
+    final destino = await _elegirBD();
+    if (destino == 'remoto') {
+      final ok = await deleteFloraRemoto(nombreCientifico);
+      if (ok)
+        _especies.removeWhere((e) => e.nombreCientifico == nombreCientifico);
+    } else {
+      final ok = await deleteFloraLocal(nombreCientifico);
+      if (ok)
+        _especies.removeWhere((e) => e.nombreCientifico == nombreCientifico);
+    }
+    notifyListeners();
+  }
+
+  /* ----------  privados ---------- */
+  Future<void> _insertarRemoto(Especie nueva, List<Uint8List> bytesList) async {
+    final List<ImagenTemp> uploaded = [];
+
+    debugPrint('--- [_insertarRemoto] INICIO ---');
+    debugPrint('Nombre científico: ${nueva.nombreCientifico}');
+    debugPrint('Cantidad de imágenes (bytes): ${bytesList.length}');
+
+    try {
+      /* ---------- 1. Subir imágenes ---------- */
+      for (int i = 0; i < bytesList.length; i++) {
+        debugPrint('Subiendo imagen ${i + 1}/${bytesList.length}');
+
+        final url = await insertImagen(bytesList[i], nueva.nombreCientifico);
+
+        debugPrint('URL recibida: "$url"');
+
+        if (url.isEmpty) {
+          throw Exception('Upload fallido: URL vacía');
+        }
+
+        uploaded.add(ImagenTemp(urlFoto: url, estado: 'comprobado'));
+      }
+
+      debugPrint('Imágenes subidas correctamente: ${uploaded.length}');
+
+      /* ---------- 2. Construir Especie SOLO con URLs ---------- */
+      final especieConImagenes = Especie(
+        nombreCientifico: nueva.nombreCientifico,
+        daSombra: nueva.daSombra,
+        florDistintiva: nueva.florDistintiva,
+        frutaDistintiva: nueva.frutaDistintiva,
+        saludSuelo: nueva.saludSuelo,
+        huespedes: nueva.huespedes,
+        formaCrecimiento: nueva.formaCrecimiento,
+        pionero: nueva.pionero,
+        polinizador: nueva.polinizador,
+        ambiente: nueva.ambiente,
+        nativoAmerica: nueva.nativoAmerica,
+        nativoPanama: nueva.nativoPanama,
+        nativoAzuero: nueva.nativoAzuero,
+        estrato: nueva.estrato,
+        nombresComunes: nueva.nombresComunes,
+        utilidades: nueva.utilidades,
+        origenes: nueva.origenes,
+
+        imagenes: uploaded,
+      );
+
+      debugPrint('Especie construida, enviando a API...');
+      debugPrint('Imágenes en DTO: ${uploaded.map((e) => e.urlFoto).toList()}');
+
+      /* ---------- 3. Enviar a API ---------- */
+      final dto = especieConImagenes.toDto();
+      final ok = await insertFloraRemoto(dto);
+
+      debugPrint('Respuesta insertFloraRemoto: $ok');
+
+      if (!ok) {
+        throw Exception('Insert remoto fallido');
+      }
+
+      /* ---------- 4. Actualizar memoria ---------- */
+      _especies.add(especieConImagenes);
+
+      debugPrint('--- [_insertarRemoto] FIN OK ---');
+    } catch (e, s) {
+      debugPrint(' Error en _insertarRemoto: $e');
+      debugPrintStack(stackTrace: s);
+
+      /* ---------- rollback imágenes ---------- */
+      for (final img in uploaded) {
+        if (img.urlFoto.isNotEmpty) {
+          await deleteImagen(img.urlFoto);
+          debugPrint('Rollback imagen: ${img.urlFoto}');
+        }
+      }
+
+      rethrow;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> _insertarLocal(Especie nueva) async {
+    final ok = await insertFloraLocal([nueva]);
+    if (ok) await cargarFlora();
+  }
+
+  Future<bool> _updateRemoto(Especie nueva, List<Uint8List> bytesList) async {
+    final uploaded = <ImagenTemp>[];
+
+    try {
+      // 1. Subir cada imagen
+      for (final bytes in bytesList) {
+        final url = await insertImagen(bytes, nueva.nombreCientifico);
+        if (url.isEmpty) throw Exception('Upload fallido');
+
+        uploaded.add(ImagenTemp(urlFoto: url, estado: 'comprobado'));
+      }
+
+      // 2. construir Especie con URLs completas
+      final especieConUrls = Especie(
+        nombreCientifico: nueva.nombreCientifico,
+        daSombra: nueva.daSombra,
+        florDistintiva: nueva.florDistintiva,
+        frutaDistintiva: nueva.frutaDistintiva,
+        saludSuelo: nueva.saludSuelo,
+        huespedes: nueva.huespedes,
+        formaCrecimiento: nueva.formaCrecimiento,
+        pionero: nueva.pionero,
+        polinizador: nueva.polinizador,
+        ambiente: nueva.ambiente,
+        nativoAmerica: nueva.nativoAmerica,
+        nativoPanama: nueva.nativoPanama,
+        nativoAzuero: nueva.nativoAzuero,
+        estrato: nueva.estrato,
+        nombresComunes: nueva.nombresComunes,
+        utilidades: nueva.utilidades,
+        origenes: nueva.origenes,
+        imagenes: [...nueva.imagenes, ...uploaded],
+      );
+
+      // 3. convertir a DTO y enviar
+      final dto = especieConUrls.toDto();
+      final ok = await updateFloraRemoto(dto);
+      if (!ok) throw Exception('Update remoto fallido');
+
+      // 4. actualizar lista en memoria
+      final index = _especies.indexWhere(
+        (e) => e.nombreCientifico == nueva.nombreCientifico,
+      );
+      if (index != -1) _especies[index] = especieConUrls;
+      return true;
+    } catch (e) {
+      for (final img in uploaded) {
+        if (img.urlFoto.isNotEmpty) {
+          await deleteImagen(img.urlFoto);
+        }
+      }
+      return false;
+    }
+  }
+
+  Future<bool> _updateLocal(Especie nueva) async {
+    final ok = await updateFloraLocal(nueva);
+    if (ok) {
+      final index = _especies.indexWhere(
+        (e) => e.nombreCientifico == nueva.nombreCientifico,
+      );
+      if (index != -1) _especies[index] = nueva;
+    }
+    notifyListeners();
+    return ok;
+  }
+
+  /* ----------  filtros (sin cambios) ---------- */
   List<Especie> get especiesFiltradas {
     if (_filtro == 'all') return _especies;
-    List<Especie> _especiesFiltradas = [];
-    if (_filtro == 'Flor distintiva') {
-      _especiesFiltradas =
-          _especies.where((e) => e.florDistintiva != null).toList();
-    }
-    if (_filtro == 'Fruta distintiva') {
-      _especiesFiltradas =
-          _especies.where((e) => e.frutaDistintiva != null).toList();
-    }
-    if (_filtro == 'Salud del suelo') {
-      _especiesFiltradas = _especies.where((e) => e.saludSuelo == 1).toList();
-    }
-    return _especiesFiltradas;
+    return _especies.where((e) {
+      switch (_filtro) {
+        case 'Flor distintiva':
+          return e.florDistintiva != null;
+        case 'Fruta distintiva':
+          return e.frutaDistintiva != null;
+        case 'Salud del suelo':
+          return e.saludSuelo == 1;
+        default:
+          return true;
+      }
+    }).toList();
   }
 
   void setFiltro(String valor) {
     _filtro = valor;
     notifyListeners();
-  }
-
-  Future<void> eliminar(String nombreCientifico) async {
-    try {
-      final resp = await deleteFlora(nombreCientifico);
-      if (resp) {
-        print('datos eliminado en bd');
-        _especies.removeWhere((e) => e.nombreCientifico == nombreCientifico);
-      } else {
-        print('no se elimino en bd');
-      }
-    } catch (e) {
-      print('$e');
-    }
-
-    notifyListeners();
-  }
-
-  Future<bool> updateFloraR(Especie fila) async {
-    final List<String> urlsSubidas = [];
-    try {
-      if (fila.imagenes.isNotEmpty) {
-        for (final img in fila.imagenes) {
-          if (img.bytes != null) {
-            print('llamando a imagen');
-            final String url = await insertImagen(
-              img.bytes!,
-              fila.nombreCientifico,
-            );
-            if (url.isEmpty) throw Exception('Error al subir imagen');
-            urlsSubidas.add(url);
-            img.urlFoto = url;
-            img.bytes = null;
-          }
-        }
-      }
-
-      final resp = await updateFlora(fila);
-      if (!resp) throw Exception('Falló la inserción en BD');
-      if (resp) {
-        //_especies.add(fila);
-        print('datos actualizados en bd');
-      }
-      notifyListeners();
-      return resp;
-    } catch (e) {
-      print(e);
-      for (final u in urlsSubidas) {
-        await deleteImagen(u);
-      }
-      return false;
-    }
-  }
-
-  Future<bool> updateFloraL(Especie fila) async {
-    try {
-      debugPrint('[FLORA] update SQLite (delegado)');
-
-      final bool resp = await updateFloraLocal(fila);
-
-      if (!resp) {
-        throw Exception('Falló update en SQLite');
-      }
-
-      /// Actualizar la lista en memoria
-      final index = _especies.indexWhere(
-        (e) => e.nombreCientifico == fila.nombreCientifico,
-      );
-
-      if (index != -1) {
-        _especies[index] = fila;
-      }
-
-      notifyListeners();
-      return true;
-    } catch (e, s) {
-      debugPrint('[FLORA] error update local: $e');
-      debugPrintStack(stackTrace: s);
-      return false;
-    }
-  }
-
-  Future<void> insertarR(Especie nueva) async {
-    final List<String> urlsSubidas = [];
-    try {
-      for (final img in nueva.imagenes) {
-        if (img.bytes == null) {
-          throw Exception('Imagen no seleccionada correctamente');
-        }
-        final String url = await insertImagen(
-          img.bytes!,
-          nueva.nombreCientifico,
-        );
-        if (url.isEmpty) throw Exception('Error al subir imagen');
-        urlsSubidas.add(url);
-        img.urlFoto = url;
-        img.bytes = null;
-      }
-
-      final resp = await insertFloraRemoto(nueva);
-      if (!resp) throw Exception('Falló la inserción en BD');
-      _especies.add(nueva);
-      print('datos insertados en bd');
-    } catch (e) {
-      print('Error en insertar: $e');
-      for (final u in urlsSubidas) {
-        await deleteImagen(u);
-      }
-      rethrow;
-    }
-    notifyListeners();
-  }
-
-  //insert offline-first
-
-  Future<void> insertarL(Especie nuevaEspecie) async {
-    try {
-      bool guardadoLocal = await insertFloraLocal([nuevaEspecie.toJson()]);
-
-      if (guardadoLocal) {
-        cargarFloraL();
-
-        // 2. INTENTAR SINCRONIZAR (Opcional/Segundo plano)
-        // No bloqueamos al usuario. Si hay internet, se envía; si no, queda en SQLite.
-        //_intentarSincronizarRemoto(nuevaEspecie);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void normalizarEspecie(Especie especie) {
-    // Creamos nuevas listas filtradas (Inmutabilidad)
-    especie.nombresComunes =
-        especie.nombresComunes
-            .where((e) => e.nombres.trim().isNotEmpty)
-            .toList();
-
-    especie.utilidades =
-        especie.utilidades.where((e) => e.utilpara.trim().isNotEmpty).toList();
-
-    especie.origenes =
-        especie.origenes.where((e) => e.origen.trim().isNotEmpty).toList();
-
-    especie.imagenes =
-        especie.imagenes
-            .where((e) => e.bytes != null || e.urlFoto.trim().isNotEmpty)
-            .toList();
   }
 }

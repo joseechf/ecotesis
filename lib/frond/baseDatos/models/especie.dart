@@ -1,3 +1,4 @@
+/*
 import 'dart:typed_data';
 
 class Especie {
@@ -204,3 +205,4 @@ class Imagen {
 
   Map<String, dynamic> toJson() => {'urlFoto': urlFoto, 'estado': estado};
 }
+*/

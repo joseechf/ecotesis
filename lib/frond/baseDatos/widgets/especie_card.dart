@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/especie.dart';
+import '../../../domain/entities/especie.dart';
 import '../../estilos.dart';
+import '../../../domain/value_objects.dart';
 
 class EspecieCard extends StatelessWidget {
   final Especie especie;
@@ -10,6 +11,8 @@ class EspecieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imagenPrincipal =
+        especie.imagenes.isNotEmpty ? especie.imagenes.first : null;
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -24,25 +27,10 @@ class EspecieCard extends StatelessWidget {
           children: [
             SizedBox(
               height: 200,
-              child:
-                  especie.imagenes.isNotEmpty
-                      ? ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          Estilos.radioBordeGrande,
-                        ),
-                        child: Image.network(
-                          especie.imagenes.first.urlFoto,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder:
-                              (_, __, ___) => Image.asset(
-                                'assets/placeholder.png',
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                        ),
-                      )
-                      : const Center(child: Icon(Icons.broken_image, size: 50)),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
+                child: _imagenWidget(imagenPrincipal),
+              ),
             ),
 
             Padding(
@@ -101,7 +89,8 @@ class EspecieCard extends StatelessWidget {
                               const ClampingScrollPhysics(), // scroll dentro del Row
                           itemCount: especie.nombresComunes.length,
                           itemBuilder:
-                              (_, i) => Text(especie.nombresComunes[i].nombres),
+                              (_, i) =>
+                                  Text(especie.nombresComunes[i].nombreComun),
                         ),
                       ),
                     ],
@@ -114,5 +103,36 @@ class EspecieCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Decide cómo renderizar la imagen principal
+  Widget _imagenWidget(ImagenTemp? img) {
+    if (img == null) {
+      return const Center(child: Icon(Icons.broken_image, size: 50));
+    }
+
+    if (img.bytes != null) {
+      return Image.memory(
+        img.bytes!,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      );
+    }
+
+    if (img.urlFoto.isNotEmpty) {
+      return Image.network(
+        img.urlFoto,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder:
+            (_, __, ___) => Image.asset(
+              'assets/placeholder.png',
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+      );
+    }
+
+    return const Center(child: Icon(Icons.broken_image, size: 50));
   }
 }

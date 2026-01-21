@@ -58,6 +58,11 @@ dependencies:
   universal_html: ^2.3.0
   # extencion de la imagen 
   image:
+  # calcular hash para sincronizacion
+  crypto: ^3.0.3
+  # para especie_dto
+  json_annotation: ^4.8.1 
+
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +74,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  # para especie_dto
+  build_runner: ^2.4.6        # generador
+  json_serializable: ^6.7.1   # genera el .g.dart
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/especie.dart';
+//import '../models/especie.dart';
 import '../providers/especies_provider.dart';
 import '../widgets/especie_card.dart';
 import '../widgets/especie_modal.dart';
 import '../widgets/filtro_dialog.dart';
 import '../widgets/insertar_dialog.dart';
 import '../../estilos.dart';
+import '../../../domain/entities/especie.dart';
 import '../../iureutilizables/widgetpersonalizados.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../iureutilizables/custom_appbar.dart';
@@ -166,7 +167,6 @@ class _CatalogoPageState extends State<CatalogoPage> {
           (_) => EspecieModal(
             especie: especie,
             onEditar: () async {
-              //await mostrarTarjetaDialog(context, especie);
               final especieEditada = await mostrarEditarDialog(
                 context,
                 especie,

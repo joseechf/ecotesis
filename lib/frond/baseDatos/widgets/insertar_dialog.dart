@@ -1,38 +1,32 @@
 import 'package:flutter/material.dart';
-import '../models/especie.dart';
+import '../../../domain/entities/especie.dart';
+import '../../../domain/value_objects.dart';
 import '../../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../providers/especies_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:typed_data';
 
 Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
+  /* ---------- controllers básicos ---------- */
   final nombreCientifico = TextEditingController();
   final florDistintiva = TextEditingController();
   final frutaDistintiva = TextEditingController();
   final estrato = TextEditingController();
 
-  bool daSombra = false;
-  bool saludSuelo = false;
-  bool pionero = false;
-  bool nativoAmerica = false;
-  bool nativoPanama = false;
-  bool nativoAzuero = false;
+  bool daSombra = false, saludSuelo = false, pionero = false;
+  bool nativoAmerica = false, nativoPanama = false, nativoAzuero = false;
 
-  String huespedes = 'vacio';
-  String formaCrecimiento = 'vacio';
-  String polinizador = 'vacio';
-  String ambiente = 'vacio';
+  String? huespedes, formaCrecimiento, polinizador, ambiente;
 
-  final nuevaEspecie = Especie(
-    nombreCientifico: '',
-    nombresComunes: [NombreComun(nombres: '')],
-    utilidades: [Utilidad(utilpara: '')],
-    origenes: [Origen(origen: '')],
-    imagenes: [Imagen(urlFoto: '', estado: '')],
-  );
+  /* ---------- datos de pantalla (temporales) ---------- */
+  final nombresComunes = <NombreComun>[NombreComun(nombreComun: '')];
+  final utilidades = <Utilidad>[Utilidad(utilidad: '')];
+  final origenes = <Origen>[Origen(origen: '')];
+  final imagenesTemp = <ImagenTemp>[ImagenTemp()]; // bytes + url provisional
 
+  /* ---------- diálogo ---------- */
   return await showDialog<Especie>(
     context: context,
     builder:
@@ -52,34 +46,24 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
               content: SingleChildScrollView(
                 child: Column(
                   children: [
+                    /* campos básicos (sin cambios) */
                     TextField(
                       controller: nombreCientifico,
                       decoration: InputDecoration(
                         labelText: context.tr('bdInterfaz.insert.Nlatin'),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     CheckboxListTile(
                       title: Text(context.tr('bdInterfaz.insert.daSombra')),
                       value: daSombra,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          daSombra = nuevoValor!;
-                        });
-                      },
+                      onChanged: (v) => setState(() => daSombra = v!),
                     ),
-
-                    SizedBox(height: 20),
                     CheckboxListTile(
                       title: Text(context.tr('bdInterfaz.insert.saludSuelo')),
                       value: saludSuelo,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          saludSuelo = nuevoValor!;
-                        });
-                      },
+                      onChanged: (v) => setState(() => saludSuelo = v!),
                     ),
-                    SizedBox(height: 20),
                     TextField(
                       controller: florDistintiva,
                       decoration: InputDecoration(
@@ -88,7 +72,6 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
                     TextField(
                       controller: frutaDistintiva,
                       decoration: InputDecoration(
@@ -97,136 +80,66 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: huespedes,
-                      items: [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(
-                          value: 'Aves',
-                          child: Text(context.tr('bdInterfaz.insert.Ave')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Mono',
-                          child: Text(context.tr('bdInterfaz.insert.Mono')),
-                        ),
-                      ],
-                      onChanged: (val) => setState(() => huespedes = val!),
+                      items: _dropItems(context, ['Aves', 'Mono']),
+                      onChanged: (v) => setState(() => huespedes = v!),
                       decoration: InputDecoration(
                         labelText: context.tr('bdInterfaz.insert.huespedes'),
                       ),
                     ),
-                    SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: formaCrecimiento,
-                      items: [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(
-                          value: 'Rapido',
-                          child: Text(context.tr('bdInterfaz.insert.Rapido')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Lento',
-                          child: Text(context.tr('bdInterfaz.insert.Lento')),
-                        ),
-                      ],
-                      onChanged:
-                          (val) => setState(() => formaCrecimiento = val!),
+                      items: _dropItems(context, ['Rapido', 'Lento']),
+                      onChanged: (v) => setState(() => formaCrecimiento = v!),
                       decoration: InputDecoration(
                         labelText: context.tr(
                           'bdInterfaz.insert.formaCrecimiento',
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
                     CheckboxListTile(
                       title: Text(context.tr('bdInterfaz.insert.pionero')),
                       value: pionero,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          pionero = nuevoValor!;
-                        });
-                      },
+                      onChanged: (v) => setState(() => pionero = v!),
                     ),
-                    SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: polinizador,
-                      items: [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(
-                          value: 'Mariposa',
-                          child: Text(context.tr('bdInterfaz.insert.Mariposa')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Abeja',
-                          child: Text(context.tr('bdInterfaz.insert.Abeja')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Mixto',
-                          child: Text(context.tr('bdInterfaz.insert.Mixto')),
-                        ),
-                      ],
-                      onChanged: (val) => setState(() => polinizador = val!),
+                      items: _dropItems(context, [
+                        'Mariposa',
+                        'Abeja',
+                        'Mixto',
+                      ]),
+                      onChanged: (v) => setState(() => polinizador = v!),
                       decoration: InputDecoration(
                         labelText: context.tr('bdInterfaz.insert.polinizador'),
                       ),
                     ),
-                    SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       initialValue: ambiente,
-                      items: [
-                        DropdownMenuItem(value: 'vacio', child: Text('')),
-                        DropdownMenuItem(
-                          value: 'Seco',
-                          child: Text(context.tr('bdInterfaz.insert.Seco')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Humedo',
-                          child: Text(context.tr('bdInterfaz.insert.Humedo')),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Mixto',
-                          child: Text(context.tr('bdInterfaz.insert.Mixto')),
-                        ),
-                      ],
-                      onChanged: (val) => setState(() => ambiente = val!),
+                      items: _dropItems(context, ['Seco', 'Humedo', 'Mixto']),
+                      onChanged: (v) => setState(() => ambiente = v!),
                       decoration: InputDecoration(
                         labelText: context.tr('bdInterfaz.insert.ambiente'),
                       ),
                     ),
-                    SizedBox(height: 20),
                     CheckboxListTile(
                       title: Text(
                         context.tr('bdInterfaz.insert.nativoAmericano'),
                       ),
                       value: nativoAmerica,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          nativoAmerica = nuevoValor!;
-                        });
-                      },
+                      onChanged: (v) => setState(() => nativoAmerica = v!),
                     ),
-                    SizedBox(height: 20),
                     CheckboxListTile(
                       title: Text(context.tr('bdInterfaz.insert.nativoPanama')),
                       value: nativoPanama,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          nativoPanama = nuevoValor!;
-                        });
-                      },
+                      onChanged: (v) => setState(() => nativoPanama = v!),
                     ),
-                    SizedBox(height: 20),
                     CheckboxListTile(
                       title: Text(context.tr('bdInterfaz.insert.nativoAzuero')),
                       value: nativoAzuero,
-                      onChanged: (nuevoValor) {
-                        setState(() {
-                          nativoAzuero = nuevoValor!;
-                        });
-                      },
+                      onChanged: (v) => setState(() => nativoAzuero = v!),
                     ),
-                    SizedBox(height: 20),
                     TextField(
                       controller: estrato,
                       decoration: InputDecoration(
@@ -234,43 +147,41 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                       ),
                     ),
 
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+                    /* Vectores de VO (sin cambios) */
                     campoVectorGenerico<NombreComun>(
-                      items: nuevaEspecie.nombresComunes,
+                      items: nombresComunes,
                       setState: setState,
                       label: context.tr('bdInterfaz.insert.Ncomun'),
-                      getValor: (n) => n.nombres,
-                      setValor: (n, v) => n.nombres = v,
-                      crearVacio: () => NombreComun(nombres: ''),
+                      getValor: (n) => n.nombreComun,
+                      setValor: (n, v) => n.nombreComun = v,
+                      crearVacio: () => NombreComun(nombreComun: ''),
                     ),
-                    SizedBox(height: 20),
-
+                    const SizedBox(height: 20),
                     campoVectorGenerico<Utilidad>(
-                      items: nuevaEspecie.utilidades,
+                      items: utilidades,
                       setState: setState,
                       label: context.tr('bdInterfaz.insert.Utilidad'),
-                      getValor: (u) => u.utilpara,
-                      setValor: (u, v) => u.utilpara = v,
-                      crearVacio: () => Utilidad(utilpara: ''),
+                      getValor: (u) => u.utilidad,
+                      setValor: (u, v) => u.utilidad = v,
+                      crearVacio: () => Utilidad(utilidad: ''),
                     ),
-
-                    SizedBox(height: 20),
-
+                    const SizedBox(height: 20),
                     campoVectorGenerico<Origen>(
-                      items: nuevaEspecie.origenes,
+                      items: origenes,
                       setState: setState,
                       label: context.tr('bdInterfaz.insert.Ubicacion'),
                       getValor: (o) => o.origen,
                       setValor: (o, v) => o.origen = v,
                       crearVacio: () => Origen(origen: ''),
                     ),
-
-                    SizedBox(height: 20),
-
-                    campoVectorImagenes(
-                      items: nuevaEspecie.imagenes,
-                      setState: setState,
+                    const SizedBox(height: 20),
+                    /* Selector de imágenes (con bytes temporales) */
+                    Text(
+                      context.tr('bdInterfaz.insert.imagenes'),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
+                    campoImagenTemp(items: imagenesTemp, setState: setState),
                   ],
                 ),
               ),
@@ -281,36 +192,68 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    nuevaEspecie.nombreCientifico = nombreCientifico.text;
-                    nuevaEspecie.daSombra = daSombra ? 1 : 0;
-                    nuevaEspecie.saludSuelo = saludSuelo ? 1 : 0;
-                    nuevaEspecie.florDistintiva =
-                        florDistintiva.text != '' ? florDistintiva.text : null;
-                    nuevaEspecie.frutaDistintiva =
-                        frutaDistintiva.text != ''
-                            ? frutaDistintiva.text
-                            : null;
-                    nuevaEspecie.huespedes =
-                        huespedes != 'vacio' ? huespedes : null;
-                    nuevaEspecie.formaCrecimiento =
-                        formaCrecimiento != 'vacio' ? formaCrecimiento : null;
-                    nuevaEspecie.pionero = pionero ? 1 : 0;
-                    nuevaEspecie.polinizador =
-                        polinizador != 'vacio' ? polinizador : null;
-                    nuevaEspecie.ambiente =
-                        ambiente != 'vacio' ? ambiente : null;
-                    nuevaEspecie.nativoAmerica = nativoAmerica ? 1 : 0;
-                    nuevaEspecie.nativoPanama = nativoPanama ? 1 : 0;
-                    nuevaEspecie.nativoAzuero = nativoAzuero ? 1 : 0;
-                    nuevaEspecie.estrato =
-                        estrato.text != '' ? estrato.text : null;
+                    /* ---------- construir VO limpios ---------- */
+                    final nombresLimpios =
+                        nombresComunes
+                            .where((n) => n.nombreComun.trim().isNotEmpty)
+                            .toList();
+                    final utilidadesLimpias =
+                        utilidades
+                            .where((u) => u.utilidad.trim().isNotEmpty)
+                            .toList();
+                    final origenesLimpios =
+                        origenes
+                            .where((o) => o.origen.trim().isNotEmpty)
+                            .toList();
 
-                    context.read<EspeciesProvider>().normalizarEspecie(
-                      nuevaEspecie,
+                    /* ---------- crear Especie (dominio) ---------- */
+                    final especieDominio = Especie(
+                      nombreCientifico: nombreCientifico.text.trim(),
+                      daSombra: daSombra ? 1 : 0,
+                      saludSuelo: saludSuelo ? 1 : 0,
+                      florDistintiva:
+                          florDistintiva.text.trim().isEmpty
+                              ? null
+                              : florDistintiva.text.trim(),
+                      frutaDistintiva:
+                          frutaDistintiva.text.trim().isEmpty
+                              ? null
+                              : frutaDistintiva.text.trim(),
+                      huespedes: huespedes,
+                      formaCrecimiento: formaCrecimiento,
+                      pionero: pionero ? 1 : 0,
+                      polinizador: polinizador,
+                      ambiente: ambiente,
+                      nativoAmerica: nativoAmerica ? 1 : 0,
+                      nativoPanama: nativoPanama ? 1 : 0,
+                      nativoAzuero: nativoAzuero ? 1 : 0,
+                      estrato:
+                          estrato.text.trim().isEmpty
+                              ? null
+                              : estrato.text.trim(),
+                      nombresComunes: nombresLimpios,
+                      utilidades: utilidadesLimpias,
+                      origenes: origenesLimpios,
+                      imagenes:
+                          imagenesTemp
+                              .where(
+                                (i) => i.bytes != null || i.urlFoto.isNotEmpty,
+                              )
+                              .toList(),
                     );
+
+                    /* ---------- bytes seleccionados ---------- */
+                    final bytesList =
+                        imagenesTemp
+                            .map((i) => i.bytes)
+                            .whereType<Uint8List>()
+                            .toList();
+
+                    /* ---------- guardar ---------- */
                     try {
                       await context.read<EspeciesProvider>().insertar(
-                        nuevaEspecie,
+                        especieDominio,
+                        imgsBytes: bytesList,
                       );
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -318,6 +261,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                             content: Text('Especie guardada correctamente'),
                           ),
                         );
+                        Navigator.pop(context, especieDominio);
                       }
                     } catch (e) {
                       if (context.mounted) {
@@ -326,11 +270,7 @@ Future<Especie?> mostrarInsertarDialog(BuildContext context) async {
                         ).showSnackBar(SnackBar(content: Text(e.toString())));
                       }
                     }
-                    if (context.mounted) {
-                      Navigator.pop(context, nuevaEspecie);
-                    }
                   },
-
                   child: Text(context.tr('bdInterfaz.buttons.addEspecie')),
                 ),
               ],
@@ -392,86 +332,75 @@ Widget campoVectorGenerico<T>({
   );
 }
 
-Widget campoVectorImagenes({
-  required List<Imagen> items,
+Widget campoImagenTemp({
+  required List<ImagenTemp> items,
   required void Function(VoidCallback fn) setState,
 }) {
   final picker = ImagePicker();
 
-  Future<void> seleccionarImagen(int index) async {
+  Future<void> seleccionar(int idx) async {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked == null) return;
-
     final bytes = await picked.readAsBytes();
-
-    setState(() {
-      items[index].bytes = bytes;
-      items[index].estado = 'tentativo';
-      items[index].urlFoto = ''; // aún no existe
-    });
+    setState(() => items[idx].bytes = bytes);
   }
 
   return Column(
-    children: [
-      ...items.asMap().entries.map((entry) {
-        final index = entry.key;
-        final imagen = entry.value;
+    children:
+        items.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final img = entry.value;
 
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // PREVIEW
-            Container(
-              width: 80,
-              height: 80,
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-              child:
-                  imagen.bytes != null
-                      ? Image.memory(imagen.bytes!, fit: BoxFit.cover)
-                      : imagen.urlFoto.isEmpty
-                      ? const Icon(Icons.image)
-                      : imagen.urlFoto.startsWith('assets/')
-                      ? Image.asset(imagen.urlFoto, fit: BoxFit.cover)
-                      : Image.network(imagen.urlFoto, fit: BoxFit.cover),
-            ),
-
-            // BOTÓN SELECCIONAR
-            /*ElevatedButton.icon(
-              onPressed: () => seleccionarImagen(index),
-              icon: const Icon(Icons.upload),
-              label: const Text('Seleccionar'),
-            ),*/
-            IconButton(
-              onPressed: () => seleccionarImagen(index),
-              icon: const Icon(Icons.upload),
-              tooltip: 'Seleccionar',
-            ),
-            // ELIMINAR
-            IconButton(
-              icon: const Icon(Icons.remove_circle),
-              onPressed:
-                  items.length == 1
-                      ? null
-                      : () {
-                        setState(() {
-                          items.removeAt(index);
-                        });
-                      },
-            ),
-
-            // AGREGAR
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                setState(() {
-                  items.add(Imagen(urlFoto: '', estado: 'tentativo'));
-                });
-              },
-            ),
-          ],
-        );
-      }),
-    ],
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // preview
+              Container(
+                width: 80,
+                height: 80,
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                ),
+                child:
+                    img.bytes != null
+                        ? Image.memory(img.bytes!, fit: BoxFit.cover)
+                        : img.urlFoto.isEmpty
+                        ? const Icon(Icons.image)
+                        : Image.network(img.urlFoto, fit: BoxFit.cover),
+              ),
+              IconButton(
+                icon: const Icon(Icons.upload),
+                tooltip: 'Seleccionar',
+                onPressed: () => seleccionar(idx),
+              ),
+              IconButton(
+                icon: const Icon(Icons.remove_circle),
+                onPressed:
+                    items.length == 1
+                        ? null
+                        : () => setState(() => items.removeAt(idx)),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => setState(() => items.add(ImagenTemp())),
+              ),
+            ],
+          );
+        }).toList(),
   );
 }
+
+/* ---------- helpers visuales ---------- */
+List<DropdownMenuItem<String>> _dropItems(
+  BuildContext ctx,
+  List<String> values,
+) =>
+    values
+        .map(
+          (v) => DropdownMenuItem(
+            value: v,
+            child: Text(ctx.tr('bdInterfaz.insert.$v')),
+          ),
+        )
+        .toList();
