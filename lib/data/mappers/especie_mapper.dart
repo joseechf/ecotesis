@@ -1,6 +1,5 @@
 // lib/data/mappers/especie_mapper.dart
 import '../../domain/entities/especie.dart';
-import '../../domain/value_objects.dart';
 import '../models/especie_db.dart';
 import '../models/especie_dto.dart';
 

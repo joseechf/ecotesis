@@ -3,14 +3,11 @@ import 'dart:convert';
 import 'package:image/image.dart' as img;
 import '../utilidades/elegirUrldeArranque.dart';
 
-import '../../../data/models/especie_dto.dart'; // ← DTO
+import '../../../data/models/especie_dto.dart';
 import 'dart:typed_data';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/foundation.dart';
 
-/* =========================================================
-   1.  LECTURA  →  devuelve List<EspecieDto>
-   ========================================================= */
 Future<List<EspecieDto>> getFloraRemoto() async {
   final url = Uri.parse('$baseUrl/getflora');
   try {
@@ -35,7 +32,7 @@ Future<List<EspecieDto>> getFloraRemoto() async {
 Future<List<Map<String, dynamic>>> getFloraRemoteSincronizacion(
   String ultSinc,
 ) async {
-  final url = Uri.parse('$baseUrl/sincronizacion/cambios');
+  final url = Uri.parse('$baseUrl/getsincronizacion');
 
   try {
     final resp = await http.post(

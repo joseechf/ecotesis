@@ -1,19 +1,15 @@
 import 'package:sqflite/sqflite.dart';
 import '../libSinc/utilidades/calcularHash.dart';
 import 'sqliteHelper.dart';
+import 'package:flutter/foundation.dart';
 
 class TablaSyncLocal {
-  Future<List<Map<String, dynamic>>> obtenerPorTabla(String tabla) async {
+  Future<List<Map<String, dynamic>>> obtenerPendientes() async {
     final Database db = await dbLocal.instancia;
-    return await db.query(
-      'sincronizacion',
-      where: 'tabla = ?',
-      whereArgs: [tabla],
-    );
+    return await db.query('sincronizacion');
   }
 
-  //por cada cambio se registran los metadatos en la tabla de sincronizacion
-  Future<void> registrarSync({
+  Future<bool> registrarSync({
     required Transaction tx,
     required String id,
     required Map<String, Object?> fila,
@@ -29,56 +25,87 @@ class TablaSyncLocal {
     );
 
     if (existente.isEmpty) {
-      // nuevo
-      await tx.insert('sincronizacion', {
-        'id': id,
-        'isNew': 1,
-        'isUpdate': 0,
-        'isDelete': 0,
-        'hash': hash,
-        'version': 1,
-        'device': device,
-        'TIMESTAMP': DateTime.now().toIso8601String(),
-      });
-    } else {
-      // actualización
-      final versionActual = existente.first['version'] as int? ?? 1;
-
-      await tx.update(
-        'sincronizacion',
-        {
-          'isNew': 0,
-          'isUpdate': 1,
+      try {
+        // INSERT nuevo
+        await tx.insert('sincronizacion', {
+          'id': id,
+          'is_new': 1,
+          'is_update': 0,
+          'is_delete': 0,
           'hash': hash,
-          'version': versionActual + 1,
+          'version': 1,
           'device': device,
-          'TIMESTAMP': DateTime.now().toIso8601String(),
-        },
-        where: 'id = ? ',
-        whereArgs: [id],
-      );
+          'last_upd': DateTime.now().toIso8601String(),
+        });
+        debugPrint('metadatos sinc local insert ok');
+        return true;
+      } catch (e) {
+        debugPrint(' insert sinc error: $e');
+        return false;
+      }
+    } else {
+      // UPDATE existente
+      final versionActual = existente.first['version'] as int? ?? 1;
+      try {
+        await tx.update(
+          'sincronizacion',
+          {
+            'is_new': 0,
+            'is_update': 1,
+            'is_delete': 0,
+            'hash': hash,
+            'version': versionActual + 1,
+            'device': device,
+            'last_upd': DateTime.now().toIso8601String(),
+          },
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        debugPrint('metadatos sinc local update ok');
+        return true;
+      } catch (e) {
+        debugPrint(' update sinc error: $e');
+        return false;
+      }
     }
   }
 
-  Future<void> registrarUpsert(
+  Future<bool> registrarUpsert(
     Transaction tx,
-    String tabla,
     String id,
     Map<String, dynamic> fila,
   ) async {
-    await registrarSync(tx: tx, id: id, fila: fila, device: 'mobile');
+    try {
+      await registrarSync(tx: tx, id: id, fila: fila, device: 'mobile');
+      debugPrint('metadatos sinc local registro ok');
+      return true;
+    } catch (e) {
+      debugPrint(' registro upsert error: $e');
+      return false;
+    }
   }
 
-  Future<void> registrarBorrado(Transaction tx, String tabla, String id) async {
-    await tx.insert('sincronizacion', {
-      'id': id,
-      'isNew': 0,
-      'isUpdate': 0,
-      'isDelete': 1,
-      'hash': '',
-      'version': 1,
-      'device': 'mobile',
-      'TIMESTAMP': DateTime.now().toIso8601String(),
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<bool> registrarBorrado(Transaction tx, String id) async {
+    try {
+      await tx.insert('sincronizacion', {
+        'id': id,
+        'is_new': 0,
+        'is_update': 0,
+        'is_delete': 1,
+        'hash': '',
+        'version': 1,
+        'device': 'mobile',
+        'last_upd': DateTime.now().toIso8601String(),
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+      debugPrint('metadatos sinc local softdelete ok');
+      return true;
+    } catch (e) {
+      debugPrint(' registro upsert error: $e');
+      return false;
+    }
+  }
+
+  Future<void> limpiarSincronizacion(Database db) async {
+    await db.delete('sincronizacion');
   }
 }

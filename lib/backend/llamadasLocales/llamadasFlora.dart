@@ -9,9 +9,7 @@ import 'tablaSinc.dart';
 final _sync = TablaSyncLocal();
 final _db = dbLocal.instancia;
 
-/* =========================================================
-   1.  LECTURA  →  devuelve List<Especie> (dominio)
-   ========================================================= */
+// 1.  LECTURA  →  devuelve List<Especie> (dominio)
 Future<List<Especie>> cargarFloraLocal() async {
   final db = await _db;
   try {
@@ -19,71 +17,73 @@ Future<List<Especie>> cargarFloraLocal() async {
     final floraMaps = await db.query('Flora');
     if (floraMaps.isEmpty) return [];
 
-    // 1.2  para cada especie → leer tablas hijas
     final resultado = <Especie>[];
-    for (final flora in floraMaps) {
-      final nombreC = flora['nombreCientifico'] as String;
 
+    for (final flora in floraMaps) {
+      final nombreC = flora['nombre_cientifico'] as String;
+
+      // 1.2  tablas hijas
       final nombres = await db.query(
         'NombreComun',
-        where: 'nombreCientifico = ?',
-        whereArgs: [nombreC],
-      );
-      final utils = await db.query(
-        'Utilidad',
-        where: 'nombreCientifico = ?',
-        whereArgs: [nombreC],
-      );
-      final origs = await db.query(
-        'Origen',
-        where: 'nombreCientifico = ?',
+        where: 'nombre_cientifico = ?',
         whereArgs: [nombreC],
       );
 
-      // 1.3  unir todo en un único mapa “completo”
+      final utils = await db.query(
+        'Utilidad',
+        where: 'nombre_cientifico = ?',
+        whereArgs: [nombreC],
+      );
+
+      final origs = await db.query(
+        'Origen',
+        where: 'nombre_cientifico = ?',
+        whereArgs: [nombreC],
+      );
+
+      // 1.3  unir todo en un solo mapa
       final completo = Map<String, dynamic>.from(flora);
       completo['nombres_comunes'] =
-          nombres.map((r) => r['nombreComun']).toList();
+          nombres.map((r) => r['nombre_comun']).toList();
       completo['utilidades'] = utils.map((r) => r['utilidad']).toList();
       completo['origenes'] = origs.map((r) => r['origen']).toList();
 
-      // 1.4  mapa → DB model → dominio
+      // 1.4  DB → Dominio
       resultado.add(EspecieMapper.fromDb(EspecieDb.fromRow(completo)));
     }
+
     return resultado;
   } catch (e) {
-    debugPrint('cargarEspeciesLocal: $e');
+    debugPrint('cargarFloraLocal error: $e');
     return [];
   }
 }
 
-/* =========================================================
-   2.  INSERCIÓN  →  recibe List<Especie> (dominio)
-   ========================================================= */
+//   2.  INSERCIÓN  →  recibe List<Especie>
 Future<bool> insertFloraLocal(List<Especie> especies) async {
   final db = await _db;
+
   try {
     await db.transaction((txn) async {
       for (final esp in especies) {
-        // 2.1  convertir a row de SQLite
-        final row = esp.toDb().toRow();
+        //  1. INSERT / UPDATE TABLA MAESTRA (Flora)
+        final floraRow = esp.toDb().toRow();
 
-        // 2.2  guardar maestro
         await txn.insert(
           'Flora',
-          row,
+          floraRow,
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-        await _sync.registrarUpsert(txn, 'Flora', row['nombreCientifico'], row);
 
-        // 2.3  tablas hijas
+        //    2. INSERT / UPDATE TABLAS HIJAS
         await _insertarVO(
           txn,
           'NombreComun',
-          'nombreComun',
+          'nombre_comun',
           esp.nombreCientifico,
           esp.nombresComunes.map((n) => n.nombreComun),
         );
+
         await _insertarVO(
           txn,
           'Utilidad',
@@ -91,6 +91,7 @@ Future<bool> insertFloraLocal(List<Especie> especies) async {
           esp.nombreCientifico,
           esp.utilidades.map((u) => u.utilidad),
         );
+
         await _insertarVO(
           txn,
           'Origen',
@@ -98,41 +99,63 @@ Future<bool> insertFloraLocal(List<Especie> especies) async {
           esp.nombreCientifico,
           esp.origenes.map((o) => o.origen),
         );
+
+        // 3. SNAPSHOT AGRUPADO DE LA ESPECIE (PARA SINCRONIZACIÓN)
+        final hashearEspecie = {
+          'flora': floraRow,
+          'nombres_comunes':
+              esp.nombresComunes.map((n) => n.nombreComun).toList()..sort(),
+          'utilidades': esp.utilidades.map((u) => u.utilidad).toList()..sort(),
+          'origenes': esp.origenes.map((o) => o.origen).toList()..sort(),
+        };
+
+        // 4. REGISTRO ÚNICO DE SINCRONIZACIÓN POR ESPECIE
+        final ok = await _sync.registrarUpsert(
+          txn,
+          esp.nombreCientifico,
+          hashearEspecie,
+        );
+
+        if (!ok) {
+          throw 'problemas al registrar sincronización de especie';
+        }
       }
     });
+
     return true;
   } catch (e) {
-    debugPrint('insertarEspeciesLocal: $e');
+    debugPrint('insertFloraLocal error: $e');
     return false;
   }
 }
 
-/* =========================================================
-   3.  ACTUALIZACIÓN  →  una sola especie
-   ========================================================= */
+// 3.  ACTUALIZACIÓN
 Future<bool> updateFloraLocal(Especie esp) async {
   final db = await _db;
+
   try {
     await db.transaction((txn) async {
-      // 3.1  maestro
-      final row = esp.toDb().toRow();
+      final floraRow = esp.toDb().toRow();
+
       await txn.update(
         'Flora',
-        row,
-        where: 'nombreCientifico = ?',
+        floraRow,
+        where: 'nombre_cientifico = ?',
         whereArgs: [esp.nombreCientifico],
       );
-      await _sync.registrarUpsert(txn, 'Flora', esp.nombreCientifico, row);
 
-      // 3.2  borrar y reinsertar hijas
+      // borrar hijas
       await _borrarVO(txn, esp.nombreCientifico);
+
+      // reinsertar hijas
       await _insertarVO(
         txn,
         'NombreComun',
-        'nombreComun',
+        'nombre_comun',
         esp.nombreCientifico,
         esp.nombresComunes.map((n) => n.nombreComun),
       );
+
       await _insertarVO(
         txn,
         'Utilidad',
@@ -140,6 +163,7 @@ Future<bool> updateFloraLocal(Especie esp) async {
         esp.nombreCientifico,
         esp.utilidades.map((u) => u.utilidad),
       );
+
       await _insertarVO(
         txn,
         'Origen',
@@ -147,39 +171,78 @@ Future<bool> updateFloraLocal(Especie esp) async {
         esp.nombreCientifico,
         esp.origenes.map((o) => o.origen),
       );
+
+      final snapshotEspecie = {
+        'flora': floraRow,
+        'nombres_comunes':
+            esp.nombresComunes.map((n) => n.nombreComun).toList()..sort(),
+        'utilidades': esp.utilidades.map((u) => u.utilidad).toList()..sort(),
+        'origenes': esp.origenes.map((o) => o.origen).toList()..sort(),
+      };
+
+      final ok = await _sync.registrarUpsert(
+        txn,
+        esp.nombreCientifico, // 🔑 1 ID = 1 especie
+        snapshotEspecie,
+      );
+
+      if (!ok) {
+        throw 'problemas al registrar sincronización de especie';
+      }
     });
+
     return true;
   } catch (e) {
-    debugPrint('actualizarEspecieLocal: $e');
+    debugPrint('updateFloraLocal error: $e');
     return false;
   }
 }
 
-/* =========================================================
-   4.  ELIMINACIÓN
-   ========================================================= */
+//  4.  ELIMINACIÓN
 Future<bool> deleteFloraLocal(String nombreCientifico) async {
   final db = await _db;
+
   try {
     return await db.transaction((txn) async {
+      /* =========================================================
+         1. BORRAR TABLAS HIJAS
+         ========================================================= */
       await _borrarVO(txn, nombreCientifico);
+
+      /* =========================================================
+         2. BORRAR TABLA MAESTRA (Flora)
+         ========================================================= */
       final filas = await txn.delete(
         'Flora',
-        where: 'nombreCientifico = ?',
+        where: 'nombre_cientifico = ?',
         whereArgs: [nombreCientifico],
       );
-      await _sync.registrarBorrado(txn, 'Flora', nombreCientifico);
-      return filas > 0;
+
+      if (filas == 0) {
+        throw 'no existe la especie a eliminar';
+      }
+
+      /* =========================================================
+         3. REGISTRAR SOFT DELETE EN SINCRONIZACIÓN (POR ESPECIE)
+         ========================================================= */
+      final ok = await _sync.registrarBorrado(
+        txn,
+        nombreCientifico, // 🔑 1 ID = 1 especie
+      );
+
+      if (!ok) {
+        throw 'problemas al registrar softdelete en sincronización';
+      }
+
+      return true;
     });
   } catch (e) {
-    debugPrint('eliminarEspecieLocal: $e');
+    debugPrint('deleteFloraLocal error: $e');
     return false;
   }
 }
 
-/* =========================================================
-   5.  HELPERS PRIVADOS
-   ========================================================= */
+// 5.  HELPERS PRIVADOS
 Future<void> _insertarVO(
   Transaction txn,
   String tabla,
@@ -188,32 +251,43 @@ Future<void> _insertarVO(
   Iterable<String> valores,
 ) async {
   if (valores.isEmpty) return;
+
   await txn.delete(
     tabla,
-    where: 'nombreCientifico = ?',
+    where: 'nombre_cientifico = ?',
     whereArgs: [nombreCientifico],
   );
+
   for (final v in valores) {
-    final row = {'nombreCientifico': nombreCientifico, colValor: v};
-    await txn.insert(tabla, row, conflictAlgorithm: ConflictAlgorithm.replace);
-    await _sync.registrarUpsert(txn, tabla, '$nombreCientifico|$v', row);
+    final row = {'nombre_cientifico': nombreCientifico, colValor: v};
+
+    final res = await txn.insert(
+      tabla,
+      row,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    if (res != 1) throw 'problemas insert Flora local';
   }
 }
 
 Future<void> _borrarVO(Transaction txn, String nombreCientifico) async {
-  await txn.delete(
-    'NombreComun',
-    where: 'nombreCientifico = ?',
-    whereArgs: [nombreCientifico],
-  );
-  await txn.delete(
-    'Utilidad',
-    where: 'nombreCientifico = ?',
-    whereArgs: [nombreCientifico],
-  );
-  await txn.delete(
-    'Origen',
-    where: 'nombreCientifico = ?',
-    whereArgs: [nombreCientifico],
-  );
+  try {
+    await txn.delete(
+      'NombreComun',
+      where: 'nombre_cientifico = ?',
+      whereArgs: [nombreCientifico],
+    );
+    await txn.delete(
+      'Utilidad',
+      where: 'nombre_cientifico = ?',
+      whereArgs: [nombreCientifico],
+    );
+    await txn.delete(
+      'Origen',
+      where: 'nombre_cientifico = ?',
+      whereArgs: [nombreCientifico],
+    );
+  } catch (e) {
+    debugPrint('delete VO error: $e');
+  }
 }

@@ -1,15 +1,12 @@
 import 'reglas.dart';
-import 'utilidades/calcularHash.dart';
 import '../llamadasLocales/llamadasFlora.dart';
 import '../llamadasRemotas/llamadasFlora.dart';
 import '../../data/models/especie_db.dart';
 import '../../data/mappers/especie_mapper.dart';
 import '../llamadasLocales/sqliteHelper.dart';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
-/* =========================================================
-   1.  OBJETOS DE TRANSPORTE (sin cambios de lógica)
-   ========================================================= */
 class FilasPorSincronizar {
   final List<String> insertToLocal = [], updateToLocal = [], deleteToLocal = [];
   final List<String> insertToRemote = [],
@@ -43,13 +40,13 @@ class ComparadorFilas {
         if (remoto['hash'] != localFila['hash']) {
           _resolverConflicto(id, localFila, remoto);
         }
-      } else if (remoto['isdelete'] == 0) {
+      } else if (remoto['is_delete'] == 0) {
         filasSinc.insertToLocal.add(id);
       }
     }
 
     for (final String id in mapLocal.keys) {
-      if (!mapRemote.containsKey(id) && mapLocal[id]!['isdelete'] == 0) {
+      if (!mapRemote.containsKey(id) && mapLocal[id]!['is_delete'] == 0) {
         filasSinc.insertToRemote.add(id);
       }
     }
@@ -72,19 +69,16 @@ class ComparadorFilas {
 
   void _ganaRemoto(String id, Map<String, dynamic> remoto) {
     filasSinc.discardedLocal.add(id);
-    if (remoto['isupdate'] == 1) filasSinc.updateToLocal.add(id);
-    if (remoto['isdelete'] == 1) filasSinc.deleteToLocal.add(id);
+    if (remoto['is_update'] == 1) filasSinc.updateToLocal.add(id);
+    if (remoto['is_delete'] == 1) filasSinc.deleteToLocal.add(id);
   }
 
   void _ganaLocal(String id, Map<String, dynamic> local) {
-    if (local['isupdate'] == 1) filasSinc.updateToRemote.add(id);
-    if (local['isdelete'] == 1) filasSinc.deleteToRemote.add(id);
+    if (local['is_update'] == 1) filasSinc.updateToRemote.add(id);
+    if (local['is_delete'] == 1) filasSinc.deleteToRemote.add(id);
   }
 }
 
-/* =========================================================
-   2.  SINCRONIZADOR LOCAL  →  ahora recibe /devuelve dominio
-   ========================================================= */
 class SincronizadorLocal {
   Future<void> ejecutar(FilasPorSincronizar filas) async {
     // 2.1 borrados lógicos (estos sí van uno por uno)
@@ -125,9 +119,6 @@ class SincronizadorLocal {
   }
 }
 
-/* =========================================================
-   3.  SINCRONIZADOR REMOTO  →  sube cambios locales
-   ========================================================= */
 class SincronizadorRemoto {
   Future<void> ejecutar(FilasPorSincronizar filas) async {
     final db = await dbLocal.instancia;
@@ -169,9 +160,6 @@ class SincronizadorRemoto {
   }
 }
 
-/* =========================================================
-   4.  SERVICIO PRINCIPAL
-   ========================================================= */
 class SyncService {
   final FilasPorSincronizar state;
   late final ComparadorFilas detector;
@@ -190,9 +178,15 @@ class SyncService {
     //final remote = await _obtenerMetaRemoto();
 
     // 3.  Comparar solo las filas actualizadas despues de la ultima sincronizacion
-    final localMeta = await obtenerCambiosLocales();
-    final remoteMeta = await obtenerCambiosRemotos();
-
+    final ult = await db.query('ultima_sinc', limit: 1);
+    final ultSinc =
+        ult.isEmpty
+            ? '1970-01-01T00:00:00Z'
+            : ult.first['fecha_sincronizacion'] as String;
+    final localMeta = await obtenerCambiosLocales(ultSinc);
+    final remoteMeta = await obtenerCambiosRemotos(ultSinc);
+    debugPrint('metas local: $localMeta');
+    debugPrint('metas remoto: $remoteMeta');
     detector.detectar(local: localMeta, remote: remoteMeta);
 
     // 4.3  aplicar
@@ -214,45 +208,36 @@ class SyncService {
   /* obtener filas actualizadas despues de la ultima sincronizacion */
 
   // 1.  Obtener filas locales que cambiaron después de la última marca
-  Future<List<Map<String, dynamic>>> obtenerCambiosLocales() async {
+  Future<List<Map<String, dynamic>>> obtenerCambiosLocales(
+    String ultSinc,
+  ) async {
     final db = await dbLocal.instancia;
-    final ult = await db.query('ultima_sinc', limit: 1);
-    final ultSinc =
-        ult.isEmpty
-            ? '1970-01-01T00:00:00Z'
-            : ult.first['fecha_sincronizacion'] as String;
-
     return db.rawQuery(
       '''
-      SELECT s.id, s.hash, s.version, s.isnew, s.isupdate, s.isdelete, f.updated_at
+      SELECT s.id, s.hash, s.version, s.is_new, s.is_update, s.is_delete, f.last_upd
       FROM   sincronizacion s
       JOIN   Flora f ON s.id = f.nombreCientifico
-      WHERE  f.updated_at > ?
+      WHERE  f.last_upd > ?
     ''',
       [ultSinc],
     );
   }
 
   // 2.  Obtener filas remotas que cambiaron después de la misma marca
-  Future<List<Map<String, dynamic>>> obtenerCambiosRemotos() async {
-    final db = await dbLocal.instancia;
-    final ult = await db.query('ultima_sinc', limit: 1);
-    final ultSinc =
-        ult.isEmpty
-            ? '1970-01-01T00:00:00Z'
-            : ult.first['fecha_sincronizacion'] as String;
-
+  Future<List<Map<String, dynamic>>> obtenerCambiosRemotos(
+    String ultSinc,
+  ) async {
     final filasSync = await getFloraRemoteSincronizacion(ultSinc);
-    print('los metadatos de sincronizacion: ${filasSync}');
+    debugPrint('los metadatos de sincronizacion: $filasSync');
     return filasSync.map((fila) {
       return {
         'id': fila['id'],
         'hash': fila['hash'],
         'version': fila['version'],
-        'isnew': fila['isnew'],
-        'isupdate': fila['isupdate'],
-        'isdelete': fila['isdelete'],
-        'lastupd': fila['lastupd'],
+        'is_new': fila['is_new'],
+        'is_update': fila['is_update'],
+        'is_delete': fila['is_delete'],
+        'last_upd': fila['last_upd'],
       };
     }).toList();
   }
@@ -267,8 +252,8 @@ class SyncService {
         'id': id,
         'hash': calcularHash(r),
         'version': 1,
-        'isupdate': 0,
-        'isdelete': r['isDelete'] == 1 ? 1 : 0,
+        'is_update': 0,
+        'is_delete': r['isDelete'] == 1 ? 1 : 0,
       };
     }).toList();
   }
@@ -282,8 +267,8 @@ class SyncService {
         'id': id,
         'hash': calcularHash(map),
         'version': 1,
-        'isupdate': 0,
-        'isdelete': 0,
+        'is_update': 0,
+        'is_delete': 0,
       };
     }).toList();
   }*/
