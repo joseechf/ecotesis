@@ -1,4 +1,3 @@
-import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
 
 class Sembrable {

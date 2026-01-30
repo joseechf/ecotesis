@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'dart:io' show Platform;
 
@@ -20,3 +21,4 @@ String get baseUrl {
   // 4️⃣ Dispositivo físico (Android / iOS)
   return 'http://192.168.0.11:3001';
 }
+*/

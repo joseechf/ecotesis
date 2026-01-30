@@ -3,8 +3,64 @@
   "features": [
     {
       "type": "Feature",
-      "properties": { "name": "siembra1" },
-      "geometry": { "type": "Point", "coordinates": [-3.692, 40.422] }
+      "properties": {
+        "id": "siembra1",
+        "nombre_cientifico": "Mangifera indica",
+        "cantidad": 15,
+        "estado": "Activo",
+        "fecha_plantacion": "2024-11-12",
+        "usuario": "Juan Pérez"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.692, 40.422]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "siembra2",
+        "nombre_cientifico": "Psidium guajava",
+        "cantidad": 8,
+        "estado": "En crecimiento",
+        "fecha_plantacion": "2024-10-03",
+        "usuario": "María López"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.695, 40.421]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "siembra3",
+        "nombre_cientifico": "Theobroma cacao",
+        "cantidad": 20,
+        "estado": "Vivero",
+        "fecha_plantacion": "2025-01-05",
+        "usuario": "Carlos Rodríguez"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.689, 40.423]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "siembra4",
+        "nombre_cientifico": "Eriobotrya japonica",
+        "cantidad": 5,
+        "estado": "Trasplantado",
+        "fecha_plantacion": "2024-09-18",
+        "usuario": "Ana Gómez"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.694, 40.424]
+      }
     }
   ]
 }
+

@@ -1,8 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../utilidades/elegirUrldeArranque.dart';
+import 'package:ecoazuero/config/config.dart';
+
 import 'llamadasAPI.dart';
 import '../../frond/admin/model/models.dart';
+import 'package:flutter/foundation.dart';
 
 Future<Map<String, dynamic>> getRSiembra() async {
   try {
@@ -25,6 +27,7 @@ Future<bool> insertReg(RSiembra nuevo) async {
 
 Future<bool> llamarInsert(RSiembra modelo, String metodo) async {
   final url = Uri.parse('$baseUrl/$metodo');
+  debugPrint('>>> BASE_URL ACTUAL = $baseUrl');
   try {
     final Payload = {'fila': modelo.toJson()};
     final response = await http

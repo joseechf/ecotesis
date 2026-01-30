@@ -10,11 +10,13 @@ import '../../../backend/llamadasRemotas/llamadasFlora.dart';
 import '../../../backend/llamadasLocales/llamadasFlora.dart';
 import '../../../validarRed.dart';
 import '../../../domain/value_objects.dart';
+import '../../../backend/libSinc/sincronizacion.dart';
 
 class EspeciesProvider with ChangeNotifier {
   final List<Especie> _especies = [];
   bool _cargandoData = false;
   bool _insertando = false;
+  bool sincronizando = false;
   bool get cargandoData => _cargandoData;
   List<Especie> get especies => _especies;
 
@@ -255,7 +257,6 @@ class EspeciesProvider with ChangeNotifier {
     return ok;
   }
 
-  /* ----------  filtros (sin cambios) ---------- */
   List<Especie> get especiesFiltradas {
     if (_filtro == 'all') return _especies;
     return _especies.where((e) {
@@ -270,6 +271,25 @@ class EspeciesProvider with ChangeNotifier {
           return true;
       }
     }).toList();
+  }
+
+  Future<void> sincronizarManual() async {
+    if (sincronizando) return;
+
+    sincronizando = true;
+    notifyListeners();
+
+    final sinc = ControlSincronizacion();
+
+    try {
+      debugPrint('iniciando la sincronizacion...');
+      await sinc.sincronizar();
+    } catch (e) {
+      debugPrint('Error en sincronizarManual: $e');
+    } finally {
+      sincronizando = false;
+      notifyListeners();
+    }
   }
 
   void setFiltro(String valor) {

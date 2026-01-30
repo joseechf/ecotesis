@@ -20,131 +20,160 @@ class EspecieModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final imagenPrincipal =
         especie.imagenes.isNotEmpty ? especie.imagenes.first : null;
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
       ),
       title: Text(especie.nombreCientifico),
-      content: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /* ---------- imagen ---------- */
-            ClipRRect(
-              borderRadius: BorderRadius.circular(Estilos.radioBorde),
-              child: _imagenWidget(imagenPrincipal),
-            ),
 
-            const SizedBox(height: Estilos.paddingMedio),
-
-            // Nombres comunes
-            if (especie.nombresComunes.isNotEmpty)
-              _fila(
-                Icons.label,
-                'Nombres comunes',
-                especie.nombresComunes.map((n) => n.nombreComun).join(', '),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /* ---------- imagen ---------- */
+              Container(
+                height: 220, // 👈 tamaño fijo = web safe
+                margin: const EdgeInsets.only(bottom: Estilos.paddingMedio),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Estilos.radioBorde),
+                  color: Colors.grey[200],
+                  image:
+                      imagenPrincipal?.urlFoto.isNotEmpty == true
+                          ? DecorationImage(
+                            image: NetworkImage(imagenPrincipal!.urlFoto),
+                            fit: BoxFit.cover,
+                          )
+                          : null,
+                ),
+                child:
+                    imagenPrincipal == null
+                        ? const Center(
+                          child: Icon(Icons.broken_image, size: 50),
+                        )
+                        : null,
               ),
 
-            // ¿Da sombra?
-            if (especie.daSombra != null)
-              _fila(
-                Icons.wb_sunny,
-                'Da sombra',
-                especie.daSombra == 1 ? 'Sí' : 'No',
-              ),
+              const SizedBox(height: Estilos.paddingMedio),
 
-            // Flor distintiva
-            if (especie.florDistintiva != null && especie.florDistintiva != '')
-              _fila(
-                Icons.local_florist,
-                'Flor distintiva',
-                especie.florDistintiva!,
-              ),
+              // Nombres comunes
+              if (especie.nombresComunes.isNotEmpty)
+                _fila(
+                  Icons.label,
+                  'Nombres comunes',
+                  especie.nombresComunes.map((n) => n.nombreComun).join(', '),
+                ),
 
-            // Fruta distintiva
-            if (especie.frutaDistintiva != null &&
-                especie.frutaDistintiva != '')
-              _fila(Icons.eco, 'Fruta distintiva', especie.frutaDistintiva!),
+              // ¿Da sombra?
+              if (especie.daSombra != null)
+                _fila(
+                  Icons.wb_sunny,
+                  'Da sombra',
+                  especie.daSombra == 1 ? 'Sí' : 'No',
+                ),
 
-            // Salud del suelo
-            if (especie.saludSuelo != null)
-              _fila(
-                Icons.grass,
-                'Salud del suelo',
-                especie.saludSuelo == 1 ? 'Sí' : 'No',
-              ),
+              // Flor distintiva
+              if (especie.florDistintiva != null &&
+                  especie.florDistintiva != '')
+                _fila(
+                  Icons.local_florist,
+                  'Flor distintiva',
+                  especie.florDistintiva!,
+                ),
 
-            // Huéspedes
-            if (especie.huespedes != null && especie.huespedes != '')
-              _fila(Icons.bug_report, 'Huéspedes', especie.huespedes!),
+              // Fruta distintiva
+              if (especie.frutaDistintiva != null &&
+                  especie.frutaDistintiva != '')
+                _fila(Icons.eco, 'Fruta distintiva', especie.frutaDistintiva!),
 
-            // Forma de crecimiento
-            if (especie.formaCrecimiento != null &&
-                especie.formaCrecimiento != '')
-              _fila(
-                Icons.trending_up,
-                'Forma de crecimiento',
-                especie.formaCrecimiento!,
-              ),
+              // Salud del suelo
+              if (especie.saludSuelo != null)
+                _fila(
+                  Icons.grass,
+                  'Salud del suelo',
+                  especie.saludSuelo == 1 ? 'Sí' : 'No',
+                ),
 
-            // ¿Es pionera?
-            if (especie.pionero != null)
-              _fila(Icons.star, 'Pionera', especie.pionero == 1 ? 'Sí' : 'No'),
+              // Huéspedes
+              if (especie.huespedes != null && especie.huespedes != '')
+                _fila(Icons.bug_report, 'Huéspedes', especie.huespedes!),
 
-            // Polinizador
-            if (especie.polinizador != null && especie.polinizador != '')
-              _fila(Icons.emoji_nature, 'Polinizador', especie.polinizador!),
+              // Forma de crecimiento
+              if (especie.formaCrecimiento != null &&
+                  especie.formaCrecimiento != '')
+                _fila(
+                  Icons.trending_up,
+                  'Forma de crecimiento',
+                  especie.formaCrecimiento!,
+                ),
 
-            // Ambiente
-            if (especie.ambiente != null && especie.ambiente != '')
-              _fila(Icons.terrain, 'Ambiente', especie.ambiente!),
+              // ¿Es pionera?
+              if (especie.pionero != null)
+                _fila(
+                  Icons.star,
+                  'Pionera',
+                  especie.pionero == 1 ? 'Sí' : 'No',
+                ),
 
-            // Nativo de América
-            if (especie.nativoAmerica != null)
-              _fila(
-                Icons.location_on,
-                'Nativo de América',
-                especie.nativoAmerica == 1 ? 'Sí' : 'No',
-              ),
+              // Polinizador
+              if (especie.polinizador != null && especie.polinizador != '')
+                _fila(Icons.emoji_nature, 'Polinizador', especie.polinizador!),
 
-            // Nativo de Panamá
-            if (especie.nativoPanama != null)
-              _fila(
-                Icons.location_on,
-                'Nativo de Panamá',
-                especie.nativoPanama == 1 ? 'Sí' : 'No',
-              ),
+              // Ambiente
+              if (especie.ambiente != null && especie.ambiente != '')
+                _fila(Icons.terrain, 'Ambiente', especie.ambiente!),
 
-            // Nativo de Azuero
-            if (especie.nativoAzuero != null)
-              _fila(
-                Icons.location_on,
-                'Nativo de Azuero',
-                especie.nativoAzuero == 1 ? 'Sí' : 'No',
-              ),
+              // Nativo de América
+              if (especie.nativoAmerica != null)
+                _fila(
+                  Icons.location_on,
+                  'Nativo de América',
+                  especie.nativoAmerica == 1 ? 'Sí' : 'No',
+                ),
 
-            // Estrato
-            if (especie.estrato != null && especie.estrato != '')
-              _fila(Icons.layers, 'Estrato', especie.estrato!),
+              // Nativo de Panamá
+              if (especie.nativoPanama != null)
+                _fila(
+                  Icons.location_on,
+                  'Nativo de Panamá',
+                  especie.nativoPanama == 1 ? 'Sí' : 'No',
+                ),
 
-            // Utilidades
-            if (especie.utilidades.isNotEmpty)
-              _fila(
-                Icons.build,
-                'Utilidades',
-                especie.utilidades.map((u) => u.utilidad).join(', '),
-              ),
+              // Nativo de Azuero
+              if (especie.nativoAzuero != null)
+                _fila(
+                  Icons.location_on,
+                  'Nativo de Azuero',
+                  especie.nativoAzuero == 1 ? 'Sí' : 'No',
+                ),
 
-            // Orígenes
-            if (especie.origenes.isNotEmpty)
-              _fila(
-                Icons.location_on,
-                'Orígenes',
-                especie.origenes.map((o) => o.origen).join(', '),
-              ),
-          ],
+              // Estrato
+              if (especie.estrato != null && especie.estrato != '')
+                _fila(Icons.layers, 'Estrato', especie.estrato!),
+
+              // Utilidades
+              if (especie.utilidades.isNotEmpty)
+                _fila(
+                  Icons.build,
+                  'Utilidades',
+                  especie.utilidades.map((u) => u.utilidad).join(', '),
+                ),
+
+              // Orígenes
+              if (especie.origenes.isNotEmpty)
+                _fila(
+                  Icons.location_on,
+                  'Orígenes',
+                  especie.origenes.map((o) => o.origen).join(', '),
+                ),
+            ],
+          ),
         ),
       ),
+
       actions: [
         ElevatedButton.icon(
           onPressed: onEditar,

@@ -1,4 +1,3 @@
-import 'reglas.dart';
 import '../llamadasLocales/llamadasFlora.dart';
 import '../llamadasRemotas/llamadasFlora.dart';
 import '../../data/models/especie_db.dart';
@@ -37,7 +36,9 @@ class ComparadorFilas {
       final remoto = entry.value;
       if (mapLocal.containsKey(id)) {
         final localFila = mapLocal[id]!;
-        if (remoto['hash'] != localFila['hash']) {
+        if (remoto['is_delete'] == 1 || localFila['is_delete'] == 1) {
+          _resolverConflictoDelete(id, localFila, remoto);
+        } else if (remoto['hash'] != localFila['hash']) {
           _resolverConflicto(id, localFila, remoto);
         }
       } else if (remoto['is_delete'] == 0) {
@@ -52,41 +53,47 @@ class ComparadorFilas {
     }
   }
 
+  void _resolverConflictoDelete(
+    String id,
+    Map<String, dynamic> local,
+    Map<String, dynamic> remoto,
+  ) {
+    // Si ambos están borrados → no hacer nada
+    if (local['is_delete'] == 1 && remoto['is_delete'] == 1) {
+      return;
+    }
+
+    // Gana el que tenga mayor versión
+    if (remoto['version'] > local['version']) {
+      filasSinc.deleteToLocal.add(id);
+    } else {
+      filasSinc.deleteToRemote.add(id);
+    }
+  }
+
   void _resolverConflicto(
     String id,
     Map<String, dynamic> local,
     Map<String, dynamic> remoto,
   ) {
     if (remoto['version'] > local['version']) {
-      _ganaRemoto(id, remoto);
+      filasSinc.updateToLocal.add(id);
     } else if (local['version'] > remoto['version']) {
-      _ganaLocal(id, local);
+      filasSinc.updateToRemote.add(id);
     } else {
-      final ganador = resolucionVersionIgual(id, remoto, {id: local});
-      if (ganador == 'remoto') _ganaRemoto(id, remoto);
+      filasSinc.updateToLocal.add(id); //versiones iguales gana remoto
     }
-  }
-
-  void _ganaRemoto(String id, Map<String, dynamic> remoto) {
-    filasSinc.discardedLocal.add(id);
-    if (remoto['is_update'] == 1) filasSinc.updateToLocal.add(id);
-    if (remoto['is_delete'] == 1) filasSinc.deleteToLocal.add(id);
-  }
-
-  void _ganaLocal(String id, Map<String, dynamic> local) {
-    if (local['is_update'] == 1) filasSinc.updateToRemote.add(id);
-    if (local['is_delete'] == 1) filasSinc.deleteToRemote.add(id);
   }
 }
 
 class SincronizadorLocal {
   Future<void> ejecutar(FilasPorSincronizar filas) async {
-    // 2.1 borrados lógicos (estos sí van uno por uno)
+    // softdelete ( uno por uno)
     for (final String id in filas.deleteToLocal) {
       await _softDeleteLocal(id);
     }
 
-    // 2.2 altas remotas → traer DTOs en bloque y guardar
+    // altas remotas → traer DTOs en bloque y guardar
     if (filas.insertToLocal.isNotEmpty) {
       final dtos = await getFloraRemotoPorIds(filas.insertToLocal);
 
@@ -109,13 +116,7 @@ class SincronizadorLocal {
   }
 
   Future<void> _softDeleteLocal(String id) async {
-    final db = await dbLocal.instancia;
-    await db.update(
-      'Flora',
-      {'isDelete': 1},
-      where: 'nombreCientifico = ?',
-      whereArgs: [id],
-    );
+    await deleteFloraLocal(id);
   }
 }
 
@@ -127,7 +128,7 @@ class SincronizadorRemoto {
     for (final id in filas.insertToRemote) {
       final maps = await db.query(
         'Flora',
-        where: 'nombreCientifico = ?',
+        where: 'nombre_cientifico = ?',
         whereArgs: [id],
       );
       if (maps.isNotEmpty) {
@@ -142,7 +143,7 @@ class SincronizadorRemoto {
     for (final id in filas.updateToRemote) {
       final maps = await db.query(
         'Flora',
-        where: 'nombreCientifico = ?',
+        where: 'nombre_cientifico = ?',
         whereArgs: [id],
       );
       if (maps.isNotEmpty) {
@@ -160,10 +161,10 @@ class SincronizadorRemoto {
   }
 }
 
-class SyncService {
+class ControlSincronizacion {
   final FilasPorSincronizar state;
   late final ComparadorFilas detector;
-  SyncService() : state = FilasPorSincronizar() {
+  ControlSincronizacion() : state = FilasPorSincronizar() {
     detector = ComparadorFilas(state);
   }
   final SincronizadorLocal localSync = SincronizadorLocal();
@@ -172,10 +173,6 @@ class SyncService {
   Future<void> sincronizar() async {
     final db = await dbLocal.instancia;
     state.clear();
-
-    // 4.1  obtenemos metadatos (sin imágenes)
-    //final local = await _obtenerMetaLocal();
-    //final remote = await _obtenerMetaRemoto();
 
     // 3.  Comparar solo las filas actualizadas despues de la ultima sincronizacion
     final ult = await db.query('ultima_sinc', limit: 1);
@@ -214,10 +211,7 @@ class SyncService {
     final db = await dbLocal.instancia;
     return db.rawQuery(
       '''
-      SELECT s.id, s.hash, s.version, s.is_new, s.is_update, s.is_delete, f.last_upd
-      FROM   sincronizacion s
-      JOIN   Flora f ON s.id = f.nombreCientifico
-      WHERE  f.last_upd > ?
+      SELECT id,hash,version,is_new,is_update,is_delete,last_upd FROM sincronizacion WHERE  last_upd > ?
     ''',
       [ultSinc],
     );
@@ -234,42 +228,11 @@ class SyncService {
         'id': fila['id'],
         'hash': fila['hash'],
         'version': fila['version'],
-        'is_new': fila['is_new'],
-        'is_update': fila['is_update'],
-        'is_delete': fila['is_delete'],
+        'is_new': (fila['is_new']) ? 1 : 0,
+        'is_update': (fila['is_update']) ? 1 : 0,
+        'is_delete': (fila['is_delete']) ? 1 : 0,
         'last_upd': fila['last_upd'],
       };
     }).toList();
   }
-
-  /* ----------  obtención de metadatos  ---------- */
-  /* Future<List<Map<String, dynamic>>> _obtenerMetaLocal() async {
-    final db = await dbLocal.instancia;
-    final flora = await db.query('Flora');
-    return flora.map((r) {
-      final String id = r['nombreCientifico'] as String;
-      return {
-        'id': id,
-        'hash': calcularHash(r),
-        'version': 1,
-        'is_update': 0,
-        'is_delete': r['isDelete'] == 1 ? 1 : 0,
-      };
-    }).toList();
-  }
-
-  Future<List<Map<String, dynamic>>> _obtenerMetaRemoto() async {
-    final dtos = await getFloraRemoto();
-    return dtos.map((dto) {
-      final id = dto.nombrecientifico;
-      final map = dto.toJson();
-      return {
-        'id': id,
-        'hash': calcularHash(map),
-        'version': 1,
-        'is_update': 0,
-        'is_delete': 0,
-      };
-    }).toList();
-  }*/
 }

@@ -1,0 +1,71 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "terreno_001",
+        "tamano_m2": 1200,
+        "dueno": "Pedro Martínez",
+        "inicio_alquiler": "2024-06-01",
+        "fin_alquiler": "2026-06-01"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-3.7000, 40.4200],
+            [-3.6985, 40.4200],
+            [-3.6985, 40.4215],
+            [-3.7000, 40.4215],
+            [-3.7000, 40.4200]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "terreno_002",
+        "tamano_m2": 850,
+        "dueno": "Ana Gómez",
+        "inicio_alquiler": "2025-01-15",
+        "fin_alquiler": "2027-01-15"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-3.6950, 40.4230],
+            [-3.6938, 40.4230],
+            [-3.6938, 40.4242],
+            [-3.6950, 40.4242],
+            [-3.6950, 40.4230]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "terreno_003",
+        "tamano_m2": 2000,
+        "dueno": "Cooperativa Verde Azuero",
+        "inicio_alquiler": "2023-09-01",
+        "fin_alquiler": "2028-09-01"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-3.6920, 40.4195],
+            [-3.6895, 40.4195],
+            [-3.6895, 40.4210],
+            [-3.6920, 40.4210],
+            [-3.6920, 40.4195]
+          ]
+        ]
+      }
+    }
+  ]
+}

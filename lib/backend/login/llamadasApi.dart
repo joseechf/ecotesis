@@ -2,12 +2,13 @@ import '../../frond/usuarios/usuarioPrueba.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 
 // SOLO se usa en WEB
 import 'package:universal_html/html.dart' as html;
 import './seguridad/token_storage.dart';
 
-import '../utilidades/elegirUrldeArranque.dart';
+import 'package:ecoazuero/config/config.dart';
 
 usuarioLogueado usuarioActual = usuarioLogueado();
 
@@ -67,6 +68,7 @@ Future<bool> registro() async {
 /// LOGIN
 /// ==========================
 Future<bool> login() async {
+  debugPrint('>>> BASE_URL ACTUAL = $baseUrl');
   try {
     // 🌐 WEB → cookies HttpOnly
     if (kIsWeb) {

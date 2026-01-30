@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../utilidades/elegirUrldeArranque.dart';
+import 'package:ecoazuero/config/config.dart';
 
 Future<Map<String, dynamic>> getData(String metodo) async {
   final url = Uri.parse('$baseUrl/$metodo');

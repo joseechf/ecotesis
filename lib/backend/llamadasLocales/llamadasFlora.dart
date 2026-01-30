@@ -204,14 +204,14 @@ Future<bool> deleteFloraLocal(String nombreCientifico) async {
 
   try {
     return await db.transaction((txn) async {
-      /* =========================================================
-         1. BORRAR TABLAS HIJAS
-         ========================================================= */
       await _borrarVO(txn, nombreCientifico);
 
-      /* =========================================================
-         2. BORRAR TABLA MAESTRA (Flora)
-         ========================================================= */
+      final ok = await _sync.registrarBorrado(txn, nombreCientifico);
+
+      if (!ok) {
+        throw 'problemas al registrar softdelete en sincronización';
+      }
+
       final filas = await txn.delete(
         'Flora',
         where: 'nombre_cientifico = ?',
@@ -220,18 +220,6 @@ Future<bool> deleteFloraLocal(String nombreCientifico) async {
 
       if (filas == 0) {
         throw 'no existe la especie a eliminar';
-      }
-
-      /* =========================================================
-         3. REGISTRAR SOFT DELETE EN SINCRONIZACIÓN (POR ESPECIE)
-         ========================================================= */
-      final ok = await _sync.registrarBorrado(
-        txn,
-        nombreCientifico, // 🔑 1 ID = 1 especie
-      );
-
-      if (!ok) {
-        throw 'problemas al registrar softdelete en sincronización';
       }
 
       return true;

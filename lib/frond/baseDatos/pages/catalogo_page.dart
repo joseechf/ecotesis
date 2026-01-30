@@ -64,8 +64,15 @@ class _CatalogoPageState extends State<CatalogoPage> {
               Alignment.center,
             ),
             const SizedBox(height: Estilos.paddingMedio),
-            Row(
+
+            /// Barra de acciones superior (responsive)
+            Wrap(
+              spacing: Estilos.paddingPequeno, // espacio horizontal
+              runSpacing:
+                  Estilos.paddingPequeno, // espacio vertical al saltar de línea
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
+                /// Botón de filtro
                 ElevatedButton.icon(
                   icon: const Icon(Icons.filter_list),
                   label: Text(context.tr('buttons.filtrar')),
@@ -77,7 +84,8 @@ class _CatalogoPageState extends State<CatalogoPage> {
                     if (res != null) provider.setFiltro(res);
                   },
                 ),
-                const SizedBox(width: Estilos.paddingPequeno),
+
+                /// Botón nuevo registro o texto de solo lectura
                 (!usuarioPrueba.validar('Scientist') &&
                         !usuarioPrueba.validar('Administrator'))
                     ? Text(
@@ -95,8 +103,21 @@ class _CatalogoPageState extends State<CatalogoPage> {
                         if (nueva != null) provider.insertar(nueva);
                       },
                     ),
+
+                /// Botón de sincronización
+                Tooltip(
+                  message: context.tr('sincronizar'),
+                  child: IconButton(
+                    icon: const Icon(Icons.sync),
+                    onPressed:
+                        provider.sincronizando
+                            ? null
+                            : provider.sincronizarManual,
+                  ),
+                ),
               ],
             ),
+
             const SizedBox(height: Estilos.paddingMedio),
             Expanded(
               child:
@@ -184,9 +205,10 @@ class _CatalogoPageState extends State<CatalogoPage> {
                 );
               }
             },
-            onEliminar: () {
-              Navigator.pop(context);
-              provider.eliminar(especie.nombreCientifico);
+            onEliminar: () async {
+              Navigator.of(context, rootNavigator: true).pop();
+              await provider.eliminar(especie.nombreCientifico);
+              if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(context.tr('buttons.delete')),

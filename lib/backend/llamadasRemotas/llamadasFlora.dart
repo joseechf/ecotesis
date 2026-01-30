@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:image/image.dart' as img;
-import '../utilidades/elegirUrldeArranque.dart';
+import 'package:ecoazuero/config/config.dart';
 
 import '../../../data/models/especie_dto.dart';
 import 'dart:typed_data';

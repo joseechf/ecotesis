@@ -1,13 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 import '../libSinc/utilidades/calcularHash.dart';
-import 'sqliteHelper.dart';
+//import 'sqliteHelper.dart';
 import 'package:flutter/foundation.dart';
 
 class TablaSyncLocal {
-  Future<List<Map<String, dynamic>>> obtenerPendientes() async {
+  /*Future<List<Map<String, dynamic>>> obtenerPendientes() async {
     final Database db = await dbLocal.instancia;
     return await db.query('sincronizacion');
-  }
+  }*/
 
   Future<bool> registrarSync({
     required Transaction tx,
@@ -87,20 +87,47 @@ class TablaSyncLocal {
 
   Future<bool> registrarBorrado(Transaction tx, String id) async {
     try {
-      await tx.insert('sincronizacion', {
-        'id': id,
-        'is_new': 0,
-        'is_update': 0,
-        'is_delete': 1,
-        'hash': '',
-        'version': 1,
-        'device': 'mobile',
-        'last_upd': DateTime.now().toIso8601String(),
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
-      debugPrint('metadatos sinc local softdelete ok');
+      final existente = await tx.query(
+        'sincronizacion',
+        where: 'id = ?',
+        whereArgs: [id],
+        limit: 1,
+      );
+
+      if (existente.isEmpty) {
+        await tx.insert('sincronizacion', {
+          'id': id,
+          'is_new': 0,
+          'is_update': 0,
+          'is_delete': 1,
+          'hash': '',
+          'version': 1,
+          'device': 'mobile',
+          'last_upd': DateTime.now().toIso8601String(),
+        });
+      } else {
+        final versionActual = existente.first['version'] as int? ?? 1;
+
+        await tx.update(
+          'sincronizacion',
+          {
+            'is_new': 0,
+            'is_update': 0,
+            'is_delete': 1,
+            'hash': '',
+            'version': versionActual + 1,
+            'device': 'mobile',
+            'last_upd': DateTime.now().toIso8601String(),
+          },
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
+
+      debugPrint('metadatos sinc local delete ok');
       return true;
     } catch (e) {
-      debugPrint(' registro upsert error: $e');
+      debugPrint('error registrarBorrado: $e');
       return false;
     }
   }
