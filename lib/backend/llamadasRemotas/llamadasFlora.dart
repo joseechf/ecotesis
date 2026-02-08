@@ -75,9 +75,6 @@ Future<List<EspecieDto>> getFloraRemotoPorIds(List<String> ids) async {
   }
 }
 
-/* =========================================================
-   2.  ESCRITURA  →  recibe EspecieDto
-   ========================================================= */
 Future<bool> insertFloraRemoto(EspecieDto dto) async {
   final url = Uri.parse('$baseUrl/insertflora');
   try {
@@ -129,9 +126,6 @@ Future<bool> deleteFloraRemoto(String nombreCientifico) async {
   }
 }
 
-/* =========================================================
-   3.  IMÁGENES
-   ========================================================= */
 Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
   final decoded = img.decodeImage(bytes);
   if (decoded == null) throw Exception('Imagen no válida');

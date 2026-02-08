@@ -15,7 +15,11 @@
     "noticias": "últimas noticias",
     "charrito": "El Mono Araña de Azuero, CHARRITO",
     "cultivoSostenible": "CULTIVAR PLANTAS Y ÁRBOLES DE MANERA SOSTENIBLE",
-    "pregFrecuentes": "PREGUNTAS FRECUENTES"
+    "pregFrecuentes": "PREGUNTAS FRECUENTES",
+    "edicion": "Edicion Usuario"
+  },
+  "mensajes": {
+    "usuarioActualizado": "Usuario Actualizado"
   },
   "buttons": {
     "change_language": "Cambiar Idioma",
@@ -38,7 +42,8 @@
     "aprender": "aprender mas",
     "delete": "eliminar",
     "add": "agregar",
-    "cancelar": "cancelar"
+    "cancelar": "cancelar",
+    "logout": "cerrar sesion"
   },
   "texts": {
     "textsHome": {
@@ -155,7 +160,8 @@
       "correo": "Correo electrónico",
       "contrasena": "Contraseña",
       "nombre": "Nombre completo",
-      "rol": "Rol"
+      "rol": "Rol",
+      "estadoRol": "Estado del rol"
     },
     "botones": {
       "login": "Iniciar sesión",

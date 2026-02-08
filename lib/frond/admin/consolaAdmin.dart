@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'SiembrayVentas/page/tablasadmin.dart';
+import '../../frond/iureutilizables/reglasRol.dart';
 
-import '../usuarios/usuarioPrueba.dart'; //este usuario es para pruebas
 import '../iureutilizables/widgetEdicion.dart';
 
 class ConsolaAdmin extends StatefulWidget {
@@ -15,7 +15,6 @@ class ConsolaAdmin extends StatefulWidget {
 }
 
 class _ConsolaAdminState extends State<ConsolaAdmin> {
-  usuarioLogueado usuarioPrueba = usuarioLogueado();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,15 +23,8 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
           MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SingleChildScrollView(
         child:
-            (!usuarioPrueba.validar(context.tr('gestionUsuario.roles.admin')))
-                ? Text(
-                  context.tr('bdInterfaz.lectura'),
-                  style: TextStyle(
-                    color: Estilos.grisMedio,
-                    fontSize: Estilos.textoPequeno,
-                  ),
-                )
-                : BotonPersonalizado(
+            tieneAlgunoDeLosRoles(context, ['admin', 'cientifico'])
+                ? BotonPersonalizado(
                   texto: ("Ir a Pantalla A"),
                   onPressed:
                       () => {
@@ -43,6 +35,13 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
                           ),
                         ),
                       },
+                )
+                : Text(
+                  context.tr('bdInterfaz.lectura'),
+                  style: TextStyle(
+                    color: Estilos.grisMedio,
+                    fontSize: Estilos.textoPequeno,
+                  ),
                 ),
       ),
     );

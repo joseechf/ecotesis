@@ -53,7 +53,6 @@ class BotonPersonalizado extends StatelessWidget {
   }
 }
 
-// Widget de campo de texto personalizado
 class CampoTextoPersonalizado extends StatelessWidget {
   final TextEditingController controlador;
   final String etiqueta;
@@ -64,6 +63,7 @@ class CampoTextoPersonalizado extends StatelessWidget {
   final TextInputType? tipoTeclado;
   final String? Function(String?)? validador;
   final int? maxLineas;
+  final bool habilitado;
 
   const CampoTextoPersonalizado({
     Key? key,
@@ -76,12 +76,15 @@ class CampoTextoPersonalizado extends StatelessWidget {
     this.tipoTeclado,
     this.validador,
     this.maxLineas = 1,
+    this.habilitado = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controlador,
+      enabled: habilitado,
+      readOnly: !habilitado,
       obscureText: esContrasena ? ocultarTexto : false,
       keyboardType: tipoTeclado,
       maxLines: maxLineas,

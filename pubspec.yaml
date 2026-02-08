@@ -56,6 +56,8 @@ dependencies:
   latlong2: # modelos de LatLng
   # dependencia para login
   universal_html: ^2.3.0
+  flutter_dotenv: 
+  supabase_flutter:
   # extencion de la imagen 
   image:
   # calcular hash para sincronizacion

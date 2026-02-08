@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//import '../models/especie.dart';
 import '../providers/especies_provider.dart';
 import '../widgets/especie_card.dart';
 import '../widgets/especie_modal.dart';
@@ -11,8 +10,7 @@ import '../../../domain/entities/especie.dart';
 import '../../iureutilizables/widgetpersonalizados.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../iureutilizables/custom_appbar.dart';
-
-import '../../usuarios/usuarioPrueba.dart';
+import '../../iureutilizables/reglasRol.dart';
 
 import '../widgets/tarjetaIncercion.dart';
 
@@ -41,7 +39,6 @@ class _CatalogoPageState extends State<CatalogoPage> {
       return const Center(child: CircularProgressIndicator());
     }
     double anchoPantalla = MediaQuery.of(context).size.width;
-    usuarioLogueado usuarioPrueba = usuarioLogueado();
     final isMobile = anchoPantalla < 800;
     return Scaffold(
       appBar: customAppBar(context: context),
@@ -65,7 +62,7 @@ class _CatalogoPageState extends State<CatalogoPage> {
             ),
             const SizedBox(height: Estilos.paddingMedio),
 
-            /// Barra de acciones superior (responsive)
+            /// Barra de acciones superior
             Wrap(
               spacing: Estilos.paddingPequeno, // espacio horizontal
               runSpacing:
@@ -86,22 +83,21 @@ class _CatalogoPageState extends State<CatalogoPage> {
                 ),
 
                 /// Botón nuevo registro o texto de solo lectura
-                (!usuarioPrueba.validar('Scientist') &&
-                        !usuarioPrueba.validar('Administrator'))
-                    ? Text(
-                      context.tr('bdInterfaz.lectura'),
-                      style: TextStyle(
-                        color: Estilos.grisMedio,
-                        fontSize: Estilos.textoPequeno,
-                      ),
-                    )
-                    : ElevatedButton.icon(
+                tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
+                    ? ElevatedButton.icon(
                       icon: const Icon(Icons.add),
                       label: Text(context.tr('bdInterfaz.nuevoRegistro')),
                       onPressed: () async {
                         final nueva = await mostrarInsertarDialog(context);
                         if (nueva != null) provider.insertar(nueva);
                       },
+                    )
+                    : Text(
+                      context.tr('bdInterfaz.lectura'),
+                      style: TextStyle(
+                        color: Estilos.grisMedio,
+                        fontSize: Estilos.textoPequeno,
+                      ),
                     ),
 
                 /// Botón de sincronización

@@ -15,7 +15,11 @@
     "noticias": "late News",
     "charrito": "The Azuero Spider Monkey, CHARRITO",
     "cultivoSostenible": "GROWING PLANTS & TREES SUSTAINABLY",
-    "pregFrecuentes": "FREQUENTLY ASKED QUESTIONS"
+    "pregFrecuentes": "FREQUENTLY ASKED QUESTIONS",
+     "edicion": "User Edit"
+  },
+   "mensajes": {
+    "usuarioActualizado": "Updated User"
   },
   "buttons": {
     "change_language": "Change Language",
@@ -38,7 +42,8 @@
     "aprender": "learn more",
     "delete": "delete",
     "add": "add",
-    "cancelar": "cancel"
+    "cancelar": "cancel",
+    "logout": "logout"
   },
   "texts": {
     "textsHome": {
@@ -156,7 +161,8 @@
       "correo": "Email",
       "contrasena": "Password",
       "nombre": "Full name",
-      "rol": "Role"
+      "rol": "Role",
+      "estadoRol": "Role status"
     },
     "botones": {
       "login": "Sign in",

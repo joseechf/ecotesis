@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'frond/static/home.dart';
 import 'frond/estilos.dart';
 import 'frond/baseDatos/providers/especies_provider.dart'; // bd falsa, cambiar después
 import 'frond/admin/provider/admin_providers.dart';
+import 'data/auth/session_provider.dart';
+import 'core/supabaseClient.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-
+  await dotenv.load(fileName: '../.env');
+  await SupabaseClientSingleton.init();
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('es')],
@@ -27,15 +31,13 @@ class AppLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*return ChangeNotifierProvider(
-      create: (_) => EspeciesProvider(), // mientras uso bd falsa
-      child: const MyApp(),
-    );*/
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => EspeciesProvider()),
         ChangeNotifierProvider(create: (_) => RegSiembraProvider()),
       ],
+
       child: const MyApp(),
     );
   }

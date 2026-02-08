@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
 import '../static/educacion.dart';
 import '../static/comunidad.dart';
-import '../usuarios/gestionUsuario.dart';
-import '../usuarios/editUsuario.dart';
+import '../auth/gestionUsuario.dart';
+import '../auth/editUsuario.dart';
 import '../static/ecoguias.dart';
 import '../baseDatos/pages/catalogo_page.dart';
 import '../static/conservrefor.dart';
@@ -17,7 +17,8 @@ import '../mapa_azuero/mapazuero.dart';
 import '../static/nosotros.dart';
 import '../estilos.dart';
 import '../admin/consolaAdmin.dart';
-import '../usuarios/usuarioPrueba.dart';
+import 'reglasRol.dart';
+import '../../data/auth/session_provider.dart';
 
 /// Punto de quiebre entre diseño móvil y escritorio.
 const double _mobileBreakpoint = 800;
@@ -32,7 +33,6 @@ class customAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMobile = MediaQuery.sizeOf(context).width < _mobileBreakpoint;
-    usuarioLogueado usuarioPrueba = usuarioLogueado();
     return AppBar(
       backgroundColor: Estilos.verdePrincipal,
       elevation: 2,
@@ -97,7 +97,7 @@ class _DesktopMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    usuarioLogueado usuarioPrueba = usuarioLogueado();
+    final sesionActual = context.watch<SessionProvider>();
     return Row(
       children: [
         _NavItem(context.tr('buttons.somos'), () => _go(context, Nosotros())),
@@ -111,7 +111,7 @@ class _DesktopMenu extends StatelessWidget {
           null,
           subItems: _recursosItems(context),
         ),
-        (usuarioPrueba.validar(context.tr('gestionUsuario.roles.admin')))
+        tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
             ? IconButton(
               icon: const Icon(Icons.assignment_ind, color: Estilos.blanco),
               onPressed:
@@ -120,19 +120,26 @@ class _DesktopMenu extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const ConsolaAdmin()),
                   ),
             )
-            : Text(''),
+            : const SizedBox.shrink(),
         const _LanguageToggleButton(),
         IconButton(
           icon: const Icon(Icons.account_circle_rounded, color: Estilos.blanco),
           onPressed:
-              (!usuarioPrueba.logueado())
+              (!sesionActual.isAuthenticated)
                   ? () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const GestionUsuario()),
                   )
                   : () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const EditUsuario()),
+                    MaterialPageRoute(
+                      builder:
+                          (_) => EditarUsuario(
+                            email: sesionActual.usuario!.email,
+                            rolActual: sesionActual.usuario!.rolActual,
+                            estadoRol: sesionActual.usuario!.estadoRol,
+                          ),
+                    ),
                   ),
         ),
       ],
@@ -192,7 +199,6 @@ class _DesktopMenu extends StatelessWidget {
   }
 }
 
-/// Elemento de navegación con hover y sub-menú opcional.
 class _NavItem extends StatefulWidget {
   const _NavItem(this.title, this.onTap, {this.subItems});
   final String title;
@@ -278,13 +284,13 @@ class _NavItemState extends State<_NavItem> {
   }
 }
 
-/// Drawer para dispositivos móviles.
+// Menú lateral para pantallas pequeñas
 class MobileMenu extends StatelessWidget {
   const MobileMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
-    usuarioLogueado usuarioPrueba = usuarioLogueado();
+    final sesionActual = context.watch<SessionProvider>();
     return Drawer(
       backgroundColor: Estilos.verdePrincipal,
       shape: const RoundedRectangleBorder(
@@ -359,7 +365,7 @@ class MobileMenu extends StatelessWidget {
                     ),
                   ),
                   onTap:
-                      (!usuarioPrueba.logueado())
+                      (!sesionActual.isAuthenticated)
                           ? () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -369,14 +375,17 @@ class MobileMenu extends StatelessWidget {
                           : () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const EditUsuario(),
+                              builder:
+                                  (_) => EditarUsuario(
+                                    email: sesionActual.usuario!.email,
+                                    rolActual: sesionActual.usuario!.rolActual,
+                                    estadoRol: sesionActual.usuario!.estadoRol,
+                                  ),
                             ),
                           ),
                 ),
                 const Divider(),
-                (usuarioPrueba.validar(
-                      context.tr('gestionUsuario.roles.admin'),
-                    ))
+                tieneAlgunoDeLosRoles(context, ['administrador'])
                     ? ListTile(
                       leading: const Icon(
                         Icons.assignment_ind,
@@ -398,7 +407,7 @@ class MobileMenu extends StatelessWidget {
                             ),
                           ),
                     )
-                    : Text(''),
+                    : const SizedBox.shrink(),
               ],
             ),
           ),
@@ -435,7 +444,7 @@ class MobileMenu extends StatelessWidget {
   }
 }
 
-/// Botón conmutador de idioma (EN - ES).
+// boton para cambiar idioma
 class _LanguageToggleButton extends StatelessWidget {
   const _LanguageToggleButton();
 
@@ -458,10 +467,4 @@ class _LanguageToggleButton extends StatelessWidget {
       ),
     );
   }
-
-  /// Devuelve 1 si hay conectividad, null en caso contrario.
-  static Future<int?> checkConnectivity() async =>
-      (await Connectivity().checkConnectivity()) == ConnectivityResult.none
-          ? null
-          : 1;
 }
