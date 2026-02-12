@@ -141,7 +141,25 @@ class _EditarUsuarioState extends State<EditarUsuario> {
           texto: context.tr('buttons.delete'),
           color: 'rojo',
           icono: const Icon(Icons.delete_outline),
-          onPressed: () {},
+          onPressed: () async {
+            final ok = await eliminarUsuario();
+            if (!mounted) return;
+            if (ok) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.tr('mensaje.delete')),
+                  backgroundColor: const Color.fromARGB(255, 243, 1, 1),
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.tr('mensaje.error')),
+                  backgroundColor: const Color.fromARGB(255, 145, 143, 143),
+                ),
+              );
+            }
+          },
         ),
         const SizedBox(height: Estilos.paddingGrande),
         BotonPersonalizado(
@@ -149,6 +167,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
           icono: const Icon(Icons.logout_outlined),
           onPressed: () {
             context.read<SessionProvider>().logout();
+            Navigator.pop(context);
           },
         ),
         const SizedBox(height: Estilos.paddingGrande),

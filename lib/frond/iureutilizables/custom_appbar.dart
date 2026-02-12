@@ -291,6 +291,10 @@ class MobileMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sesionActual = context.watch<SessionProvider>();
+    print('🔍 CustomAppBar - hashCode: ${sesionActual.hashCode}');
+    print('🔍 isAuthenticated: ${sesionActual.isAuthenticated}');
+    print('🔍 usuario: ${sesionActual.usuario}');
+    print('🔍 isLoading: ${sesionActual.isLoading}');
     return Drawer(
       backgroundColor: Estilos.verdePrincipal,
       shape: const RoundedRectangleBorder(

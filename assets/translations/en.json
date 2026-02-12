@@ -19,7 +19,9 @@
      "edicion": "User Edit"
   },
    "mensajes": {
-    "usuarioActualizado": "Updated User"
+    "usuarioActualizado": "Updated User",
+    "delete":"deleted",
+    "error":"action not completed"
   },
   "buttons": {
     "change_language": "Change Language",

@@ -19,7 +19,9 @@
     "edicion": "Edicion Usuario"
   },
   "mensajes": {
-    "usuarioActualizado": "Usuario Actualizado"
+    "usuarioActualizado": "Usuario Actualizado",
+    "delete":"eliminado",
+    "error":"accion no completada"
   },
   "buttons": {
     "change_language": "Cambiar Idioma",

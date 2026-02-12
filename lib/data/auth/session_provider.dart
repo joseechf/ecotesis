@@ -18,19 +18,17 @@ class SessionProvider extends ChangeNotifier {
   UsuarioModel? _usuario;
   bool _isAuthenticated = false;
   bool _isLoading = true;
-  late final StreamSubscription<AuthState> _authSub;
+  StreamSubscription<AuthState>? _authSub;
 
   UsuarioModel? get usuario => _usuario;
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
 
-  SessionProvider() {
-    _init();
-  }
+  SessionProvider();
 
-  void _init() {
+  void init() {
     final supabase = SupabaseClientSingleton.client;
-    //escuchar cambios en la sesion
+    _authSub?.cancel();
     _authSub = supabase.auth.onAuthStateChange.listen((data) {
       _handleSession(data.session);
     });
@@ -38,14 +36,11 @@ class SessionProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _authSub.cancel();
+    _authSub?.cancel();
     super.dispose();
   }
 
   Future<void> _handleSession(Session? session) async {
-    _isLoading = true;
-    notifyListeners();
-
     if (session == null) {
       _usuario = null;
       _isAuthenticated = false;
@@ -53,16 +48,26 @@ class SessionProvider extends ChangeNotifier {
       notifyListeners();
       return;
     }
-
+    _isLoading = true;
+    notifyListeners();
     try {
       final user = session.user;
 
       final response =
           await SupabaseClientSingleton.client
               .from('users_view')
-              .select('id, email, rol_actual, estado_rol')
+              .select('id, email, rol_actual, estado_rol, activo')
               .eq('id', user.id)
               .maybeSingle();
+
+      if (response != null && response['activo'] == false) {
+        await logout();
+        _usuario = null;
+        _isAuthenticated = false;
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
 
       if (response == null) {
         _usuario = UsuarioModel(
@@ -77,8 +82,7 @@ class SessionProvider extends ChangeNotifier {
 
       _isAuthenticated = true;
     } catch (_) {
-      // Error real → cerrar sesion
-      await SupabaseClientSingleton.client.auth.signOut();
+      await logout();
       _usuario = null;
       _isAuthenticated = false;
     } finally {
@@ -89,8 +93,5 @@ class SessionProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await SupabaseClientSingleton.client.auth.signOut();
-    _usuario = null;
-    _isAuthenticated = false;
-    notifyListeners();
   }
 }
