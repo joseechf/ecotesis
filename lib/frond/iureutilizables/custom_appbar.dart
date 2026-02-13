@@ -111,7 +111,7 @@ class _DesktopMenu extends StatelessWidget {
           null,
           subItems: _recursosItems(context),
         ),
-        tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
+        tieneAlgunoDeLosRoles(context, ['administrador'])
             ? IconButton(
               icon: const Icon(Icons.assignment_ind, color: Estilos.blanco),
               onPressed:
@@ -291,10 +291,6 @@ class MobileMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sesionActual = context.watch<SessionProvider>();
-    print('🔍 CustomAppBar - hashCode: ${sesionActual.hashCode}');
-    print('🔍 isAuthenticated: ${sesionActual.isAuthenticated}');
-    print('🔍 usuario: ${sesionActual.usuario}');
-    print('🔍 isLoading: ${sesionActual.isLoading}');
     return Drawer(
       backgroundColor: Estilos.verdePrincipal,
       shape: const RoundedRectangleBorder(

@@ -8,6 +8,7 @@ import 'frond/estilos.dart';
 import 'frond/baseDatos/providers/especies_provider.dart';
 import 'frond/admin/provider/admin_providers.dart';
 import 'data/auth/session_provider.dart';
+import 'data/auth/auth_admin_provider.dart';
 import 'core/supabaseClient.dart';
 
 void main() async {
@@ -40,22 +41,19 @@ class _AppLoaderState extends State<AppLoader> {
   void initState() {
     super.initState();
     _sessionProvider = SessionProvider();
-    print(
-      '🏗️ [_AppLoaderState.initState] Creando provider: ${_sessionProvider.hashCode}',
-    );
+
     //para evitar que movil se congele se inicia el provider despues del primer frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print('🎯 [postFrame] Iniciando provider: ${_sessionProvider.hashCode}');
       _sessionProvider.init();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('🏗️ [build] Proveyendo: ${_sessionProvider.hashCode}');
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: _sessionProvider),
+        ChangeNotifierProvider(create: (_) => AuthAdminProvider()),
         ChangeNotifierProvider(create: (_) => EspeciesProvider()),
         ChangeNotifierProvider(create: (_) => RegSiembraProvider()),
       ],
