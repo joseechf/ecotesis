@@ -3,18 +3,23 @@ import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'visorpdf.dart';
 
 class Ecoguias extends StatelessWidget {
+  const Ecoguias({super.key});
   @override
   Widget build(BuildContext context) {
     double anchoPantalla = MediaQuery.of(context).size.width;
     double alturaPantalla = MediaQuery.of(context).size.height;
+
+    // Lista de guías (ya no es Future)
+    final listaGuias = _obtenerListaGuias(context);
+
     return Scaffold(
-      appBar: customAppBar(context: context),
-      drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+      appBar: CustomAppBar(context: context),
+      drawer: anchoPantalla < 800 ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [
@@ -27,37 +32,39 @@ class Ecoguias extends StatelessWidget {
                   height: alturaPantalla,
                 ),
                 Container(
-                  margin: EdgeInsets.only(
-                    top: anchoPantalla * 0.070,
-                    bottom: anchoPantalla * 0.070,
-                    left: anchoPantalla * 0.070,
-                    right: anchoPantalla * 0.070,
+                  margin: EdgeInsets.symmetric(
+                    vertical: anchoPantalla * 0.070,
+                    horizontal: anchoPantalla * 0.070,
                   ),
-                  color: const Color.fromARGB(255, 255, 255, 255),
+                  color: Colors.white,
                   child: Center(
                     child: Column(
                       children: [
-                        WidgetPersonalizados.constructorContainerText(
-                          context.tr('texts.ecoguias.titulo'),
-                          const Color.fromARGB(0, 255, 35, 35),
-                          const Color.fromARGB(255, 4, 63, 19),
-                          EdgeInsets.all(20),
-                          0,
-                          anchoPantalla * 0.060,
-                          'Oswald',
-                          FontWeight.w500,
-                          Alignment.center,
+                        TextContainerWidget(
+                          text: context.tr('texts.ecoguias.titulo'),
+                          margin: const EdgeInsets.all(20),
+                          padding: 0,
+                          backgroundColor: Colors.transparent,
+                          alignment: Alignment.center,
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 4, 63, 19),
+                            fontSize: anchoPantalla * 0.060,
+                            fontFamily: 'Oswald',
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        WidgetPersonalizados.constructorContainerText(
-                          context.tr('texts.ecoguias.texto'),
-                          const Color.fromARGB(0, 46, 255, 39),
-                          const Color.fromARGB(255, 4, 63, 19),
-                          EdgeInsets.all(20),
-                          0,
-                          20,
-                          'Oswald',
-                          FontWeight.w200,
-                          Alignment.center,
+                        TextContainerWidget(
+                          text: context.tr('texts.ecoguias.texto'),
+                          margin: const EdgeInsets.all(20),
+                          padding: 0,
+                          backgroundColor: Colors.transparent,
+                          alignment: Alignment.center,
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 4, 63, 19),
+                            fontSize: 20,
+                            fontFamily: 'Oswald',
+                            fontWeight: FontWeight.w200,
+                          ),
                         ),
                       ],
                     ),
@@ -66,63 +73,53 @@ class Ecoguias extends StatelessWidget {
               ],
             ),
 
-            FutureBuilder<List<Map<String, dynamic>>>(
-              future: _obtenerListaGuias(context),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) return Text('Error al cargar los datos');
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: CircularProgressIndicator(),
+            Column(
+              children: List.generate(listaGuias.length, (index) {
+                return ResponsiveLayout(
+                  breakpoint: 400,
+                  children: [
+                    ImageContainerWidget(
+                      imagePath: listaGuias[index]['imagen'],
+                      margin: const EdgeInsets.all(10),
+                      padding: 0,
+                      height: 300,
                     ),
-                  );
-                }
-                final listaGuias = snapshot.data!;
-                return Column(
-                  children: List.generate(listaGuias.length, (index) {
-                    return WidgetPersonalizados.ElijeFilaColumnaDynamico([
-                      WidgetPersonalizados.constructorContainerimg(
-                        listaGuias[index]['imagen'],
-                        10,
-                        0,
-                        300,
-                        0,
-                      ),
-                      Container(
-                        child: Column(
-                          children: [
-                            WidgetPersonalizados.constructorContainerText(
-                              listaGuias[index]['titulo'],
-                              const Color.fromARGB(0, 255, 255, 255),
-                              const Color.fromARGB(255, 1, 43, 15),
-                              EdgeInsets.all(20),
-                              0,
-                              20,
-                              'Oswald',
-                              FontWeight.bold,
-                              Alignment.center,
-                            ),
-                            WidgetPersonalizados.constructorContainerText(
-                              listaGuias[index]['texto'],
-                              const Color.fromARGB(0, 255, 255, 255),
-                              const Color.fromARGB(255, 1, 43, 15),
-                              EdgeInsets.all(20),
-                              0,
-                              20,
-                              'Oswald',
-                              FontWeight.bold,
-                              Alignment.center,
-                            ),
-                            listaGuias[index]['boton'],
-                          ],
+                    Column(
+                      children: [
+                        TextContainerWidget(
+                          text: listaGuias[index]['titulo'],
+                          margin: const EdgeInsets.all(20),
+                          padding: 0,
+                          backgroundColor: Colors.transparent,
+                          alignment: Alignment.center,
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 1, 43, 15),
+                            fontSize: 20,
+                            fontFamily: 'Oswald',
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ], 400);
-                  }),
+                        TextContainerWidget(
+                          text: listaGuias[index]['texto'],
+                          margin: const EdgeInsets.all(20),
+                          padding: 0,
+                          backgroundColor: Colors.transparent,
+                          alignment: Alignment.center,
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 1, 43, 15),
+                            fontSize: 20,
+                            fontFamily: 'Oswald',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        listaGuias[index]['boton'],
+                      ],
+                    ),
+                  ],
                 );
-              },
+              }),
             ),
+
             const Footer(),
           ],
         ),
@@ -130,25 +127,27 @@ class Ecoguias extends StatelessWidget {
     );
   }
 
-  Future<List<Map<String, dynamic>>> _obtenerListaGuias(
-    BuildContext context,
-  ) async {
+  List<Map<String, dynamic>> _obtenerListaGuias(BuildContext context) {
     return [
       {
         "imagen": "assets/images/mirando.jpg",
         "titulo": "Fire Control: Rights & Regulations",
         "boton": ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (_) => VisorPDF(
-                      url:
-                          'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
-                    ),
-              ),
+          onPressed: () async {
+            final url = Uri.parse(
+              'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
             );
+
+            if (kIsWeb) {
+              await launchUrl(url, mode: LaunchMode.platformDefault);
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => VisorPDF(url: url.toString()),
+                ),
+              );
+            }
           },
           child: Text('Abrir PDF'),
         ),
@@ -158,17 +157,21 @@ class Ecoguias extends StatelessWidget {
         "imagen": "assets/images/mirando.jpg",
         "titulo": "Fire Control: Rights & Regulations",
         "boton": ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (_) => VisorPDF(
-                      url:
-                          'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
-                    ),
-              ),
+          onPressed: () async {
+            final url = Uri.parse(
+              'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
             );
+
+            if (kIsWeb) {
+              await launchUrl(url, mode: LaunchMode.platformDefault);
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => VisorPDF(url: url.toString()),
+                ),
+              );
+            }
           },
           child: Text('Abrir PDF'),
         ),

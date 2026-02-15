@@ -44,12 +44,12 @@ Future<GeoData> loadGeoJson(
   final markers = <Marker>[];
   final polygonTaps = <PolygonTapData>[];
 
-  /// GeoJSON [lon, lat] -> flutter_map [lat, lon]
+  // GeoJSON [lon, lat] -> flutter_map [lat, lon]
   LatLng toLatLng(List<dynamic> coord) {
     return LatLng((coord[1] as num).toDouble(), (coord[0] as num).toDouble());
   }
 
-  /// Calcular centro del polígono
+  // Calcular centro del poligono
   LatLng calcularCentro(List<LatLng> puntos) {
     double latSum = 0;
     double lonSum = 0;
@@ -91,7 +91,7 @@ Future<GeoData> loadGeoJson(
 
             final polygon = Polygon(
               points: puntos,
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
               borderColor: color,
               borderStrokeWidth: 2,
               label: props['id']?.toString(),
@@ -216,7 +216,6 @@ Future<void> mostrarInfoTerreno(
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            //mainAxisAlignment: MainAxisAlignment.min,
             children: [
               _fila(Icons.fingerprint, 'ID', props['id']),
               _fila(Icons.square_foot, 'Tamaño (m²)', props['tamano_m2']),

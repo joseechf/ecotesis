@@ -10,6 +10,7 @@ class Estilos {
   static const Color grisMedio = Color(0xFF9E9E9E);
   static const Color blanco = Colors.white;
   static const Color negro = Colors.black87;
+  static const Color red = Color.fromARGB(255, 226, 3, 3);
 
   // Tamaños y espaciados
   static const double paddingPequeno = 8.0;
@@ -117,7 +118,7 @@ class Estilos {
   static List<BoxShadow> get sombraSuave {
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withValues(alpha: 0.1),
         blurRadius: 4,
         offset: const Offset(0, 2),
       ),
@@ -127,7 +128,7 @@ class Estilos {
   static List<BoxShadow> get sombraMedia {
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.15),
+        color: Colors.black.withValues(alpha: 0.15),
         blurRadius: 8,
         offset: const Offset(0, 4),
       ),

@@ -2,7 +2,7 @@ import '../model/models.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import '../../../backend/llamadasRemotas/llamadasAdmin.dart';
+import '../../../backend/llamadas_remotas/llamadas_admin.dart';
 
 class RegSiembraProvider with ChangeNotifier {
   final List<RSiembra> _rsiembra = [];
@@ -14,7 +14,7 @@ class RegSiembraProvider with ChangeNotifier {
   bool get mostrarSembrados => _mostrarSembrados;
   List<RSiembra> get rsiembra => _rsiembra;
 
-  /// Activa o desactiva la capa de sembrados
+  // Activa o desactiva la capa de sembrados
   void toggleSembrados(bool valor) {
     _mostrarSembrados = valor;
     notifyListeners();
@@ -37,11 +37,11 @@ class RegSiembraProvider with ChangeNotifier {
                 .toList();
         _rsiembra.addAll(resultadoFormateado);
       } else {
-        print('La consulta GET salió mal');
-        print(regSiembraDB);
+        debugPrint('La consulta GET salió mal');
+        debugPrint('$regSiembraDB');
       }
     } on TimeoutException {
-      print('La operación tardó demasiado');
+      debugPrint('La operación tardó demasiado');
     }
     _cargandoData = false;
     notifyListeners();

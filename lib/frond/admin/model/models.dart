@@ -132,7 +132,7 @@ class RVentas {
   });
 }
 
-class terrenosAlquilados {
+class TerrenosAlquilados {
   final String idAlquiler;
   final String idUsuario;
   final String fechaInicio;
@@ -141,7 +141,7 @@ class terrenosAlquilados {
   final String tamanio; //alto y ancho
   final String caracterizacion;
   final String estado;
-  terrenosAlquilados({
+  TerrenosAlquilados({
     required this.idAlquiler,
     required this.idUsuario,
     required this.fechaInicio,

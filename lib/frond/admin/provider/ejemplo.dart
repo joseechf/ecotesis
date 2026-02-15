@@ -42,8 +42,8 @@ final List<RVentas> vendidos = [
   ),
 ];
 
-final List<terrenosAlquilados> terrenos = [
-  terrenosAlquilados(
+final List<TerrenosAlquilados> terrenos = [
+  TerrenosAlquilados(
     idAlquiler: '1',
     idUsuario: '1',
     fechaInicio: '12-12-2025',

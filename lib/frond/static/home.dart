@@ -7,37 +7,6 @@ import 'educacion.dart';
 import 'comunidad.dart';
 import '../iureutilizables/footer.dart';
 
-// Implementación personalizada del manejador de navegación para la página de inicio
-class HomeNavigationHandler implements NavigationHandler {
-  @override
-  void navigateTo(BuildContext context, String route) {
-    switch (route) {
-      case 'conservacion':
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => Conservrefor()),
-          (route) => false,
-        );
-        break;
-      case 'educDiv':
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => Educacion()),
-          (route) => false,
-        );
-        break;
-      case 'colaboracion':
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => Comunidad()),
-          (route) => false,
-        );
-        break;
-      default:
-    }
-  }
-}
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -53,19 +22,17 @@ class _MyHomePageState extends State<MyHomePage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 800;
     return Scaffold(
-      appBar: customAppBar(context: context),
+      appBar: CustomAppBar(context: context),
       drawer:
           MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
-          //child: Column(
           children: [
-            WidgetPersonalizados.constructorContainerimg(
-              'assets/images/mono1.jpg',
-              0,
-              0,
-              400,
-              0,
+            ImageContainerWidget(
+              imagePath: 'assets/images/mono1.jpg',
+              margin: EdgeInsets.zero,
+              padding: 0,
+              height: 400,
             ),
 
             LayoutBuilder(
@@ -83,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: 400,
-                          cacheWidth: 500, //resolucion guardada en memoria
+                          cacheWidth: 500,
                           cacheHeight: 500,
                         ),
                       ),
@@ -104,61 +71,71 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
 
-            WidgetPersonalizados.constructorContainerText(
-              context.tr('texts.textsHome.texto1'),
-              fondo,
-              Color.fromARGB(255, 18, 90, 5),
-              EdgeInsets.all(20),
-              10,
-              MediaQuery.of(context).size.width * 0.045,
-              'Oswald',
-              FontWeight.w300, // Cambiado a Light para texto general
-              Alignment.center,
+            TextContainerWidget(
+              text: context.tr('texts.textsHome.texto1'),
+              margin: EdgeInsets.all(20),
+              padding: 10,
+              backgroundColor: fondo,
+              alignment: Alignment.center,
+              style: TextStyle(
+                color: Color.fromARGB(255, 18, 90, 5),
+                fontSize: MediaQuery.of(context).size.width * 0.045,
+                fontFamily: 'Oswald',
+                fontWeight: FontWeight.w300,
+              ),
             ),
 
-            WidgetPersonalizados.ElijeFilaColumnaDynamico([
-              WidgetPersonalizados.constructorContainerText(
-                context.tr('texts.textsHome.esun'),
-                const Color.fromARGB(0, 253, 255, 254),
-                const Color.fromARGB(255, 20, 68, 6),
-                EdgeInsets.all(20),
-                10,
-                30,
-                'Oswald',
-                FontWeight.bold, // Cambiado a Bold para subtítulos
-                Alignment.centerLeft,
-              ),
-              WidgetPersonalizados.constructorContainerimg(
-                context.tr('assets/images/doñas.jpg'),
-                10,
-                10,
-                400,
-                0,
-              ),
-            ], 400),
+            ResponsiveLayout(
+              breakpoint: 400,
+              children: [
+                TextContainerWidget(
+                  text: context.tr('texts.textsHome.esun'),
+                  margin: EdgeInsets.all(20),
+                  padding: 10,
+                  backgroundColor: const Color.fromARGB(0, 253, 255, 254),
+                  alignment: Alignment.centerLeft,
+                  style: TextStyle(
+                    color: const Color.fromARGB(255, 20, 68, 6),
+                    fontSize: 30,
+                    fontFamily: 'Oswald',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ImageContainerWidget(
+                  imagePath: 'assets/images/doñas.jpg',
+                  margin: EdgeInsets.all(10),
+                  padding: 10,
+                  height: 400,
+                ),
+              ],
+            ),
 
-            WidgetPersonalizados.ElijeFilaColumnaDynamico([
-              WidgetPersonalizados.constructorContainerimg(
-                context.tr('assets/images/monoArania.jpg'),
-                20,
-                10,
-                400,
-                0,
-              ),
-              WidgetPersonalizados.constructorContainerText(
-                context.tr('texts.textsHome.monoArania'),
-                const Color.fromARGB(0, 253, 255, 254),
-                const Color.fromARGB(255, 20, 68, 6),
-                EdgeInsets.all(10),
-                10,
-                30,
-                'Oswald',
-                FontWeight.bold, // Cambiado a Bold para subtítulos
-                Alignment.centerLeft,
-              ),
-            ], 400),
+            ResponsiveLayout(
+              breakpoint: 400,
+              children: [
+                ImageContainerWidget(
+                  imagePath: 'assets/images/monoArania.jpg',
+                  margin: EdgeInsets.all(20),
+                  padding: 10,
+                  height: 400,
+                ),
+                TextContainerWidget(
+                  text: context.tr('texts.textsHome.monoArania'),
+                  margin: EdgeInsets.all(10),
+                  padding: 10,
+                  backgroundColor: const Color.fromARGB(0, 253, 255, 254),
+                  alignment: Alignment.centerLeft,
+                  style: TextStyle(
+                    color: const Color.fromARGB(255, 20, 68, 6),
+                    fontSize: 30,
+                    fontFamily: 'Oswald',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
 
-            //Bloque cargando 1
+            // Bloque cargando 1
             FutureBuilder<List<Map<String, String>>>(
               future: _cargarListasHacemos(context),
               builder: (context, snapshot) {
@@ -176,16 +153,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     children: [
-                      WidgetPersonalizados.constructorContainerText(
-                        context.tr('titles.hacemos'),
-                        fondo,
-                        const Color.fromARGB(255, 2, 63, 2),
-                        EdgeInsets.all(20),
-                        10,
-                        (!isMobile) ? 50 : 30,
-                        'Oswald',
-                        FontWeight.bold, // Ya está en Bold, pero lo aseguramos
-                        Alignment.center,
+                      TextContainerWidget(
+                        text: context.tr('titles.hacemos'),
+                        margin: EdgeInsets.all(20),
+                        padding: 10,
+                        backgroundColor: fondo,
+                        alignment: Alignment.center,
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 2, 63, 2),
+                          fontSize: (!isMobile) ? 50 : 30,
+                          fontFamily: 'Oswald',
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       LayoutBuilder(
                         builder: (context, constraints) {
@@ -204,19 +183,33 @@ class _MyHomePageState extends State<MyHomePage> {
                                 width: 350,
                                 height: 700,
                                 decoration: BoxDecoration(
-                                  color:
-                                      Colors
-                                          .transparent, // Removed white background
+                                  color: Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Column(
                                   children: [
-                                    WidgetPersonalizados.ListaWidgetOrdenada(
+                                    listaWidgetOrdenada(
                                       listaHacemos[index],
                                       0,
                                       context,
-                                      navigationHandler:
-                                          HomeNavigationHandler(),
+                                      onNavegar: (ctx, ruta) {
+                                        final destino =
+                                            {
+                                              'conservacion': Conservrefor(),
+                                              'educDiv': Educacion(),
+                                              'colaboracion': Comunidad(),
+                                            }[ruta];
+
+                                        if (destino != null) {
+                                          Navigator.pushAndRemoveUntil(
+                                            ctx,
+                                            MaterialPageRoute(
+                                              builder: (_) => destino,
+                                            ),
+                                            (_) => false,
+                                          );
+                                        }
+                                      },
                                     ),
                                   ],
                                 ),
@@ -231,30 +224,34 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
 
-            WidgetPersonalizados.constructorContainerText(
-              context.tr('texts.textsHome.NewYorkTimes'),
-              const Color.fromARGB(0, 4, 66, 12),
-              const Color.fromARGB(255, 5, 58, 5),
-              EdgeInsets.all(20),
-              10,
-              MediaQuery.of(context).size.width * 0.045,
-              'Oswald',
-              FontWeight.w300, // Cambiado a Light para texto general
-              Alignment.center,
+            TextContainerWidget(
+              text: context.tr('texts.textsHome.NewYorkTimes'),
+              margin: EdgeInsets.all(20),
+              padding: 10,
+              backgroundColor: const Color.fromARGB(0, 4, 66, 12),
+              alignment: Alignment.center,
+              style: TextStyle(
+                color: const Color.fromARGB(255, 5, 58, 5),
+                fontSize: MediaQuery.of(context).size.width * 0.045,
+                fontFamily: 'Oswald',
+                fontWeight: FontWeight.w300,
+              ),
             ),
-            WidgetPersonalizados.constructorContainerText(
-              '- New York Times',
-              const Color.fromARGB(0, 4, 66, 12),
-              const Color.fromARGB(255, 5, 58, 5),
-              EdgeInsets.all(20),
-              10,
-              20,
-              'Oswald',
-              FontWeight.w200,
-              Alignment.center,
+            TextContainerWidget(
+              text: '- New York Times',
+              margin: EdgeInsets.all(20),
+              padding: 10,
+              backgroundColor: const Color.fromARGB(0, 4, 66, 12),
+              alignment: Alignment.center,
+              style: TextStyle(
+                color: const Color.fromARGB(255, 5, 58, 5),
+                fontSize: 20,
+                fontFamily: 'Oswald',
+                fontWeight: FontWeight.w200,
+              ),
             ),
 
-            //Bloque cargando 2
+            // Bloque cargando 2
             FutureBuilder<List<Map<String, String>>>(
               future: _cargarlistaNoticias(context),
               builder: (context, snapshot) {
@@ -272,16 +269,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     children: [
-                      WidgetPersonalizados.constructorContainerText(
-                        context.tr('titles.noticias'),
-                        fondo,
-                        const Color.fromARGB(255, 20, 56, 28),
-                        EdgeInsets.all(20),
-                        10,
-                        (!isMobile) ? 50 : 30,
-                        'Oswald',
-                        FontWeight.bold, // Ya está en Bold, pero lo aseguramos
-                        Alignment.center,
+                      TextContainerWidget(
+                        text: context.tr('titles.noticias'),
+                        margin: EdgeInsets.all(20),
+                        padding: 10,
+                        backgroundColor: fondo,
+                        alignment: Alignment.center,
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 20, 56, 28),
+                          fontSize: (!isMobile) ? 50 : 30,
+                          fontFamily: 'Oswald',
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       LayoutBuilder(
                         builder: (context, constraints) {
@@ -297,19 +296,33 @@ class _MyHomePageState extends State<MyHomePage> {
                                 width: 350,
                                 height: 600,
                                 decoration: BoxDecoration(
-                                  color:
-                                      Colors
-                                          .transparent, // Removed white background
+                                  color: Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Column(
                                   children: [
-                                    WidgetPersonalizados.ListaWidgetOrdenada(
+                                    listaWidgetOrdenada(
                                       listaNoticias[index],
                                       0,
                                       context,
-                                      navigationHandler:
-                                          HomeNavigationHandler(),
+                                      onNavegar: (ctx, ruta) {
+                                        final destino =
+                                            {
+                                              'conservacion': Conservrefor(),
+                                              'educDiv': Educacion(),
+                                              'colaboracion': Comunidad(),
+                                            }[ruta];
+
+                                        if (destino != null) {
+                                          Navigator.pushAndRemoveUntil(
+                                            ctx,
+                                            MaterialPageRoute(
+                                              builder: (_) => destino,
+                                            ),
+                                            (_) => false,
+                                          );
+                                        }
+                                      },
                                     ),
                                   ],
                                 ),
@@ -324,17 +337,14 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
 
-            WidgetPersonalizados.constructorContainerimg(
-              'assets/images/manos.jpg',
-              0,
-              0,
-              400,
-              0,
+            ImageContainerWidget(
+              imagePath: 'assets/images/manos.jpg',
+              margin: EdgeInsets.zero,
+              padding: 0,
+              height: 400,
             ),
-            //const CustomFooter(),
             const Footer(),
           ],
-          //),
         ),
       ),
     );

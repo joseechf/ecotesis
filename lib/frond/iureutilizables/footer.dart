@@ -91,7 +91,7 @@ class Footer extends StatelessWidget {
           Text(
             '©2022 by Pro Eco Azuero. Proudly created with Wix.com',
             style: TextStyle(
-              color: Estilos.blanco.withOpacity(0.9),
+              color: Estilos.blanco.withValues(alpha: 0.9),
               fontSize: Estilos.textoPequeno,
             ),
           ),

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,25 +7,25 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
 import '../static/educacion.dart';
 import '../static/comunidad.dart';
-import '../auth/gestionUsuario.dart';
-import '../auth/editUsuario.dart';
+import '../auth/gestion_usuario.dart';
+import '../auth/edit_usuario.dart';
 import '../static/ecoguias.dart';
-import '../baseDatos/pages/catalogo_page.dart';
+import '../base_datos/pages/catalogo_page.dart';
 import '../static/conservrefor.dart';
 import '../mapa_azuero/mapazuero.dart';
 import '../static/nosotros.dart';
 import '../estilos.dart';
-import '../admin/consolaAdmin.dart';
-import 'reglasRol.dart';
+import '../admin/consola_admin.dart';
+import 'reglas_rol.dart';
 import '../../data/auth/session_provider.dart';
 
 /// Punto de quiebre entre diseño móvil y escritorio.
 const double _mobileBreakpoint = 800;
 
 /// AppBar personalizada que se adapta a escritorio y móvil.
-class customAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
-  const customAppBar({Key? key, required this.context}) : super(key: key);
+  const CustomAppBar({Key? key, required this.context}) : super(key: key);
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
@@ -184,8 +183,12 @@ class _DesktopMenu extends StatelessWidget {
     ),
   );
 
-  void _go(BuildContext ctx, Widget page) =>
-      Navigator.pushReplacement(ctx, MaterialPageRoute(builder: (_) => page));
+  void _go(BuildContext contexto, Widget pagina) {
+    Navigator.pushReplacement(
+      contexto,
+      MaterialPageRoute(builder: (contextoRuta) => pagina),
+    );
+  }
 
   Future<void> _launchUrl(BuildContext ctx, String url) async {
     final uri = Uri.parse(url);

@@ -42,7 +42,7 @@ class EspecieDto {
     this.imagenes,
   });
 
-  /// ---------- FROM JSON (API → APP) ----------
+  //  FROM JSON (API → APP)
   factory EspecieDto.fromJson(Map<String, dynamic> json) {
     return EspecieDto(
       nombreCientifico: json['nombre_cientifico'] as String,
@@ -89,7 +89,7 @@ class EspecieDto {
     );
   }
 
-  /// ---------- TO JSON (APP → API) ----------
+  //  TO JSON (APP → API)
   Map<String, dynamic> toJson() {
     return {
       'nombre_cientifico': nombreCientifico,

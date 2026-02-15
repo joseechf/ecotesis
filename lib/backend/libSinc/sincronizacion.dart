@@ -1,8 +1,8 @@
-import '../llamadasLocales/llamadasFlora.dart';
-import '../llamadasRemotas/llamadasFlora.dart';
+import '../llamadas_locales/llamadas_flora.dart';
+import '../llamadas_remotas/llamadas_flora.dart';
 import '../../data/models/especie_db.dart';
 import '../../data/mappers/especie_mapper.dart';
-import '../llamadasLocales/sqliteHelper.dart';
+import '../llamadas_locales/sqlite_helper.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 

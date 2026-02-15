@@ -200,6 +200,7 @@
     "nuevoRegistro": "New Registration",
     "sinEspecies": "No species found",
     "nuevaEspecie": "Add New Species",
+    "editarEspecie":"Edit species",
    "insert":{
       "Nlatin": "Latin Name",
       "Ncomun": "Common Name",
@@ -212,7 +213,7 @@
       "florDistintiva": "Distinctive Flower",
       "frutaDistintiva":"Distinctive Fruit",
       "huespedes":"Guests",
-      "Ave":"Bird",
+      "Aves":"Bird",
       "Mono":"Ape",
       "formaCrecimiento":"Growth Form",
       "Rapido":"Fast",
@@ -226,7 +227,8 @@
       "Humedo":"Humid",
       "estrato":"stratum",
       "Utilidad": "Utility",
-      "Ubicacion": "Location"
+      "Ubicacion": "Location",
+      "Imagenes": "Image"
     },
     "buttons":{
       "addEspecie":"Add Species"

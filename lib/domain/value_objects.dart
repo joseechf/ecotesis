@@ -1,51 +1,23 @@
-/*import 'dart:typed_data';
-
-// domain/value_objects/nombre_comun.dart
-class NombreComun {
-  String nombreComun;
-  NombreComun({required this.nombreComun});
-}
-
-// domain/value_objects/utilidad.dart
-class Utilidad {
-  String utilidad;
-  Utilidad({required this.utilidad});
-}
-
-// domain/value_objects/origen.dart
-class Origen {
-  String origen;
-  Origen({required this.origen});
-}
-
-class ImagenTemp {
-  String urlFoto; // url ya existente (opcional)
-  String estado; // etiqueta local
-  Uint8List? bytes; // bytes seleccionados (opcional)
-
-  ImagenTemp({this.urlFoto = '', this.estado = 'tentativo', this.bytes});
-}
-*/
 import 'dart:typed_data';
 
-/// ---------------- NombreComun ----------------
+//  NombreComun
 class NombreComun {
   String nombreComun;
 
   NombreComun({required String nombreComun}) : nombreComun = nombreComun.trim();
 
-  /// SQLite → VO
+  // SQLite → VO
   factory NombreComun.fromRow(Map<String, dynamic> r) =>
       NombreComun(nombreComun: r['nombre_comun']);
 
-  /// VO → SQLite
+  // VO → SQLite
   Map<String, dynamic> toRow(String nombreCientifico) => {
     'nombre_comun': nombreComun,
     'nombre_cientifico': nombreCientifico,
   };
 }
 
-/// ---------------- Utilidad ----------------
+//  Utilidad
 class Utilidad {
   String utilidad;
 
@@ -60,7 +32,7 @@ class Utilidad {
   };
 }
 
-/// ---------------- Origen ----------------
+//  Origen
 class Origen {
   String origen;
 
@@ -74,7 +46,7 @@ class Origen {
   };
 }
 
-/// ---------------- ImagenTemp ----------------
+//  ImagenTemp
 class ImagenTemp {
   String urlFoto; // url ya existente (opcional)
   String estado; // etiqueta local

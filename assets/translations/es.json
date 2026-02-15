@@ -199,6 +199,7 @@
     "nuevoRegistro": "Nuevo Registro",
     "sinEspecies": "No se encontraron especies",
     "nuevaEspecie": "Agregar Nueva Especie",
+    "editarEspecie":"Editar Especie",
     "insert": {
       "Nlatin": "Nombre Latino",
       "Ncomun": "Nombre Comun",
@@ -211,7 +212,7 @@
       "florDistintiva": "Flor Distintiva",
       "frutaDistintiva":"Fruta Distintiva",
       "huespedes":"huespedes",
-      "Ave":"Ave",
+      "Aves":"Ave",
       "Mono":"Mono",
       "formaCrecimiento":"formaCrecimiento",
       "Rapido":"Rapido",
@@ -225,7 +226,8 @@
       "Humedo":"Humedo",
       "estrato":"estrato",
       "Utilidad": "Utilidad",
-      "Ubicacion": "Ubicación"
+      "Ubicacion": "Ubicación",
+      "Imagenes": "Imagen"
     },
     "buttons":{
       "addEspecie":"agregar especie"

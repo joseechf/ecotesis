@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import '../iureutilizables/footer.dart';
 
 class Nosotros extends StatelessWidget {
+  const Nosotros({super.key});
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -13,21 +13,19 @@ class Nosotros extends StatelessWidget {
     return Builder(
       builder: (context) {
         return Scaffold(
-          appBar: customAppBar(context: context),
+          appBar: CustomAppBar(context: context),
           drawer:
               MediaQuery.sizeOf(context).width < 800
                   ? const MobileMenu()
                   : null,
           body: SafeArea(
             child: ListView(
-              //child: Column(
               children: [
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/mono1.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ImageContainerWidget(
+                  imagePath: 'assets/images/mono1.jpg',
+                  margin: EdgeInsets.zero,
+                  padding: 0,
+                  height: 400,
                 ),
 
                 Container(
@@ -35,7 +33,6 @@ class Nosotros extends StatelessWidget {
                   constraints: BoxConstraints(maxHeight: 400),
                   margin: EdgeInsets.only(bottom: 20),
                   child: Stack(
-                    //fit: StackFit.expand,
                     children: [
                       Opacity(
                         opacity: 0.8,
@@ -60,120 +57,58 @@ class Nosotros extends StatelessWidget {
                   ),
                 ),
 
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth > 600) {
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: WidgetPersonalizados.constructorContainerimg(
-                              'assets/images/bosque.jpg',
-                              20,
-                              10,
-                              400,
-                              0,
-                            ),
+                ResponsiveLayout(
+                  breakpoint: 600,
+                  children: [
+                    ImageContainerWidget(
+                      imagePath: 'assets/images/bosque.jpg',
+                      margin: EdgeInsets.all(20),
+                      padding: 10,
+                      height: 400,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(30),
+                      alignment: Alignment.center,
+                      child: RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black87,
+                            height: 1.4,
                           ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(30),
-                                  alignment: Alignment.center,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                        height: 1.4,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: context.tr(
-                                            'texts.textsNosotros.historia.p1',
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: context.tr(
-                                            'texts.textsNosotros.historia.negrita',
-                                          ),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: context.tr(
-                                            'texts.textsNosotros.historia.p2',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    } else {
-                      return Column(
-                        children: [
-                          WidgetPersonalizados.constructorContainerimg(
-                            'assets/images/bosque.jpg',
-                            20,
-                            10,
-                            400,
-                            0,
-                          ),
-                          Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(30),
-                            alignment: Alignment.center,
-                            child: RichText(
-                              text: TextSpan(
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                  height: 1.4,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: context.tr(
-                                      'texts.textsNosotros.historia.p1',
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: context.tr(
-                                      'texts.textsNosotros.historia.negrita',
-                                    ),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: context.tr(
-                                      'texts.textsNosotros.historia.p2',
-                                    ),
-                                  ),
-                                ],
+                          children: [
+                            TextSpan(
+                              text: context.tr(
+                                'texts.textsNosotros.historia.p1',
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }
-                  },
+                            TextSpan(
+                              text: context.tr(
+                                'texts.textsNosotros.historia.negrita',
+                              ),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            TextSpan(
+                              text: context.tr(
+                                'texts.textsNosotros.historia.p2',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/casaVieja.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ImageContainerWidget(
+                  imagePath: 'assets/images/casaVieja.jpg',
+                  margin: EdgeInsets.zero,
+                  padding: 0,
+                  height: 400,
                 ),
 
                 Container(
@@ -181,27 +116,31 @@ class Nosotros extends StatelessWidget {
                   color: const Color.fromARGB(255, 4, 56, 13),
                   child: Column(
                     children: [
-                      WidgetPersonalizados.constructorContainerText(
-                        'Jay Chiat Centro de Aprendizaje Ambiental',
-                        const Color.fromARGB(0, 255, 255, 255),
-                        Colors.white,
-                        EdgeInsets.all(10),
-                        10,
-                        (!isMobile) ? 50 : 30,
-                        'Oswald',
-                        FontWeight.bold,
-                        Alignment.center,
+                      TextContainerWidget(
+                        text: 'Jay Chiat Centro de Aprendizaje Ambiental',
+                        margin: EdgeInsets.all(10),
+                        padding: 10,
+                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                        alignment: Alignment.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: (!isMobile) ? 50 : 30,
+                          fontFamily: 'Oswald',
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      WidgetPersonalizados.constructorContainerText(
-                        context.tr('texts.textsNosotros.aprendizaje'),
-                        const Color.fromARGB(0, 255, 255, 255),
-                        Colors.white,
-                        EdgeInsets.all(10),
-                        10,
-                        (!isMobile) ? 40 : 20,
-                        'Oswald',
-                        FontWeight.normal,
-                        Alignment.center,
+                      TextContainerWidget(
+                        text: context.tr('texts.textsNosotros.aprendizaje'),
+                        margin: EdgeInsets.all(10),
+                        padding: 10,
+                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                        alignment: Alignment.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: (!isMobile) ? 40 : 20,
+                          fontFamily: 'Oswald',
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ],
                   ),
@@ -222,12 +161,11 @@ class Nosotros extends StatelessWidget {
                   ),
                 ),
 
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/mono1.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ImageContainerWidget(
+                  imagePath: 'assets/images/mono1.jpg',
+                  margin: EdgeInsets.zero,
+                  padding: 0,
+                  height: 400,
                 ),
 
                 Container(
@@ -235,27 +173,31 @@ class Nosotros extends StatelessWidget {
                   color: const Color.fromARGB(255, 4, 56, 13),
                   child: Column(
                     children: [
-                      WidgetPersonalizados.constructorContainerText(
-                        context.tr('titles.charrito'),
-                        const Color.fromARGB(0, 255, 255, 255),
-                        Colors.white,
-                        EdgeInsets.all(10),
-                        10,
-                        25,
-                        'Oswald',
-                        FontWeight.bold,
-                        Alignment.center,
+                      TextContainerWidget(
+                        text: context.tr('titles.charrito'),
+                        margin: EdgeInsets.all(10),
+                        padding: 10,
+                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                        alignment: Alignment.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontFamily: 'Oswald',
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      WidgetPersonalizados.constructorContainerText(
-                        context.tr('texts.textsNosotros.charrito'),
-                        const Color.fromARGB(0, 255, 255, 255),
-                        Colors.white,
-                        EdgeInsets.all(10),
-                        10,
-                        (!isMobile) ? 40 : 20,
-                        'Oswald',
-                        FontWeight.normal,
-                        Alignment.center,
+                      TextContainerWidget(
+                        text: context.tr('texts.textsNosotros.charrito'),
+                        margin: EdgeInsets.all(10),
+                        padding: 10,
+                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                        alignment: Alignment.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: (!isMobile) ? 40 : 20,
+                          fontFamily: 'Oswald',
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ],
                   ),
@@ -266,23 +208,24 @@ class Nosotros extends StatelessWidget {
                   width: double.infinity,
                   child: Column(
                     children: [
-                      WidgetPersonalizados.constructorContainerText(
-                        context.tr('titles.titlePrincipal.PARTNERS'),
-                        const Color.fromARGB(0, 255, 255, 255),
-                        const Color.fromARGB(255, 8, 66, 25),
-                        EdgeInsets.all(10),
-                        10,
-                        25,
-                        'Oswald',
-                        FontWeight.bold,
-                        Alignment.center,
+                      TextContainerWidget(
+                        text: context.tr('titles.titlePrincipal.PARTNERS'),
+                        margin: EdgeInsets.all(10),
+                        padding: 10,
+                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                        alignment: Alignment.center,
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 8, 66, 25),
+                          fontSize: 25,
+                          fontFamily: 'Oswald',
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 const Footer(),
               ],
-              //),
             ),
           ),
         );

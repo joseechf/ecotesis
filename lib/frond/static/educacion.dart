@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 
 class Educacion extends StatelessWidget {
+  const Educacion({super.key});
   @override
   Widget build(BuildContext context) {
     double anchoPantalla = MediaQuery.of(context).size.width;
-    double alturaPantalla = MediaQuery.of(context).size.height;
     final isMobile = anchoPantalla < 800;
     return Scaffold(
-      appBar: customAppBar(context: context),
+      appBar: CustomAppBar(context: context),
       drawer:
           MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SafeArea(
@@ -20,199 +19,228 @@ class Educacion extends StatelessWidget {
           children: [
             Column(
               children: [
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/mono1.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ImageContainerWidget(
+                  imagePath: 'assets/images/mono1.jpg',
+                  margin: EdgeInsets.zero,
+                  padding: 0,
+                  height: 400,
                 ),
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/casaVieja.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ImageContainerWidget(
+                  imagePath: 'assets/images/casaVieja.jpg',
+                  margin: EdgeInsets.zero,
+                  padding: 0,
+                  height: 400,
                 ),
-                WidgetPersonalizados.constructorContainerText(
-                  context.tr('titles.titlePrincipal.educacion'),
-                  Colors.white,
-                  const Color.fromARGB(255, 3, 49, 13),
-                  EdgeInsets.all(0),
-                  0,
-                  (!isMobile) ? 100 : 50,
-                  'Oswald',
-                  FontWeight.bold,
-                  Alignment.center,
+                TextContainerWidget(
+                  text: context.tr('titles.titlePrincipal.educacion'),
+                  margin: EdgeInsets.all(0),
+                  padding: 0,
+                  backgroundColor: Colors.white,
+                  alignment: Alignment.center,
+                  style: TextStyle(
+                    color: const Color.fromARGB(255, 3, 49, 13),
+                    fontSize: (!isMobile) ? 100 : 50,
+                    fontFamily: 'Oswald',
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
-                WidgetPersonalizados.ElijeFilaColumnaDynamico([
-                  Stack(
-                    children: [
-                      Align(
-                        child: Opacity(
-                          opacity: 0.8,
-                          child: Image.asset(
-                            'assets/images/bosque.jpg',
-                            fit: BoxFit.cover,
+                ResponsiveLayout(
+                  breakpoint: 400,
+                  children: [
+                    Stack(
+                      children: [
+                        Align(
+                          child: Opacity(
+                            opacity: 0.8,
+                            child: Image.asset(
+                              'assets/images/bosque.jpg',
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Builder(
-                          builder: (context) {
-                            print(
-                              'DEBUG: monoArania title - Stack alignment: Alignment.center',
-                            );
-                            print(
-                              'DEBUG: monoArania title - Screen width: $anchoPantalla',
-                            );
-                            print(
-                              'DEBUG: monoArania title - Font size: ${anchoPantalla * 0.070}',
-                            );
-                            return WidgetPersonalizados.constructorContainerText(
-                              context.tr('texts.educacion.monoArania'),
-                              const Color.fromARGB(0, 255, 255, 255),
-                              Colors.white,
-                              EdgeInsets.all(20),
-                              20,
-                              anchoPantalla * 0.070,
-                              'Oswald',
-                              FontWeight.bold,
-                              Alignment.center,
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.educacion.texto1'),
-                    const Color.fromARGB(0, 0, 0, 0),
-                    const Color.fromARGB(255, 2, 49, 10),
-                    EdgeInsets.only(left: 30, top: 10, right: 30, bottom: 10),
-                    0,
-                    20,
-                    'Oswald',
-                    FontWeight.w200,
-                    Alignment.center,
-                  ),
-                ], 400),
-
-                WidgetPersonalizados.ElijeFilaColumnaDynamico([
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.educacion.objetivo.texto1'),
-                    const Color.fromARGB(0, 20, 68, 6),
-                    const Color.fromARGB(255, 8, 32, 1),
-                    EdgeInsets.all(20),
-                    10,
-                    20,
-                    'Oswald',
-                    FontWeight.w200,
-                    Alignment.center,
-                  ),
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.educacion.objetivo.texto2'),
-                    const Color.fromARGB(0, 20, 68, 6),
-                    const Color.fromARGB(255, 8, 32, 1),
-                    EdgeInsets.all(20),
-                    10,
-                    20,
-                    'Oswald',
-                    FontWeight.w200,
-                    Alignment.center,
-                  ),
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.educacion.objetivo.texto3'),
-                    const Color.fromARGB(0, 20, 68, 6),
-                    const Color.fromARGB(255, 8, 32, 1),
-                    EdgeInsets.all(20),
-                    10,
-                    20,
-                    'Oswald',
-                    FontWeight.w200,
-                    Alignment.center,
-                  ),
-                ], 600),
-
-                WidgetPersonalizados.constructorContainerText(
-                  'AQUI VAN IMAGENES',
-                  Colors.amber,
-                  Colors.blue,
-                  EdgeInsets.all(20),
-                  0,
-                  30,
-                  'Oswald',
-                  FontWeight.bold,
-                  Alignment.center,
-                ),
-
-                WidgetPersonalizados.ElijeFilaColumnaDynamico([
-                  Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Opacity(
-                          opacity: 0.8,
-                          child: Image.asset(
-                            'assets/images/bosque.jpg',
-                            fit: BoxFit.cover,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Builder(
+                            builder: (context) {
+                              return TextContainerWidget(
+                                text: context.tr('texts.educacion.monoArania'),
+                                margin: EdgeInsets.all(20),
+                                padding: 20,
+                                backgroundColor: const Color.fromARGB(
+                                  0,
+                                  255,
+                                  255,
+                                  255,
+                                ),
+                                alignment: Alignment.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: anchoPantalla * 0.070,
+                                  fontFamily: 'Oswald',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            },
                           ),
                         ),
+                      ],
+                    ),
+                    TextContainerWidget(
+                      text: context.tr('texts.educacion.texto1'),
+                      margin: EdgeInsets.only(
+                        left: 30,
+                        top: 10,
+                        right: 30,
+                        bottom: 10,
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Builder(
-                          builder: (context) {
-                            print(
-                              'DEBUG: kids.title - Stack alignment: Alignment.center',
-                            );
-                            print(
-                              'DEBUG: kids.title - Screen width: $anchoPantalla',
-                            );
-                            print(
-                              'DEBUG: kids.title - Font size: ${anchoPantalla * 0.070}',
-                            );
-                            return WidgetPersonalizados.constructorContainerText(
-                              context.tr('texts.educacion.kids.title'),
-                              const Color.fromARGB(0, 255, 255, 255),
-                              Colors.white,
-                              EdgeInsets.all(20),
-                              20,
-                              anchoPantalla * 0.070,
-                              'Oswald',
-                              FontWeight.bold,
-                              Alignment.center,
-                            );
-                          },
-                        ),
+                      padding: 0,
+                      backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 2, 49, 10),
+                        fontSize: 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
                       ),
-                    ],
-                  ),
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.educacion.kids.texto'),
-                    const Color.fromARGB(0, 0, 0, 0),
-                    const Color.fromARGB(255, 2, 49, 10),
-                    EdgeInsets.only(left: 50, top: 20, right: 50, bottom: 20),
-                    0,
-                    20,
-                    'Oswald',
-                    FontWeight.w200,
-                    Alignment.center,
-                  ),
-                ], alturaPantalla),
+                    ),
+                  ],
+                ),
 
-                WidgetPersonalizados.constructorContainerText(
-                  'AQUI VAN IMAGENES',
-                  Colors.amber,
-                  Colors.blue,
-                  EdgeInsets.all(0),
-                  0,
-                  30,
-                  'Oswald',
-                  FontWeight.bold,
-                  Alignment.center,
+                ResponsiveLayout(
+                  breakpoint: 600,
+                  children: [
+                    TextContainerWidget(
+                      text: context.tr('texts.educacion.objetivo.texto1'),
+                      margin: EdgeInsets.all(20),
+                      padding: 10,
+                      backgroundColor: const Color.fromARGB(0, 20, 68, 6),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 8, 32, 1),
+                        fontSize: 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                    TextContainerWidget(
+                      text: context.tr('texts.educacion.objetivo.texto2'),
+                      margin: EdgeInsets.all(20),
+                      padding: 10,
+                      backgroundColor: const Color.fromARGB(0, 20, 68, 6),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 8, 32, 1),
+                        fontSize: 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                    TextContainerWidget(
+                      text: context.tr('texts.educacion.objetivo.texto3'),
+                      margin: EdgeInsets.all(20),
+                      padding: 10,
+                      backgroundColor: const Color.fromARGB(0, 20, 68, 6),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 8, 32, 1),
+                        fontSize: 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ],
+                ),
+
+                TextContainerWidget(
+                  text: 'AQUI VAN IMAGENES',
+                  margin: EdgeInsets.all(20),
+                  padding: 0,
+                  backgroundColor: Colors.amber,
+                  alignment: Alignment.center,
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 30,
+                    fontFamily: 'Oswald',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                ResponsiveLayout(
+                  breakpoint: 600,
+                  children: [
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Opacity(
+                            opacity: 0.8,
+                            child: Image.asset(
+                              'assets/images/bosque.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Builder(
+                            builder: (context) {
+                              return TextContainerWidget(
+                                text: context.tr('texts.educacion.kids.title'),
+                                margin: EdgeInsets.all(20),
+                                padding: 20,
+                                backgroundColor: const Color.fromARGB(
+                                  0,
+                                  255,
+                                  255,
+                                  255,
+                                ),
+                                alignment: Alignment.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: anchoPantalla * 0.070,
+                                  fontFamily: 'Oswald',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    TextContainerWidget(
+                      text: context.tr('texts.educacion.kids.texto'),
+                      margin: EdgeInsets.only(
+                        left: 50,
+                        top: 20,
+                        right: 50,
+                        bottom: 20,
+                      ),
+                      padding: 0,
+                      backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 2, 49, 10),
+                        fontSize: 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ],
+                ),
+
+                TextContainerWidget(
+                  text: 'AQUI VAN IMAGENES',
+                  margin: EdgeInsets.all(0),
+                  padding: 0,
+                  backgroundColor: Colors.amber,
+                  alignment: Alignment.center,
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 30,
+                    fontFamily: 'Oswald',
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Footer(),
               ],

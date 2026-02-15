@@ -10,7 +10,7 @@ Mantiene el estado global de sesión
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/supabaseClient.dart';
+import '../../core/supabase_client.dart';
 import 'usuario_modelo.dart';
 import 'dart:async';
 

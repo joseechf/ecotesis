@@ -1,3 +1,4 @@
+import 'package:ecoazuero/frond/estilos.dart';
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
 import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
@@ -6,13 +7,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'dart:ui' as ui;
 
 class Comunidad extends StatelessWidget {
+  const Comunidad({super.key});
   @override
   Widget build(BuildContext context) {
     double anchoPantalla = MediaQuery.of(context).size.width;
-    double alturaPantalla = MediaQuery.of(context).size.height;
     bool isMobile = anchoPantalla < 800;
     return Scaffold(
-      appBar: customAppBar(context: context),
+      appBar: CustomAppBar(context: context),
       drawer:
           MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
       body: SafeArea(
@@ -20,12 +21,11 @@ class Comunidad extends StatelessWidget {
           children: [
             Column(
               children: [
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/mono1.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ImageContainerWidget(
+                  imagePath: 'assets/images/mono1.jpg',
+                  margin: const EdgeInsets.all(0),
+                  padding: 0,
+                  height: 0,
                 ),
 
                 Container(
@@ -59,77 +59,93 @@ class Comunidad extends StatelessWidget {
                   ),
                 ),
 
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/mirando.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ImageContainerWidget(
+                  imagePath: 'assets/images/mirando.jpg',
+                  margin: const EdgeInsets.all(0),
+                  padding: 0,
+                  height: 400,
                 ),
 
-                WidgetPersonalizados.ElijeFilaColumnaDynamico([
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.comunidad.comites.titulo'),
-                    const Color.fromARGB(255, 3, 53, 7),
-                    Colors.white,
-                    EdgeInsets.all(20),
-                    20,
-                    anchoPantalla * 0.050,
-                    'Oswald',
-                    FontWeight.bold,
-                    Alignment.center,
-                  ),
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.comunidad.comites.texto'),
-                    const Color.fromARGB(255, 255, 255, 255),
-                    const Color.fromARGB(255, 2, 56, 14),
-                    (!isMobile) ? EdgeInsets.all(50) : EdgeInsets.all(10),
-                    20,
-                    (!isMobile) ? 30 : 20,
-                    'Oswald',
-                    FontWeight.w200,
-                    Alignment.center,
-                  ),
-                ], alturaPantalla),
-
-                WidgetPersonalizados.constructorContainerimg(
-                  'assets/images/mirando.jpg',
-                  0,
-                  0,
-                  400,
-                  0,
+                ResponsiveLayout(
+                  breakpoint:
+                      600, // o el valor que prefieras para el breakpoint
+                  children: [
+                    TextContainerWidget(
+                      text: context.tr('texts.comunidad.comites.titulo'),
+                      margin: EdgeInsets.all(20),
+                      padding: 20,
+                      backgroundColor: const Color.fromARGB(255, 3, 53, 7),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: anchoPantalla * 0.050,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextContainerWidget(
+                      text: context.tr('texts.comunidad.comites.texto'),
+                      margin:
+                          (!isMobile) ? EdgeInsets.all(50) : EdgeInsets.all(10),
+                      padding: 20,
+                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 2, 56, 14),
+                        fontSize: (!isMobile) ? 30 : 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ],
                 ),
 
-                WidgetPersonalizados.ElijeFilaColumnaDynamico([
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.comunidad.instituciones.titulo'),
-                    const Color.fromARGB(255, 3, 53, 7),
-                    Colors.white,
-                    EdgeInsets.all(50),
-                    20,
-                    30,
-                    'Oswald',
-                    FontWeight.bold,
-                    Alignment.center,
-                  ),
-                  WidgetPersonalizados.constructorContainerText(
-                    context.tr('texts.comunidad.instituciones.texto'),
-                    const Color.fromARGB(255, 255, 255, 255),
-                    const Color.fromARGB(255, 2, 56, 14),
-                    EdgeInsets.all(20),
-                    20,
-                    30,
-                    'Oswald',
-                    FontWeight.w200,
-                    Alignment.center,
-                  ),
-                ], 600),
+                ImageContainerWidget(
+                  imagePath: 'assets/images/mirando.jpg',
+                  margin: EdgeInsets.zero,
+                  padding: 0,
+                  height: 400,
+                ),
+
+                ResponsiveLayout(
+                  breakpoint: 600,
+                  children: [
+                    TextContainerWidget(
+                      text: context.tr('texts.comunidad.instituciones.titulo'),
+                      margin: const EdgeInsets.all(50),
+                      padding: 20,
+                      backgroundColor: const Color.fromARGB(255, 3, 53, 7),
+                      alignment: Alignment.center,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+
+                    TextContainerWidget(
+                      text: context.tr('texts.comunidad.instituciones.texto'),
+                      margin: const EdgeInsets.all(20),
+                      padding: 20,
+                      backgroundColor: Colors.white,
+                      alignment: Alignment.center,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
+                        color: Estilos.verdeOscuro,
+                      ),
+                    ),
+                  ],
+                ),
 
                 FutureBuilder<List<Map<String, String>>>(
                   future: _obtenerRecursosColaboradores(context),
                   builder: (context, snapshot) {
-                    if (snapshot.hasError)
+                    if (snapshot.hasError) {
                       return Text('Error al cargar los datos');
+                    }
                     if (!snapshot.hasData) {
                       return const Center(
                         child: Padding(
@@ -140,22 +156,25 @@ class Comunidad extends StatelessWidget {
                     }
                     final listaRecursosColaboradores = snapshot.data!;
                     return Container(
-                      color: const Color.fromARGB(255, 132, 218, 167),
+                      color: Estilos.verdeClaro,
                       child: Column(
                         children: [
-                          WidgetPersonalizados.constructorContainerText(
-                            context.tr(
+                          TextContainerWidget(
+                            text: context.tr(
                               'texts.comunidad.recursoColaborador.titulo',
                             ),
-                            const Color.fromARGB(0, 0, 0, 0),
-                            const Color.fromARGB(255, 253, 253, 253),
-                            EdgeInsets.all(20),
-                            10,
-                            50,
-                            'Oswald',
-                            FontWeight.bold,
-                            Alignment.center,
+                            margin: const EdgeInsets.all(20),
+                            padding: 10,
+                            backgroundColor: Colors.transparent,
+                            alignment: Alignment.center,
+                            style: const TextStyle(
+                              fontSize: 50,
+                              fontFamily: 'Oswald',
+                              fontWeight: FontWeight.bold,
+                              color: Estilos.blanco,
+                            ),
                           ),
+
                           LayoutBuilder(
                             builder: (context, constraints) {
                               // Encontrar el texto más largo para determinar la altura
@@ -217,23 +236,28 @@ class Comunidad extends StatelessWidget {
                                           ),
                                           Expanded(
                                             child: SingleChildScrollView(
-                                              child: WidgetPersonalizados.constructorContainerText(
-                                                listaRecursosColaboradores[index]['texto']!,
-                                                Colors.white,
-                                                const Color.fromARGB(
-                                                  255,
-                                                  4,
-                                                  46,
-                                                  4,
+                                              child: TextContainerWidget(
+                                                text:
+                                                    listaRecursosColaboradores[index]['texto']!,
+                                                margin: const EdgeInsets.all(
+                                                  10,
                                                 ),
-                                                EdgeInsets.all(10),
-                                                10,
-                                                20,
-                                                'Oswald',
-                                                FontWeight.w200,
-                                                Alignment.center,
+                                                padding: 10,
+                                                backgroundColor: Colors.white,
+                                                alignment: Alignment.center,
                                                 maxLines: 10,
                                                 overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily: 'Oswald',
+                                                  fontWeight: FontWeight.w200,
+                                                  color: Color.fromARGB(
+                                                    255,
+                                                    4,
+                                                    46,
+                                                    4,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
