@@ -4,42 +4,10 @@ import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import '../estilos.dart';
+import 'listas_lazy_loading/listas_lazy.dart';
 
 class Conservrefor extends StatelessWidget {
   const Conservrefor({super.key});
-  Future<List<Map<String, String>>> _cargarListaIniciativas(
-    BuildContext context,
-  ) async {
-    return [
-      {
-        'imagen': 'assets/images/doñas.jpg',
-        'titulo': context.tr(
-          'texts.conservrefor.cultivosSostenibles.titulo.viveros',
-        ),
-        'resumen': context.tr(
-          'texts.conservrefor.cultivosSostenibles.texto.viveros',
-        ),
-      },
-      {
-        'imagen': 'assets/images/doñas.jpg',
-        'titulo': context.tr(
-          'texts.conservrefor.cultivosSostenibles.titulo.Microproductores',
-        ),
-        'resumen': context.tr(
-          'texts.conservrefor.cultivosSostenibles.texto.Microproductores',
-        ),
-      },
-      {
-        'imagen': 'assets/images/doñas.jpg',
-        'titulo': context.tr(
-          'texts.conservrefor.cultivosSostenibles.titulo.semillas',
-        ),
-        'resumen': context.tr(
-          'texts.conservrefor.cultivosSostenibles.texto.semillas',
-        ),
-      },
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +179,7 @@ class Conservrefor extends StatelessWidget {
                   ),
                 ),
                 FutureBuilder<List<Map<String, String>>>(
-                  future: _cargarListaIniciativas(context),
+                  future: cargarListaIniciativas(context),
                   builder: (context, datos) {
                     if (datos.hasError) {
                       return Text('ERROR AL CARGAR LA SECCION');
@@ -229,10 +197,9 @@ class Conservrefor extends StatelessWidget {
                           padding: EdgeInsets.all(10),
                           width: 350,
                           height: 600,
-                          child: listaWidgetOrdenada(
-                            listaIniciativas[index],
-                            100,
-                            context,
+                          child: ListaWidgetOrdenada(
+                            datos: listaIniciativas[index],
+                            radioImg: 100,
                           ),
                         );
                       }),

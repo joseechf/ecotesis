@@ -25,7 +25,7 @@ const double _mobileBreakpoint = 800;
 /// AppBar personalizada que se adapta a escritorio y móvil.
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
-  const CustomAppBar({Key? key, required this.context}) : super(key: key);
+  const CustomAppBar({super.key, required this.context});
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
@@ -146,36 +146,40 @@ class _DesktopMenu extends StatelessWidget {
   }
 
   /* ---------- submenús ---------- */
-  List<PopupMenuEntry<String>> _trabajoItems(BuildContext ctx) => [
-    _popup(ctx, 'buttons.conservref', () => _go(ctx, Conservrefor())),
-    _popup(ctx, 'buttons.educacion', () => _go(ctx, Educacion())),
-    _popup(ctx, 'buttons.comunidad', () => _go(ctx, Comunidad())),
+  List<PopupMenuEntry<String>> _trabajoItems(BuildContext context) => [
+    _popup(context, 'buttons.conservref', () => _go(context, Conservrefor())),
+    _popup(context, 'buttons.educacion', () => _go(context, Educacion())),
+    _popup(context, 'buttons.comunidad', () => _go(context, Comunidad())),
   ];
 
-  List<PopupMenuEntry<String>> _recursosItems(BuildContext ctx) => [
-    _popup(ctx, 'buttons.mapa', () => _go(ctx, MappAzuero())),
-    _popup(ctx, 'buttons.ecoguias', () => _go(ctx, Ecoguias())),
-    _popup(ctx, 'buttons.basedatos', () => _go(ctx, const CatalogoPage())),
+  List<PopupMenuEntry<String>> _recursosItems(BuildContext context) => [
+    _popup(context, 'buttons.mapa', () => _go(context, MappAzuero())),
+    _popup(context, 'buttons.ecoguias', () => _go(context, Ecoguias())),
+    _popup(
+      context,
+      'buttons.basedatos',
+      () => _go(context, const CatalogoPage()),
+    ),
     if (kIsWeb)
       _popup(
-        ctx,
+        context,
         'buttons.biblioteca',
         () => _launchUrl(
-          ctx,
+          context,
           'https://www.librarything.com/catalog/ProEcoAzuero',
         ),
       ),
-    _popup(ctx, 'buttons.blog', () => _go(ctx, Conservrefor())),
+    _popup(context, 'buttons.blog', () => _go(context, Conservrefor())),
   ];
 
   PopupMenuItem<String> _popup(
-    BuildContext ctx,
+    BuildContext context,
     String key,
     VoidCallback onTap,
   ) => PopupMenuItem<String>(
     onTap: onTap,
     child: Text(
-      ctx.tr(key),
+      context.tr(key),
       style: const TextStyle(
         color: Estilos.verdeOscuro,
         fontSize: Estilos.textoGrande,
@@ -190,14 +194,16 @@ class _DesktopMenu extends StatelessWidget {
     );
   }
 
-  Future<void> _launchUrl(BuildContext ctx, String url) async {
+  Future<void> _launchUrl(BuildContext context, String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       launchUrl(uri, mode: LaunchMode.platformDefault);
     } else {
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(content: Text('No se pudo abrir el enlace.')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo abrir el enlace.')),
+        );
+      }
     }
   }
 }
@@ -419,9 +425,9 @@ class MobileMenu extends StatelessWidget {
     );
   }
 
-  Widget _drawerTile(BuildContext ctx, String key, Widget page) => ListTile(
+  Widget _drawerTile(BuildContext context, String key, Widget page) => ListTile(
     title: Text(
-      ctx.tr(key),
+      context.tr(key),
       style: const TextStyle(
         fontSize: Estilos.textoGrande,
         color: Estilos.blanco,
@@ -430,19 +436,24 @@ class MobileMenu extends StatelessWidget {
       ),
     ),
     onTap: () {
-      Navigator.pop(ctx); // cierra drawer
-      Navigator.pushReplacement(ctx, MaterialPageRoute(builder: (_) => page));
+      Navigator.pop(context); // cierra drawer
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => page),
+      );
     },
   );
 
-  Future<void> _launchUrl(BuildContext ctx, String url) async {
+  Future<void> _launchUrl(BuildContext context, String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       launchUrl(uri);
     } else {
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(content: Text('No se pudo abrir el enlace.')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo abrir el enlace.')),
+        );
+      }
     }
   }
 }

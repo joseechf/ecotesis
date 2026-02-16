@@ -3,6 +3,7 @@ import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import '../iureutilizables/footer.dart';
+import 'listas_lazy_loading/listas_lazy.dart';
 
 class Nosotros extends StatelessWidget {
   const Nosotros({super.key});
@@ -159,6 +160,41 @@ class Nosotros extends StatelessWidget {
                       color: const Color.fromARGB(255, 8, 66, 13),
                     ),
                   ),
+                ),
+
+                // aquí va una lista de persona y descripción
+                FutureBuilder<List<Map<String, String>>>(
+                  future: cargarColaboradores(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error al cargar los datos');
+                    }
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    final lista = snapshot.data!;
+                    return Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: List.generate(lista.length, (index) {
+                        return Container(
+                          width: 350,
+                          child: ListaWidgetOrdenada(
+                            datos: lista[index],
+                            radioImg: 10,
+                            onNavegar: (ctx, ruta) {
+                              debugPrint("Ir a $ruta");
+                            },
+                          ),
+                        );
+                      }),
+                    );
+                  },
                 ),
 
                 ImageContainerWidget(

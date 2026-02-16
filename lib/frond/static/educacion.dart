@@ -3,6 +3,7 @@ import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import 'package:ecoazuero/frond/iureutilizables/footer.dart';
+import 'listas_lazy_loading/listas_lazy.dart';
 
 class Educacion extends StatelessWidget {
   const Educacion({super.key});
@@ -152,18 +153,22 @@ class Educacion extends StatelessWidget {
                   ],
                 ),
 
-                TextContainerWidget(
-                  text: 'AQUI VAN IMAGENES',
-                  margin: EdgeInsets.all(20),
-                  padding: 0,
-                  backgroundColor: Colors.amber,
-                  alignment: Alignment.center,
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 30,
-                    fontFamily: 'Oswald',
-                    fontWeight: FontWeight.bold,
-                  ),
+                Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
+                  alignment: WrapAlignment.center,
+                  children:
+                      listaEstudiantes.map((imagen) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            imagen,
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      }).toList(),
                 ),
 
                 ResponsiveLayout(
@@ -229,18 +234,22 @@ class Educacion extends StatelessWidget {
                   ],
                 ),
 
-                TextContainerWidget(
-                  text: 'AQUI VAN IMAGENES',
-                  margin: EdgeInsets.all(0),
-                  padding: 0,
-                  backgroundColor: Colors.amber,
-                  alignment: Alignment.center,
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 30,
-                    fontFamily: 'Oswald',
-                    fontWeight: FontWeight.bold,
-                  ),
+                Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
+                  alignment: WrapAlignment.center,
+                  children:
+                      listaEstudiantes.map((imagen) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            imagen,
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      }).toList(),
                 ),
                 const Footer(),
               ],

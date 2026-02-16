@@ -66,7 +66,7 @@ class CampoTextoPersonalizado extends StatelessWidget {
   final bool habilitado;
 
   const CampoTextoPersonalizado({
-    Key? key,
+    super.key,
     required this.controlador,
     required this.etiqueta,
     this.icono,
@@ -77,7 +77,7 @@ class CampoTextoPersonalizado extends StatelessWidget {
     this.validador,
     this.maxLineas = 1,
     this.habilitado = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

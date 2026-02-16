@@ -246,5 +246,15 @@
   },
   "mapa": {
     "siembra": "sembrados"
+  },
+  "colaboradores":{
+    "Dra_Maria_Gonzalez":{
+      "puesto": "Directora Científica",
+      "descripcion": "Bióloga especializada en conservación de ecosistemas tropicales con más de 10 años de experiencia."
+    },
+    "Carlos_Mendez":{
+      "puesto": "Coordinador de Proyectos",
+      "descripcion": "Responsable de la gestión y ejecución de proyectos ambientales comunitarios."
+    }
   }
 }

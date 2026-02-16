@@ -56,6 +56,7 @@ class _GestionUsuarioState extends State<GestionUsuario> {
         Navigator.pop(context);
       }
     } catch (e) {
+      if (!mounted) return;
       debugPrint(e.toString());
       ScaffoldMessenger.of(
         context,

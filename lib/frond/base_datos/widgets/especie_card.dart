@@ -149,13 +149,13 @@ class EspecieCard extends StatelessWidget {
     }
 
     if (img.urlFoto.isNotEmpty) {
-      print('Intentando cargar imagen: ${img.urlFoto}');
+      debugPrint('Intentando cargar imagen: ${img.urlFoto}');
       return Image.network(
         img.urlFoto,
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
-          print('Error cargando imagen: $error');
+          debugPrint('Error cargando imagen: $error');
           return Image.asset(
             'assets/placeholder.png',
             width: double.infinity,

@@ -204,99 +204,105 @@ class IndicadorCarga extends StatelessWidget {
   }
 }
 
-// Función simple que ordena un Map en widgets
-Widget listaWidgetOrdenada(
-  Map<String, dynamic> datos,
-  double radioImg,
-  BuildContext context, {
-  Function(BuildContext, String)? onNavegar,
-}) {
-  final List<Widget> widgets = [];
+// Widget que construye una lista ordenada de elementos
+// mostrando imagen, título, botón y textos adicionales.
+class ListaWidgetOrdenada extends StatelessWidget {
+  final Map<String, dynamic> datos;
+  final double radioImg;
+  final Function(BuildContext, String)? onNavegar;
 
-  // IMPORTANTE: Define el orden fijo aquí
-  final orden = ['imagen', 'titulo', 'boton'];
-
-  // Recorre en orden definido, no el orden del Map
-  for (final clave in orden) {
-    if (!datos.containsKey(clave)) continue;
-    final valor = datos[clave];
-
-    switch (clave) {
-      case 'imagen':
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(radioImg),
-              child: HoverImageWidget(
-                imagePath: valor.toString(),
-                width: 340,
-                height: 340,
-              ),
-            ),
-          ),
-        );
-        break;
-
-      case 'titulo':
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: SelectableText(
-              valor.toString(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color.fromARGB(255, 2, 30, 2),
-                fontSize: 30,
-                fontFamily: 'Oswald',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        );
-        break;
-
-      case 'boton':
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: ElevatedButton(
-              onPressed:
-                  onNavegar != null
-                      ? () => onNavegar(context, valor.toString())
-                      : null,
-              child: Text(context.tr('buttons.aprender')),
-            ),
-          ),
-        );
-        break;
-    }
-  }
-
-  // El resto de claves como texto simple (sin orden específico)
-  datos.forEach((clave, valor) {
-    if (orden.contains(clave)) return; // Ya procesado arriba
-
-    widgets.add(
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: SelectableText(
-          valor.toString(),
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 4, 53, 3),
-            fontSize: 18,
-            fontFamily: 'Oswald',
-            fontWeight: FontWeight.w300,
-          ),
-        ),
-      ),
-    );
+  const ListaWidgetOrdenada({
+    super.key,
+    required this.datos,
+    required this.radioImg,
+    this.onNavegar,
   });
 
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: widgets,
-  );
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> widgets = [];
+    final orden = ['imagen', 'titulo', 'boton'];
+
+    for (final clave in orden) {
+      if (!datos.containsKey(clave)) continue;
+      final valor = datos[clave];
+
+      switch (clave) {
+        case 'imagen':
+          widgets.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(radioImg),
+                child: HoverImageWidget(
+                  imagePath: valor.toString(),
+                  width: 340,
+                  height: 340,
+                ),
+              ),
+            ),
+          );
+          break;
+
+        case 'titulo':
+          widgets.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: SelectableText(
+                valor.toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 2, 30, 2),
+                  fontSize: 30,
+                  fontFamily: 'Oswald',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+          break;
+
+        case 'boton':
+          widgets.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: ElevatedButton(
+                onPressed:
+                    onNavegar != null
+                        ? () => onNavegar!(context, valor.toString())
+                        : null,
+                child: Text(context.tr('buttons.aprender')),
+              ),
+            ),
+          );
+          break;
+      }
+    }
+
+    datos.forEach((clave, valor) {
+      if (orden.contains(clave)) return;
+
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: SelectableText(
+            valor.toString(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 4, 53, 3),
+              fontSize: 18,
+              fontFamily: 'Oswald',
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+      );
+    });
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: widgets,
+    );
+  }
 }

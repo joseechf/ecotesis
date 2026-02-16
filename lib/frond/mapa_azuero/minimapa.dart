@@ -14,7 +14,6 @@ class MiniMap extends StatefulWidget {
 
 class _MiniMapState extends State<MiniMap> {
   late final Future<GeoData> _futureSembrados;
-  //late final Future<GeoData> _futureTerrenos;
 
   bool _mostrarSembrados = true;
   bool _mostrarTerrenos = true;
@@ -28,13 +27,12 @@ class _MiniMapState extends State<MiniMap> {
     _cargarDatos();
     dev.log(' InitState called');
 
-    //_futureTerrenos = _loadAndCacheTerrenos();
     _futureSembrados = _loadAndCacheSembrados();
   }
 
   Future<void> _cargarDatos() async {
     _cachedTerrenos = await loadGeoJson(
-      'assets/geo/terrenosAlquilados.geojson',
+      'assets/geo/terrenos_alquilados.geojson',
       color: Colors.orange,
     );
     setState(() {});
@@ -60,24 +58,14 @@ class _MiniMapState extends State<MiniMap> {
   void _onMapTap(TapPosition tapPosition, LatLng latLng) {
     if (_cachedTerrenos == null || !_mostrarTerrenos) return;
 
-    // Buscar en qué polígono cayó el clic
+    // obtiene el poligono en el que se hizo clic
     for (final pt in _cachedTerrenos!.polygonTaps) {
       if (_puntoEnPoligono(latLng, pt.polygon.points)) {
         mostrarInfoTerreno(context, pt.center, pt.properties);
-        return; // Mostrar solo el primero que encuentre
+        return; // imprime el primero que encuentra
       }
     }
   }
-
-  /* Future<GeoData> _loadAndCacheTerrenos() async {
-    final data = await loadGeoJson(
-      'assets/geo/terrenosAlquilados.geojson',
-      color: Colors.orange,
-    );
-
-    _cachedTerrenos = data;
-    return data;
-  }*/
 
   Future<GeoData> _loadAndCacheSembrados() async {
     final data = await loadGeoJson(
@@ -217,19 +205,14 @@ class _SelectorCapas extends StatelessWidget {
           label: Text('mapa.siembra'.tr()),
           selected: mostrarSembrados,
           onSelected: onToggleSembrados,
-          selectedColor: const Color.fromARGB(
-            255,
-            1,
-            70,
-            4,
-          ).withValues(alpha: 0.2),
+          selectedColor: const Color.fromARGB(255, 1, 70, 4).withOpacity(0.2),
           checkmarkColor: const Color.fromARGB(255, 1, 70, 4),
         ),
         FilterChip(
           label: const Text('Terrenos'),
           selected: mostrarTerrenos,
           onSelected: onToggleTerrenos,
-          selectedColor: Colors.orange.withValues(alpha: 0.2),
+          selectedColor: Colors.orange.withOpacity(0.2),
           checkmarkColor: Colors.orange,
         ),
       ],

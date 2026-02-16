@@ -247,5 +247,15 @@
   },
   "mapa": {
     "siembra": "sown"
+  },
+  "colaboradores":{
+    "Dra_Maria_Gonzalez":{
+      "puesto": "Scientific Director",
+      "descripcion": "Biologist specializing in tropical ecosystem conservation with more than 10 years of experience."
+    },
+    "Carlos_Mendez":{
+      "puesto": "Project Coordinator",
+      "descripcion": "Responsible for the management and execution of community environmental projects."
+    }
   }
 }

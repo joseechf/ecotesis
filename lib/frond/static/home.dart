@@ -6,6 +6,8 @@ import 'conservrefor.dart';
 import 'educacion.dart';
 import 'comunidad.dart';
 import '../iureutilizables/footer.dart';
+import 'listas_lazy_loading/listas_lazy.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -137,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             // Bloque cargando 1
             FutureBuilder<List<Map<String, String>>>(
-              future: _cargarListasHacemos(context),
+              future: cargarListasHacemos(context),
               builder: (context, snapshot) {
                 if (snapshot.hasError) return Text('Error al cargar los datos');
                 if (!snapshot.hasData) {
@@ -188,10 +190,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 child: Column(
                                   children: [
-                                    listaWidgetOrdenada(
-                                      listaHacemos[index],
-                                      0,
-                                      context,
+                                    ListaWidgetOrdenada(
+                                      datos: listaHacemos[index],
+                                      radioImg: 0,
                                       onNavegar: (ctx, ruta) {
                                         final destino =
                                             {
@@ -253,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             // Bloque cargando 2
             FutureBuilder<List<Map<String, String>>>(
-              future: _cargarlistaNoticias(context),
+              future: cargarlistaNoticias(context),
               builder: (context, snapshot) {
                 if (snapshot.hasError) return Text('Error al cargar los datos');
                 if (!snapshot.hasData) {
@@ -301,25 +302,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 child: Column(
                                   children: [
-                                    listaWidgetOrdenada(
-                                      listaNoticias[index],
-                                      0,
-                                      context,
-                                      onNavegar: (ctx, ruta) {
-                                        final destino =
-                                            {
-                                              'conservacion': Conservrefor(),
-                                              'educDiv': Educacion(),
-                                              'colaboracion': Comunidad(),
-                                            }[ruta];
+                                    ListaWidgetOrdenada(
+                                      datos: listaNoticias[index],
+                                      radioImg: 0,
+                                      onNavegar: (ctx, ruta) async {
+                                        final uri = Uri.parse(ruta);
 
-                                        if (destino != null) {
-                                          Navigator.pushAndRemoveUntil(
-                                            ctx,
-                                            MaterialPageRoute(
-                                              builder: (_) => destino,
-                                            ),
-                                            (_) => false,
+                                        if (await canLaunchUrl(uri)) {
+                                          await launchUrl(
+                                            uri,
+                                            mode:
+                                                LaunchMode.externalApplication,
                                           );
                                         }
                                       },
@@ -348,47 +341,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-  }
-
-  Future<List<Map<String, String>>> _cargarListasHacemos(
-    BuildContext context,
-  ) async {
-    return [
-      {
-        'imagen': 'assets/images/mono1.jpg',
-        'titulo': context.tr('texts.textsHome.hacemos.titulo.conservacion'),
-        'resumen': context.tr('texts.textsHome.hacemos.texto.conservacion'),
-        'boton': 'conservacion',
-      },
-      {
-        'imagen': 'assets/images/mono1.jpg',
-        'titulo': context.tr('texts.textsHome.hacemos.titulo.educDiv'),
-        'resumen': context.tr('texts.textsHome.hacemos.texto.educDiv'),
-        'boton': 'educDiv',
-      },
-      {
-        'imagen': 'assets/images/mono1.jpg',
-        'titulo': context.tr('texts.textsHome.hacemos.titulo.colaboracion'),
-        'resumen': context.tr('texts.textsHome.hacemos.texto.colaboracion'),
-        'boton': 'colaboracion',
-      },
-    ];
-  }
-
-  Future<List<Map<String, String>>> _cargarlistaNoticias(
-    BuildContext context,
-  ) async {
-    return [
-      {
-        'imagen': 'assets/images/mono1.jpg',
-        'fecha': context.tr('texts.textsHome.fecha'),
-        'link': 'aqui va un link',
-      },
-      {
-        'imagen': 'assets/images/mono1.jpg',
-        'fecha': context.tr('texts.textsHome.fecha'),
-        'link': 'aqui va un link',
-      },
-    ];
   }
 }

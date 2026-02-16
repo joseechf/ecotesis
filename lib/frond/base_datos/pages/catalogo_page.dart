@@ -12,7 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../iureutilizables/custom_appbar.dart';
 import '../../iureutilizables/reglas_rol.dart';
 
-import '../widgets/tarjetaIncercion.dart';
+import '../widgets/tarjeta_incercion.dart';
 
 class CatalogoPage extends StatefulWidget {
   const CatalogoPage({super.key});
