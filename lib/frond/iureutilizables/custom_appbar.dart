@@ -375,12 +375,33 @@ class MobileMenu extends StatelessWidget {
                   ),
                   onTap:
                       (!sesionActual.isAuthenticated)
-                          ? () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const GestionUsuario(),
-                            ),
-                          )
+                          ? () async {
+                            final resultado = await Navigator.push<String>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const GestionUsuario(),
+                              ),
+                            );
+
+                            if (!context.mounted || resultado == null) return;
+
+                            final esError = resultado.startsWith("ERROR:");
+                            final mensaje =
+                                esError
+                                    ? resultado.replaceFirst("ERROR:", "")
+                                    : resultado;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(mensaje),
+                                backgroundColor:
+                                    esError
+                                        ? Colors.red.shade600
+                                        : Colors.green.shade600,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
                           : () => Navigator.push(
                             context,
                             MaterialPageRoute(

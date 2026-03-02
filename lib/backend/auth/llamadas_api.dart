@@ -12,7 +12,21 @@ Future<AuthResponse> login({
   try {
     final response = await SupabaseClientSingleton.client.auth
         .signInWithPassword(email: email, password: password);
+    if (response.user != null) {
+      final profile =
+          await SupabaseClientSingleton.client
+              .from('users_view')
+              .select('activo')
+              .eq('id', response.user!.id)
+              .maybeSingle();
 
+      if (profile != null && profile['activo'] == false) {
+        await SupabaseClientSingleton.client.auth.signOut();
+        throw Exception(
+          "Tu cuenta está desactivada. Contacta al administrador.",
+        );
+      }
+    }
     debugPrint('Login exitoso');
     debugPrint('User ID: ${response.user?.id}');
     debugPrint('Session activa: ${response.session != null}');

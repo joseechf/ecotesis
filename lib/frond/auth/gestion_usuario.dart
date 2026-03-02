@@ -49,13 +49,9 @@ class _GestionUsuarioState extends State<GestionUsuario> {
         if (!mounted) return;
 
         if (response.session == null) {
-          _mostrarMensaje(
-            "Registro exitoso. Revisa tu correo para confirmar tu cuenta.",
-            esError: false,
-          );
+          Navigator.pop(context, "Registro exitoso");
         } else {
-          _mostrarMensaje("Registro exitoso. Bienvenido 🌱", esError: false);
-          Navigator.pop(context);
+          Navigator.pop(context, "Registro fallido");
         }
       } else {
         final response = await login(
@@ -66,13 +62,7 @@ class _GestionUsuarioState extends State<GestionUsuario> {
         if (!mounted) return;
 
         if (response.session != null) {
-          _mostrarMensaje("Inicio de sesión exitoso 🌿", esError: false);
-          Navigator.pop(context);
-        } else {
-          _mostrarMensaje(
-            "No se pudo iniciar sesión. Intenta nuevamente.",
-            esError: true,
-          );
+          Navigator.pop(context, "Inicio de sesión exitoso");
         }
       }
     } catch (e) {
@@ -80,23 +70,12 @@ class _GestionUsuarioState extends State<GestionUsuario> {
 
       final mensajeError = _traducirError(e.toString());
 
-      _mostrarMensaje(mensajeError, esError: true);
+      Navigator.pop(context, "ERROR:$mensajeError");
     } finally {
       if (mounted) {
         setState(() => _cargando = false);
       }
     }
-  }
-
-  void _mostrarMensaje(String mensaje, {required bool esError}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(mensaje),
-        backgroundColor: esError ? Colors.red.shade600 : Colors.green.shade600,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 3),
-      ),
-    );
   }
 
   String _traducirError(String error) {
