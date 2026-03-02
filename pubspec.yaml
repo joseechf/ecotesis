@@ -65,6 +65,8 @@ dependencies:
   crypto: ^3.0.3
   # para especie_dto
   json_annotation: ^4.8.1 
+  # para el logo de Twitter
+  font_awesome_flutter: ^10.7.0 
 
 
 dev_dependencies:

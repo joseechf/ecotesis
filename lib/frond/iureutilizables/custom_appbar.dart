@@ -366,11 +366,11 @@ class MobileMenu extends StatelessWidget {
                     color: Estilos.blanco,
                   ),
                   title: Text(
-                    context.tr('login'),
+                    context.tr('titles.login'),
                     style: TextStyle(
                       color: Estilos.blanco,
                       fontWeight: FontWeight.w100,
-                      fontSize: Estilos.textoPequeno,
+                      fontSize: Estilos.textoMedio,
                     ),
                   ),
                   onTap:
@@ -401,11 +401,11 @@ class MobileMenu extends StatelessWidget {
                         color: Estilos.blanco,
                       ),
                       title: Text(
-                        context.tr('Admin'),
+                        context.tr('titles.admin'),
                         style: TextStyle(
                           color: Estilos.blanco,
                           fontWeight: FontWeight.w100,
-                          fontSize: Estilos.textoPequeno,
+                          fontSize: Estilos.textoMedio,
                         ),
                       ),
                       onTap:

@@ -47,7 +47,7 @@ class Educacion extends StatelessWidget {
                 ),
 
                 ResponsiveLayout(
-                  breakpoint: 400,
+                  breakpoint: 800,
                   children: [
                     Stack(
                       children: [
@@ -66,7 +66,7 @@ class Educacion extends StatelessWidget {
                             builder: (context) {
                               return TextContainerWidget(
                                 text: context.tr('texts.educacion.monoArania'),
-                                margin: EdgeInsets.all(20),
+                                margin: const EdgeInsets.all(20),
                                 padding: 20,
                                 backgroundColor: const Color.fromARGB(
                                   0,
@@ -77,10 +77,14 @@ class Educacion extends StatelessWidget {
                                 alignment: Alignment.center,
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: anchoPantalla * 0.070,
+                                  fontSize: (anchoPantalla * 0.07).clamp(
+                                    16.0,
+                                    40.0,
+                                  ),
                                   fontFamily: 'Oswald',
                                   fontWeight: FontWeight.bold,
                                 ),
+                                overflow: TextOverflow.visible,
                               );
                             },
                           ),
@@ -109,7 +113,7 @@ class Educacion extends StatelessWidget {
                 ),
 
                 ResponsiveLayout(
-                  breakpoint: 600,
+                  breakpoint: 800,
                   children: [
                     TextContainerWidget(
                       text: context.tr('texts.educacion.objetivo.texto1'),
@@ -152,7 +156,7 @@ class Educacion extends StatelessWidget {
                     ),
                   ],
                 ),
-
+                SizedBox(height: 20),
                 Wrap(
                   spacing: 20,
                   runSpacing: 20,
@@ -170,9 +174,9 @@ class Educacion extends StatelessWidget {
                         );
                       }).toList(),
                 ),
-
+                SizedBox(height: 20),
                 ResponsiveLayout(
-                  breakpoint: 600,
+                  breakpoint: 800,
                   children: [
                     Stack(
                       children: [
@@ -203,7 +207,10 @@ class Educacion extends StatelessWidget {
                                 alignment: Alignment.center,
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: anchoPantalla * 0.070,
+                                  fontSize: (anchoPantalla * 0.07).clamp(
+                                    16.0,
+                                    40.0,
+                                  ),
                                   fontFamily: 'Oswald',
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -233,7 +240,7 @@ class Educacion extends StatelessWidget {
                     ),
                   ],
                 ),
-
+                SizedBox(height: 20),
                 Wrap(
                   spacing: 20,
                   runSpacing: 20,
@@ -251,6 +258,7 @@ class Educacion extends StatelessWidget {
                         );
                       }).toList(),
                 ),
+                SizedBox(height: 20),
                 const Footer(),
               ],
             ),

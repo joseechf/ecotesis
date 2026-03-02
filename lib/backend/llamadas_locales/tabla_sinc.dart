@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
-import '../libSinc/utilidades/calcular_hash.dart';
-//import 'sqliteHelper.dart';
+import '../utilidades/calcular_hash.dart';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 class TablaSyncLocal {
@@ -35,7 +35,7 @@ class TablaSyncLocal {
           'hash': hash,
           'version': 1,
           'device': device,
-          'last_upd': DateTime.now().toIso8601String(),
+          'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
         debugPrint('metadatos sinc local insert ok');
         return true;
@@ -56,7 +56,7 @@ class TablaSyncLocal {
             'hash': hash,
             'version': versionActual + 1,
             'device': device,
-            'last_upd': DateTime.now().toIso8601String(),
+            'last_upd': DateTime.now().toUtc().toIso8601String(),
           },
           where: 'id = ?',
           whereArgs: [id],
@@ -103,7 +103,7 @@ class TablaSyncLocal {
           'hash': '',
           'version': 1,
           'device': 'mobile',
-          'last_upd': DateTime.now().toIso8601String(),
+          'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
       } else {
         final versionActual = existente.first['version'] as int? ?? 1;
@@ -117,7 +117,7 @@ class TablaSyncLocal {
             'hash': '',
             'version': versionActual + 1,
             'device': 'mobile',
-            'last_upd': DateTime.now().toIso8601String(),
+            'last_upd': DateTime.now().toUtc().toIso8601String(),
           },
           where: 'id = ?',
           whereArgs: [id],
@@ -134,5 +134,25 @@ class TablaSyncLocal {
 
   Future<void> limpiarSincronizacion(Database db) async {
     await db.delete('sincronizacion');
+  }
+
+  Future<void> guardarUltimaSincronizacion({
+    required Database db,
+    required String fecha,
+    required List<String> idsLoc,
+    required List<String> idsRem,
+  }) async {
+    final datos = {
+      'id': 1,
+      'fecha_sincronizacion': fecha,
+      'registros_locales_procesados': jsonEncode(idsLoc),
+      'registros_remotos_procesados': jsonEncode(idsRem),
+    };
+
+    await db.insert(
+      'ultima_sinc',
+      datos,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }

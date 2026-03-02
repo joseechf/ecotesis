@@ -162,7 +162,7 @@ void mostrarInfoPunto(
 ) {
   showDialog(
     context: context,
-    builder: (_) {
+    builder: (dialogContext) {
       return AlertDialog(
         title: const Text('Información de la siembra'),
         content: SingleChildScrollView(
@@ -194,7 +194,7 @@ void mostrarInfoPunto(
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cerrar'),
           ),
         ],
@@ -210,7 +210,7 @@ Future<void> mostrarInfoTerreno(
 ) {
   return showDialog(
     context: context,
-    builder: (_) {
+    builder: (dialogContext) {
       return AlertDialog(
         title: const Text('Terreno alquilado'),
         content: SingleChildScrollView(
@@ -236,7 +236,7 @@ Future<void> mostrarInfoTerreno(
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cerrar'),
           ),
         ],

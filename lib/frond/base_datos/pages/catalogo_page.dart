@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/especies_provider.dart';
-import '../widgets/especie_card.dart';
-import '../widgets/especie_modal.dart';
-import '../widgets/filtro_dialog.dart';
-import '../widgets/insertar_dialog.dart';
+import '../widgets/mostrar_tarjeta/especie_card.dart';
+import '../widgets/mostrar_tarjeta/especie_modal.dart';
+import '../widgets/mostrar_tarjeta/filtro_dialog.dart';
+//import '../widgets/insertar_dialog.dart';
 import '../../estilos.dart';
-import '../../../domain/entities/especie.dart';
+import '../../../domain/entities/especie_unificada.dart';
 import '../../iureutilizables/widgetpersonalizados.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../iureutilizables/custom_appbar.dart';
 import '../../iureutilizables/reglas_rol.dart';
-
-import '../widgets/tarjeta_incercion.dart';
+import '../../iureutilizables/widget_edicion.dart';
+import '../widgets/especie_dialog.dart';
+//import '../widgets/tarjeta_incercion.dart';
 
 class CatalogoPage extends StatefulWidget {
   const CatalogoPage({super.key});
@@ -35,17 +36,21 @@ class _CatalogoPageState extends State<CatalogoPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<EspeciesProvider>(context);
+
     if (provider.cargandoData) {
-      return const Center(child: CircularProgressIndicator());
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
     return Scaffold(
       appBar: CustomAppBar(context: context),
       drawer:
           MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(Estilos.paddingMedio),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Título
             TextContainerWidget(
               text: context.tr('bdInterfaz.titulo'),
               margin: const EdgeInsets.all(16),
@@ -59,112 +64,109 @@ class _CatalogoPageState extends State<CatalogoPage> {
 
             const SizedBox(height: Estilos.paddingMedio),
 
-            // Barra de acciones superior
+            // Botones
             Wrap(
-              spacing: Estilos.paddingPequeno, // espacio horizontal
-              runSpacing:
-                  Estilos.paddingPequeno, // espacio vertical al saltar de línea
+              spacing: Estilos.paddingPequeno,
+              runSpacing: Estilos.paddingPequeno,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                // Botón de filtro
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.filter_list),
-                  label: Text(context.tr('buttons.filtrar')),
+                BotonPersonalizado(
+                  texto: context.tr('buttons.filtrar'),
+                  icono: const Icon(Icons.filter_list),
                   onPressed: () async {
                     final res = await mostrarFiltroDialog(
                       context,
-                      provider.filtro,
+                      provider.filtrosActivos,
                     );
-                    if (res != null) provider.setFiltro(res);
+
+                    if (res != null) {
+                      provider.setFiltros(res);
+                    }
                   },
+                  ancho: 120,
                 ),
 
-                // Botón nuevo registro o texto de solo lectura
                 tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
-                    ? ElevatedButton.icon(
-                      icon: const Icon(Icons.add),
-                      label: Text(context.tr('bdInterfaz.nuevoRegistro')),
+                    ? BotonPersonalizado(
+                      texto: context.tr('bdInterfaz.nuevoRegistro'),
+                      icono: const Icon(Icons.add),
+                      ancho: 210,
                       onPressed: () async {
-                        final nueva = await mostrarInsertarDialog(context);
-                        if (nueva != null) provider.insertar(nueva);
+                        //final resultado = await mostrarInsertarDialog(context);
+                        final resultado = await showDialog<bool>(
+                          context: context,
+                          builder: (_) => const EspecieDialog(),
+                        );
+                        if (!context.mounted) return;
+
+                        if (resultado == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Especie guardada correctamente'),
+                            ),
+                          );
+                        } else if (resultado == false) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Error al guardar la especie'),
+                            ),
+                          );
+                        }
                       },
                     )
                     : Text(
                       context.tr('bdInterfaz.lectura'),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Estilos.grisMedio,
                         fontSize: Estilos.textoPequeno,
                       ),
                     ),
 
-                // Botón de sincronización
-                Tooltip(
-                  message: context.tr('sincronizar'),
-                  child: IconButton(
-                    icon: const Icon(Icons.sync),
-                    onPressed:
-                        provider.sincronizando
-                            ? null
-                            : provider.sincronizarManual,
-                  ),
+                OutlinedButton.icon(
+                  onPressed:
+                      provider.sincronizando
+                          ? null
+                          : provider.sincronizarManual,
+                  icon: const Icon(Icons.cloud_upload),
+                  label: Text(context.tr('buttons.sincronizar')),
                 ),
               ],
             ),
 
-            const SizedBox(height: Estilos.paddingMedio),
-            Expanded(
-              child:
-                  provider.especiesFiltradas.isEmpty
-                      ? Center(
-                        child: Text(
-                          context.tr('bdInterfaz.sinEspecies'),
-                          style: TextStyle(
-                            color: Estilos.grisMedio,
-                            fontSize: Estilos.textoPequeno,
-                          ),
-                        ),
-                      )
-                      : CustomScrollView(
-                        slivers: [
-                          SliverPadding(
-                            padding: const EdgeInsets.all(Estilos.margenMedio),
-                            sliver: SliverLayoutBuilder(
-                              builder: (context, constraints) {
-                                return SliverToBoxAdapter(
-                                  child: Wrap(
-                                    spacing: Estilos.margenMedio,
-                                    runSpacing: Estilos.margenMedio,
-                                    children: List.generate(
-                                      provider.especiesFiltradas.length,
-                                      (i) {
-                                        final especie =
-                                            provider.especiesFiltradas[i];
+            const SizedBox(height: Estilos.paddingGrande),
 
-                                        return SizedBox(
-                                          width: 300,
-                                          height: 400,
-                                          child: Builder(
-                                            builder:
-                                                (context) => EspecieCard(
-                                                  especie: especie,
-                                                  onTap:
-                                                      () => _mostrarModal(
-                                                        context,
-                                                        especie,
-                                                      ),
-                                                ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+            // Contenido
+            provider.especiesFiltradas.isEmpty
+                ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: Estilos.paddingGrande),
+                    child: Text(
+                      context.tr('bdInterfaz.sinEspecies'),
+                      style: const TextStyle(
+                        color: Estilos.grisMedio,
+                        fontSize: Estilos.textoPequeno,
                       ),
-            ),
+                    ),
+                  ),
+                )
+                : Wrap(
+                  spacing: Estilos.margenMedio,
+                  runSpacing: Estilos.margenMedio,
+                  children: List.generate(provider.especiesFiltradas.length, (
+                    i,
+                  ) {
+                    final especie = provider.especiesFiltradas[i];
+
+                    return SizedBox(
+                      width: 300,
+                      height: 400,
+                      child: EspecieCard(
+                        especie: especie,
+                        onTap: () => _mostrarModal(context, especie),
+                      ),
+                    );
+                  }),
+                ),
           ],
         ),
       ),
@@ -181,9 +183,13 @@ class _CatalogoPageState extends State<CatalogoPage> {
           (_) => EspecieModal(
             especie: especie,
             onEditar: () async {
-              final especieEditada = await mostrarEditarDialog(
+              /*final especieEditada = await mostrarEditarDialog(
                 context,
                 especie,
+              );*/
+              final especieEditada = await showDialog<bool>(
+                context: context,
+                builder: (_) => EspecieDialog(especieInicial: especie),
               );
               if (!context.mounted) return;
               if (especieEditada != null) {

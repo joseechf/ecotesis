@@ -14,7 +14,6 @@ class Ecoguias extends StatelessWidget {
     double anchoPantalla = MediaQuery.of(context).size.width;
     double alturaPantalla = MediaQuery.of(context).size.height;
 
-    // Lista de guías (ya no es Future)
     final listaGuias = _obtenerListaGuias(context);
 
     return Scaffold(
@@ -119,7 +118,7 @@ class Ecoguias extends StatelessWidget {
                 );
               }),
             ),
-
+            SizedBox(height: 20),
             const Footer(),
           ],
         ),

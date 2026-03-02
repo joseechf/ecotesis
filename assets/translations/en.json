@@ -1,53 +1,59 @@
 {
   "titles": {
     "title": "My App",
+    "admin": "Administrator",
+    "login": "Authentication",
     "titlePrincipal": {
-      "nosotros": "WHO WE ARE",
-      "equipo": "OUR TEAM",
-      "PARTNERS": "OUR PARTNERS",
-      "conservrefor": "CONSERVATION AND\n RESTORATION",
+      "nosotros": "Who We Are",
+      "equipo": "Our Team",
+      "PARTNERS": "Our Partners",
+      "conservrefor": "Conservation And\n Restoration",
       "corredor": "The Biological Corridor",
-      "educacion": "EDUCATION",
-      "comunidad": "GROW COMMUNITY"
+      "educacion": "Education",
+      "comunidad": "Grow Community"
     },
     "greeting": "Hello",
-    "hacemos": "What we do",
-    "noticias": "late News",
-    "charrito": "The Azuero Spider Monkey, CHARRITO",
-    "cultivoSostenible": "GROWING PLANTS & TREES SUSTAINABLY",
-    "pregFrecuentes": "FREQUENTLY ASKED QUESTIONS",
-     "edicion": "User Edit"
+    "hacemos": "What We Do",
+    "noticias": "Late News",
+    "charrito": "The Azuero Spider Monkey, Charrito",
+    "cultivoSostenible": "Growing Plants & Trees Sustainably",
+    "pregFrecuentes": "Frequently Asked Questions",
+    "edicion": "User Edit"
   },
-   "mensajes": {
+  "mensajes": {
     "usuarioActualizado": "Updated User",
-    "delete":"deleted",
-    "error":"action not completed"
+    "delete": "Deleted",
+    "error": "Action Not Completed",
+    "apoyo": "Support Our Work"
   },
   "buttons": {
     "change_language": "Change Language",
     "enviar": "Send",
-    "somos": "Who we are",
+    "somos": "Who We Are",
     "trabajo": "What We Do",
-    "conservref": "CONSERVATION AND RESTORATION",
-    "educacion": "EDUCATION",
-    "comunidad": "GROW COMMUNITY",
+    "conservref": "Conservation And Restoration",
+    "educacion": "Education",
+    "comunidad": "Grow Community",
     "recursos": "Resources",
-    "mapa": "AZUERO MAP",
-    "ecoguias": "ECO-GUIDES",
-    "basedatos": "AZUERO PLANT DATABASE",
-    "biblioteca": "LIBRARY",
-    "blog": "BLOG",
-    "editar": "edit",
-    "filtrar": "filter",
-    "nameC": "cientice name",
-    "update": "update",
-    "aprender": "learn more",
-    "delete": "delete",
-    "add": "add",
-    "cancelar": "cancel",
-    "logout": "logout"
+    "mapa": "Azuero Map",
+    "ecoguias": "Eco-Guides",
+    "basedatos": "Azuero Plant Database",
+    "biblioteca": "Library",
+    "blog": "Blog",
+    "editar": "Edit",
+    "filtrar": "Filter",
+    "nameC": "Cientice Name",
+    "update": "Update",
+    "aprender": "Learn More",
+    "delete": "Delete",
+    "add": "Add",
+    "cancelar": "Cancel",
+    "logout": "Logout",
+    "sincronizar": "Synchronize",
+    "limpiar": "Clear",
+    "rol":"Role Requests"
   },
-  "texts": {
+    "texts": {
     "textsHome": {
       "texto1": "Since 2010, Pro Eco Azuero has been dedicated to reforestation, habitat restoration, sustainable land management, and environmental education with the mission to preserve the earth’s ecosystems, protect biodiversity, and promote healthy communities by helping people to make informed decisions, take sustainable actions, and share knowledge",
       "esun": "Pro Eco Azuero is a “living laboratory” located on Panama’s Azuero Peninsula focused on reforestation, habitat restoration, sustainable land use and environmental education. We combine community outreach with science and fieldwork to create models that are scalable and replicable worldwide.",
@@ -152,8 +158,7 @@
       "texto": "On this page you will find guides to jumpstart your eco-journey in Azuero. These guides serve as the jumping off point for the specifics of sustainable living on the peninsula. Looking to put in a live fence? Check out our guide on live fences for where to start. Want to know how to reduce waste? Check out the Reduce, Reuse, Recycle Eco-guide. These eco-guides are living documents and we rely on community feedback to keep them in top shape!"
     }
   },
-
-  "nonumero": "dont set numbers",
+  "nonumero": "Dont set numbers",
   "gestionUsuario": {
     "titulo": {
       "login": "Welcome",
@@ -190,63 +195,70 @@
     },
     "roles": {
       "cientifico": "Scientist",
-      "admin": "Administrator",
-      "sinRol": "No role"
+      "administrador": "Administrator",
+      "sin_rol": "No role"
     }
   },
   "bdInterfaz": {
     "titulo": "CATEGORIZED SPECIES",
-    "lectura": "Rading Mode",
-    "nuevoRegistro": "New Registration",
+    "lectura": "Rading mode",
+    "nuevoRegistro": "Add species",
     "sinEspecies": "No species found",
-    "nuevaEspecie": "Add New Species",
-    "editarEspecie":"Edit species",
-   "insert":{
-      "Nlatin": "Latin Name",
-      "Ncomun": "Common Name",
-      "daSombra":"does it give shade?",
-      "saludSuelo":"Soil Health?",
-      "pionero":"Is a Pioneer?",
-      "nativoAmericano":"Is Native to America?",
-      "nativoPanama":"Is Native to Panama?",
-      "nativoAzuero":"Is Native to Azuero?",
-      "florDistintiva": "Distinctive Flower",
-      "frutaDistintiva":"Distinctive Fruit",
-      "huespedes":"Guests",
-      "Aves":"Bird",
-      "Mono":"Ape",
-      "formaCrecimiento":"Growth Form",
-      "Rapido":"Fast",
-      "Lento":"Slow",
-      "polinizador":"Pollinator",
-      "Mariposa":"Butterfly",
-      "Abeja":"Bee",
-      "Mixto":"Mixed",
-      "ambiente":"Environment",
-      "Seco":"Dry",
-      "Humedo":"Humid",
-      "estrato":"stratum",
-      "Utilidad": "Utility",
+    "nuevaEspecie": "Add new species",
+    "editarEspecie": "Edit species",
+    "insert": {
+      "Nlatin": "Scientific name",
+      "Ncomun": "Common name",
+      "daSombra": "Does it give shade?",
+      "saludSuelo": "Soil health?",
+      "pionero": "Is a pioneer?",
+      "nativoAmericano": "Is native to america?",
+      "nativoPanama": "Is native to panama?",
+      "nativoAzuero": "Is native to azuero?",
+      "florDistintiva": "Distinctive flower",
+      "frutaDistintiva": "Distinctive fruit",
+      "huespedes": "Guests",
+      "Aves": "Bird",
+      "Mono": "Ape",
+      "formaCrecimiento": "Growth form",
+      "Rapido": "Fast",
+      "Lento": "Slow",
+      "polinizador": "Pollinator",
+      "Mariposa": "Butterfly",
+      "Abeja": "Bee",
+      "Mixto": "Mixed",
+      "ambiente": "Environment",
+      "Seco": "Dry",
+      "Humedo": "Humid",
+      "estrato": "Stratum",
       "Ubicacion": "Location",
-      "Imagenes": "Image"
+      "Imagenes": "Image",
+      "Utilidad": {
+        "titulo": "Utility",
+        "frutal": "Fruit",
+        "maderal": "Timber",
+        "ganado": "Livestock",
+        "medicinal": "Medicinal"
+      }
     },
-    "buttons":{
-      "addEspecie":"Add Species"
+    "buttons": {
+      "addEspecie": "Add species"
     }
   },
   "admin": {
     "titulo": "ADMIN CONSOLE",
     "bienvenida": "Welcome to the admin console",
     "tablas": {
-      "inventas": "Sales Inventory",
-      "invsiembra": "Planting Inventory",
-      "regventas": "Sales Record",
-      "regsiembra": "Planting Record",
-      "terrenos": "Rented Lands"
+      "inventas": "Sales inventory",
+      "invsiembra": "Planting inventory",
+      "regventas": "Sales record",
+      "regsiembra": "Planting record",
+      "terrenos": "Rented lands"
     }
   },
   "mapa": {
-    "siembra": "sown"
+    "siembra": "Sown",
+    "terrenos": "Rented lands"
   },
   "colaboradores":{
     "Dra_Maria_Gonzalez":{

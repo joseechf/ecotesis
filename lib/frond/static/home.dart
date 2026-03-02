@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             ResponsiveLayout(
-              breakpoint: 400,
+              breakpoint: 800,
               children: [
                 TextContainerWidget(
                   text: context.tr('texts.textsHome.esun'),
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             ResponsiveLayout(
-              breakpoint: 400,
+              breakpoint: 800,
               children: [
                 ImageContainerWidget(
                   imagePath: 'assets/images/monoArania.jpg',

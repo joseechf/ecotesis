@@ -1,119 +1,161 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/foundation.dart';
-import '../../../domain/entities/especie.dart';
-import '../../../data/models/especie_db.dart';
-import '../../../data/mappers/especie_mapper.dart';
+import '../../../domain/entities/especie_unificada.dart';
 import 'sqlite_helper.dart';
 import 'tabla_sinc.dart';
+import '../../domain/value_objects.dart';
 
 final _sync = TablaSyncLocal();
 final _db = dbLocal.instancia;
 
-// 1.  LECTURA  →  devuelve List<Especie> (dominio)
-Future<List<Especie>> cargarFloraLocal() async {
+Future<List<Map<String, dynamic>>> selectLocal({
+  required String tabla,
+  String? where,
+  List<Object?>? whereArgs,
+}) async {
   final db = await _db;
-  try {
-    // 1.1  flora maestra
-    final floraMaps = await db.query('Flora');
-    if (floraMaps.isEmpty) return [];
 
-    final resultado = <Especie>[];
-
-    for (final flora in floraMaps) {
-      final nombreC = flora['nombre_cientifico'] as String;
-
-      // 1.2  tablas hijas
-      final nombres = await db.query(
-        'NombreComun',
-        where: 'nombre_cientifico = ?',
-        whereArgs: [nombreC],
-      );
-
-      final utils = await db.query(
-        'Utilidad',
-        where: 'nombre_cientifico = ?',
-        whereArgs: [nombreC],
-      );
-
-      final origs = await db.query(
-        'Origen',
-        where: 'nombre_cientifico = ?',
-        whereArgs: [nombreC],
-      );
-
-      // 1.3  unir todo en un solo mapa
-      final completo = Map<String, dynamic>.from(flora);
-      completo['nombres_comunes'] =
-          nombres.map((r) => r['nombre_comun']).toList();
-      completo['utilidades'] = utils.map((r) => r['utilidad']).toList();
-      completo['origenes'] = origs.map((r) => r['origen']).toList();
-
-      // 1.4  DB → Dominio
-      resultado.add(EspecieMapper.fromDb(EspecieDb.fromRow(completo)));
-    }
-
-    return resultado;
-  } catch (e) {
-    debugPrint('cargarFloraLocal error: $e');
-    return [];
+  const tablasPermitidas = {'sincronizacion', 'Flora'};
+  if (!tablasPermitidas.contains(tabla)) {
+    throw Exception('Tabla no permitida');
   }
+  return await db.query(
+    tabla,
+    columns: [
+      'id',
+      'hash',
+      'version',
+      'is_new',
+      'is_update',
+      'is_delete',
+      'last_upd',
+    ],
+    where: where,
+    whereArgs: whereArgs,
+  );
 }
 
-//   2.  INSERCIÓN  →  recibe List<Especie>
+Future<List<Especie>> cargarFloraLocal() async {
+  final db = await _db;
+
+  final floraMaps = await db.query('Flora');
+  if (floraMaps.isEmpty) return [];
+
+  final resultado = <Especie>[];
+
+  for (final flora in floraMaps) {
+    final especie = await _mapearEspecieCompleta(db, flora);
+    resultado.add(especie);
+  }
+
+  return resultado;
+}
+
+Future<Map<String, dynamic>?> obtenerFloraLocalById(
+  String nombreCientifico,
+) async {
+  final db = await _db;
+
+  final floraMaps = await db.query(
+    'Flora',
+    where: 'nombre_cientifico = ?',
+    whereArgs: [nombreCientifico],
+  );
+
+  if (floraMaps.isEmpty) return null;
+  final especie = await _mapearEspecieCompleta(db, floraMaps.first);
+  final json = especie.toJson();
+  return json;
+}
+
+Future<Especie> _mapearEspecieCompleta(
+  Database db,
+  Map<String, dynamic> flora,
+) async {
+  final nombreC = flora['nombre_cientifico'] as String;
+
+  final nombresRows = await db.query(
+    'NombreComun',
+    where: 'nombre_cientifico = ?',
+    whereArgs: [nombreC],
+  );
+
+  final utilRows = await db.query(
+    'Utilidad',
+    where: 'nombre_cientifico = ?',
+    whereArgs: [nombreC],
+  );
+
+  final origenRows = await db.query(
+    'Origen',
+    where: 'nombre_cientifico = ?',
+    whereArgs: [nombreC],
+  );
+
+  return Especie.fromDbMap(
+    row: flora,
+    nombresComunes: nombresRows.map((r) => NombreComun.fromRow(r)).toList(),
+    utilidades: utilRows.map((r) => Utilidad.fromRow(r)).toList(),
+    origenes: origenRows.map((r) => Origen.fromRow(r)).toList(),
+  );
+}
+
+Map<String, dynamic> estructurarHash(
+  Map<String, dynamic> floraRow,
+  Especie esp,
+) {
+  return {
+    ...floraRow,
+    'NombreComun':
+        esp.nombresComunes.map((n) => {'nombre_comun': n.nombreComun}).toList()
+          ..sort(
+            (a, b) => (a['nombre_comun'] as String).compareTo(
+              b['nombre_comun'] as String,
+            ),
+          ),
+    'Utilidad':
+        esp.utilidades.map((u) => {'utilidad': u.utilidad}).toList()..sort(
+          (a, b) =>
+              (a['utilidad'] as String).compareTo(b['utilidad'] as String),
+        ),
+    'Origen':
+        esp.origenes.map((o) => {'origen': o.origen}).toList()..sort(
+          (a, b) => (a['origen'] as String).compareTo(b['origen'] as String),
+        ),
+  };
+}
+
 Future<bool> insertFloraLocal(List<Especie> especies) async {
   final db = await _db;
 
   try {
     await db.transaction((txn) async {
       for (final esp in especies) {
-        //  1. INSERT / UPDATE TABLA MAESTRA (Flora)
-        final floraRow = esp.toDb().toRow();
+        final floraRow = esp.toDbRow();
 
         await txn.insert(
           'Flora',
           floraRow,
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
+        for (final n in esp.nombresComunes) {
+          await txn.insert('NombreComun', n.toRow(esp.nombreCientifico));
+        }
+        for (final n in esp.utilidades) {
+          debugPrint('utilidades: ${n.toRow(esp.nombreCientifico)}');
+          await txn.insert('Utilidad', n.toRow(esp.nombreCientifico));
+        }
+        for (final n in esp.origenes) {
+          await txn.insert('Origen', n.toRow(esp.nombreCientifico));
+        }
 
-        //    2. INSERT / UPDATE TABLAS HIJAS
-        await _insertarVO(
-          txn,
-          'NombreComun',
-          'nombre_comun',
-          esp.nombreCientifico,
-          esp.nombresComunes.map((n) => n.nombreComun),
-        );
+        final snapshotEspecie = estructurarHash(floraRow, esp);
 
-        await _insertarVO(
-          txn,
-          'Utilidad',
-          'utilidad',
-          esp.nombreCientifico,
-          esp.utilidades.map((u) => u.utilidad),
-        );
-
-        await _insertarVO(
-          txn,
-          'Origen',
-          'origen',
-          esp.nombreCientifico,
-          esp.origenes.map((o) => o.origen),
-        );
-
-        // 3. SNAPSHOT AGRUPADO DE LA ESPECIE (PARA SINCRONIZACIÓN)
-        final hashearEspecie = {
-          'flora': floraRow,
-          'nombres_comunes':
-              esp.nombresComunes.map((n) => n.nombreComun).toList()..sort(),
-          'utilidades': esp.utilidades.map((u) => u.utilidad).toList()..sort(),
-          'origenes': esp.origenes.map((o) => o.origen).toList()..sort(),
-        };
-
-        // 4. REGISTRO ÚNICO DE SINCRONIZACIÓN POR ESPECIE
+        debugPrint('voy a hashear: $snapshotEspecie');
         final ok = await _sync.registrarUpsert(
           txn,
           esp.nombreCientifico,
-          hashearEspecie,
+          snapshotEspecie,
         );
 
         if (!ok) {
@@ -129,13 +171,12 @@ Future<bool> insertFloraLocal(List<Especie> especies) async {
   }
 }
 
-// 3.  ACTUALIZACIÓN
 Future<bool> updateFloraLocal(Especie esp) async {
   final db = await _db;
 
   try {
     await db.transaction((txn) async {
-      final floraRow = esp.toDb().toRow();
+      final floraRow = esp.toDbRow();
 
       await txn.update(
         'Flora',
@@ -144,45 +185,27 @@ Future<bool> updateFloraLocal(Especie esp) async {
         whereArgs: [esp.nombreCientifico],
       );
 
-      // borrar hijas
       await _borrarVO(txn, esp.nombreCientifico);
 
-      // reinsertar hijas
-      await _insertarVO(
-        txn,
-        'NombreComun',
-        'nombre_comun',
-        esp.nombreCientifico,
-        esp.nombresComunes.map((n) => n.nombreComun),
-      );
+      for (final n in esp.nombresComunes) {
+        await txn.insert('NombreComun', n.toRow(esp.nombreCientifico));
+      }
 
-      await _insertarVO(
-        txn,
-        'Utilidad',
-        'utilidad',
-        esp.nombreCientifico,
-        esp.utilidades.map((u) => u.utilidad),
-      );
+      for (final u in esp.utilidades) {
+        await txn.insert('Utilidad', u.toRow(esp.nombreCientifico));
+      }
 
-      await _insertarVO(
-        txn,
-        'Origen',
-        'origen',
-        esp.nombreCientifico,
-        esp.origenes.map((o) => o.origen),
-      );
+      for (final o in esp.origenes) {
+        await txn.insert('Origen', o.toRow(esp.nombreCientifico));
+      }
 
-      final snapshotEspecie = {
-        'flora': floraRow,
-        'nombres_comunes':
-            esp.nombresComunes.map((n) => n.nombreComun).toList()..sort(),
-        'utilidades': esp.utilidades.map((u) => u.utilidad).toList()..sort(),
-        'origenes': esp.origenes.map((o) => o.origen).toList()..sort(),
-      };
+      final snapshotEspecie = estructurarHash(floraRow, esp);
+
+      debugPrint('voy a hashear: $snapshotEspecie');
 
       final ok = await _sync.registrarUpsert(
         txn,
-        esp.nombreCientifico, // 🔑 1 ID = 1 especie
+        esp.nombreCientifico,
         snapshotEspecie,
       );
 
@@ -198,7 +221,6 @@ Future<bool> updateFloraLocal(Especie esp) async {
   }
 }
 
-//  4.  ELIMINACIÓN
 Future<bool> deleteFloraLocal(String nombreCientifico) async {
   final db = await _db;
 
@@ -206,10 +228,14 @@ Future<bool> deleteFloraLocal(String nombreCientifico) async {
     return await db.transaction((txn) async {
       await _borrarVO(txn, nombreCientifico);
 
-      final ok = await _sync.registrarBorrado(txn, nombreCientifico);
+      final ok = await txn.delete(
+        'sincronizacion',
+        where: 'nombre_cientifico = ?',
+        whereArgs: [nombreCientifico],
+      );
 
-      if (!ok) {
-        throw 'problemas al registrar softdelete en sincronización';
+      if (ok == 0) {
+        throw 'no existe metadatos de especie a eliminar';
       }
 
       final filas = await txn.delete(
@@ -227,34 +253,6 @@ Future<bool> deleteFloraLocal(String nombreCientifico) async {
   } catch (e) {
     debugPrint('deleteFloraLocal error: $e');
     return false;
-  }
-}
-
-// 5.  HELPERS PRIVADOS
-Future<void> _insertarVO(
-  Transaction txn,
-  String tabla,
-  String colValor,
-  String nombreCientifico,
-  Iterable<String> valores,
-) async {
-  if (valores.isEmpty) return;
-
-  await txn.delete(
-    tabla,
-    where: 'nombre_cientifico = ?',
-    whereArgs: [nombreCientifico],
-  );
-
-  for (final v in valores) {
-    final row = {'nombre_cientifico': nombreCientifico, colValor: v};
-
-    final res = await txn.insert(
-      tabla,
-      row,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    if (res != 1) throw 'problemas insert Flora local';
   }
 }
 
@@ -277,5 +275,22 @@ Future<void> _borrarVO(Transaction txn, String nombreCientifico) async {
     );
   } catch (e) {
     debugPrint('delete VO error: $e');
+  }
+}
+
+Future<bool> softDeleteLocal(String nombreCientifico) async {
+  final db = await _db;
+
+  try {
+    return await db.transaction((txn) async {
+      final ok = await _sync.registrarBorrado(txn, nombreCientifico);
+      if (!ok) {
+        throw 'problemas al registrar softdelete en sincronización';
+      }
+      return true;
+    });
+  } catch (e) {
+    debugPrint('soft delete error: $e');
+    return false;
   }
 }

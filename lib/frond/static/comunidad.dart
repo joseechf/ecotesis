@@ -4,7 +4,6 @@ import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'dart:ui' as ui;
 
 class Comunidad extends StatelessWidget {
   const Comunidad({super.key});
@@ -67,8 +66,7 @@ class Comunidad extends StatelessWidget {
                 ),
 
                 ResponsiveLayout(
-                  breakpoint:
-                      600, // o el valor que prefieras para el breakpoint
+                  breakpoint: 900,
                   children: [
                     TextContainerWidget(
                       text: context.tr('texts.comunidad.comites.titulo'),
@@ -108,7 +106,7 @@ class Comunidad extends StatelessWidget {
                 ),
 
                 ResponsiveLayout(
-                  breakpoint: 600,
+                  breakpoint: 900,
                   children: [
                     TextContainerWidget(
                       text: context.tr('texts.comunidad.instituciones.titulo'),
@@ -144,8 +142,9 @@ class Comunidad extends StatelessWidget {
                   future: _obtenerRecursosColaboradores(context),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
-                      return Text('Error al cargar los datos');
+                      return const Text('Error al cargar los datos');
                     }
+
                     if (!snapshot.hasData) {
                       return const Center(
                         child: Padding(
@@ -154,7 +153,9 @@ class Comunidad extends StatelessWidget {
                         ),
                       );
                     }
+
                     final listaRecursosColaboradores = snapshot.data!;
+
                     return Container(
                       color: Estilos.verdeClaro,
                       child: Column(
@@ -175,89 +176,60 @@ class Comunidad extends StatelessWidget {
                             ),
                           ),
 
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              // Encontrar el texto más largo para determinar la altura
-                              double maxTextHeight = 0;
-                              for (var item in listaRecursosColaboradores) {
-                                final textSpan = TextSpan(
-                                  text: item['texto'],
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'Oswald',
-                                    fontWeight: FontWeight.w200,
-                                  ),
-                                );
-                                final tp = TextPainter(
-                                  text: textSpan,
-                                  maxLines: 10,
-                                  textDirection: ui.TextDirection.ltr,
-                                );
-                                tp.layout(maxWidth: 380); // 400 - padding
-                                if (tp.height > maxTextHeight) {
-                                  maxTextHeight = tp.height;
-                                }
-                              }
+                          const SizedBox(height: 20),
 
-                              return Wrap(
-                                spacing: 10.0,
-                                runSpacing: 10.0,
+                          Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1500),
+                              child: Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: 20,
+                                runSpacing: 20,
                                 children: List.generate(
                                   listaRecursosColaboradores.length,
                                   (index) {
+                                    final item =
+                                        listaRecursosColaboradores[index];
+
                                     return Container(
-                                      margin: EdgeInsets.all(20),
-                                      padding: EdgeInsets.all(5),
+                                      margin: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(20),
                                       width: 400,
-                                      height:
-                                          maxTextHeight +
-                                          100, // Añadir espacio para el icono y padding
-                                      color: const Color.fromARGB(
-                                        255,
-                                        255,
-                                        255,
-                                        255,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.home,
                                             size: 40,
-                                            color: const Color.fromARGB(
+                                            color: Color.fromARGB(
                                               255,
                                               4,
                                               46,
                                               4,
                                             ),
                                           ),
-                                          Expanded(
-                                            child: SingleChildScrollView(
-                                              child: TextContainerWidget(
-                                                text:
-                                                    listaRecursosColaboradores[index]['texto']!,
-                                                margin: const EdgeInsets.all(
-                                                  10,
-                                                ),
-                                                padding: 10,
-                                                backgroundColor: Colors.white,
-                                                alignment: Alignment.center,
-                                                maxLines: 10,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontFamily: 'Oswald',
-                                                  fontWeight: FontWeight.w200,
-                                                  color: Color.fromARGB(
-                                                    255,
-                                                    4,
-                                                    46,
-                                                    4,
-                                                  ),
-                                                ),
+
+                                          const SizedBox(height: 15),
+
+                                          TextContainerWidget(
+                                            text: item['texto']!,
+                                            margin: EdgeInsets.zero,
+                                            padding: 0,
+                                            alignment: Alignment.topCenter,
+                                            backgroundColor: Colors.white,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontFamily: 'Oswald',
+                                              fontWeight: FontWeight.w200,
+                                              color: Color.fromARGB(
+                                                255,
+                                                4,
+                                                46,
+                                                4,
                                               ),
                                             ),
                                           ),
@@ -266,8 +238,8 @@ class Comunidad extends StatelessWidget {
                                     );
                                   },
                                 ),
-                              );
-                            },
+                              ),
+                            ),
                           ),
                         ],
                       ),

@@ -202,14 +202,14 @@ class _SelectorCapas extends StatelessWidget {
       spacing: 8,
       children: [
         FilterChip(
-          label: Text('mapa.siembra'.tr()),
+          label: Text(context.tr('mapa.siembra')),
           selected: mostrarSembrados,
           onSelected: onToggleSembrados,
           selectedColor: const Color.fromARGB(255, 1, 70, 4).withOpacity(0.2),
           checkmarkColor: const Color.fromARGB(255, 1, 70, 4),
         ),
         FilterChip(
-          label: const Text('Terrenos'),
+          label: Text(context.tr('mapa.terrenos')),
           selected: mostrarTerrenos,
           onSelected: onToggleTerrenos,
           selectedColor: Colors.orange.withOpacity(0.2),

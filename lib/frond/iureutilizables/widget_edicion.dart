@@ -21,11 +21,11 @@ class BotonPersonalizado extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 48,
-      width: (ancho != null) ? ancho : double.infinity,
+      width: ancho ?? double.infinity,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
           backgroundColor:
               (color == 'rojo')
                   ? const Color.fromARGB(255, 255, 0, 0)
@@ -37,13 +37,15 @@ class BotonPersonalizado extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (icono != null) ...[icono!, const SizedBox(width: 8)],
             Text(
               texto,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: Estilos.textoGrande,
                 fontWeight: FontWeight.bold,
+                height: 1.2,
               ),
             ),
           ],

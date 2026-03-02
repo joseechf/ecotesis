@@ -1,51 +1,57 @@
 {
   "titles": {
     "title": "Mi App",
+    "admin": "Administrador",
+    "login": "Autenticacion",
     "titlePrincipal": {
-      "nosotros": "QUIENES SOMOS",
-      "equipo": "NUESTRO EQUIPO",
+      "nosotros": "Quienes Somos",
+      "equipo": "Nuestro Equipo",
       "PARTNERS": "Nuestros Compañeros",
-      "conservrefor": "CONSERVACIÓN Y\n REFORESTACIÓN",
+      "conservrefor": "Conservación Y\n Reforestación",
       "corredor": "El Corredor Biológico",
-      "educacion": "EDUCACIÓN",
-      "comunidad": "CRECER COMUNIDAD"
+      "educacion": "Educación",
+      "comunidad": "Crecer Comunidad"
     },
     "greeting": "¡Hola!",
     "hacemos": "Que Hacemos",
-    "noticias": "últimas noticias",
-    "charrito": "El Mono Araña de Azuero, CHARRITO",
-    "cultivoSostenible": "CULTIVAR PLANTAS Y ÁRBOLES DE MANERA SOSTENIBLE",
-    "pregFrecuentes": "PREGUNTAS FRECUENTES",
+    "noticias": "Últimas Noticias",
+    "charrito": "El Mono Araña De Azuero, Charrito",
+    "cultivoSostenible": "Cultivar Plantas Y Árboles De Manera Sostenible",
+    "pregFrecuentes": "Preguntas Frecuentes",
     "edicion": "Edicion Usuario"
   },
   "mensajes": {
     "usuarioActualizado": "Usuario Actualizado",
-    "delete":"eliminado",
-    "error":"accion no completada"
+    "delete": "Eliminado",
+    "error": "Accion No Completada",
+    "apoyo": "Apoya Nuestro Trabajo"
   },
   "buttons": {
     "change_language": "Cambiar Idioma",
     "enviar": "Enviar",
-    "somos": "Quiénes somos",
+    "somos": "Quiénes Somos",
     "trabajo": "Nuestro Trabajo",
-    "conservref": "CONSERVACIÓN Y REFORESTACIÓN",
-    "educacion": "EDUCACIÓN",
-    "comunidad": "HACER CRECER LA COMUNIDAD",
-    "recursos": "RECURSOS",
-    "mapa": "MAPA DE AZUERO",
-    "ecoguias": "ECOGUIAS",
-    "basedatos": "BASE DE DATOS DE PLANTAS DE AZUERO",
-    "biblioteca": "BIBLIOTECA",
-    "blog": "BLOG",
-    "editar": "editar",
-    "filtrar": "filtrar",
-    "nameC": "nombre cientifico",
-    "update": "actualizar",
-    "aprender": "aprender mas",
-    "delete": "eliminar",
-    "add": "agregar",
-    "cancelar": "cancelar",
-    "logout": "cerrar sesion"
+    "conservref": "Conservación Y Reforestación",
+    "educacion": "Educación",
+    "comunidad": "Hacer Crecer La Comunidad",
+    "recursos": "Recursos",
+    "mapa": "Mapa De Azuero",
+    "ecoguias": "Ecoguias",
+    "basedatos": "Base De Datos De Plantas De Azuero",
+    "biblioteca": "Biblioteca",
+    "blog": "Blog",
+    "editar": "Editar",
+    "filtrar": "Filtrar",
+    "nameC": "Nombre Cientifico",
+    "update": "Actualizar",
+    "aprender": "Aprender Mas",
+    "delete": "Eliminar",
+    "add": "Agregar",
+    "cancelar": "Cancelar",
+    "logout": "Cerrar Sesion",
+    "sincronizar": "Sincronizar",
+    "limpiar": "Limpiar",
+    "rol":"Solicitudes de Rol"
   },
   "texts": {
     "textsHome": {
@@ -152,7 +158,7 @@
       "texto": "En esta página encontrará guías para impulsar su viaje ecológico en Azuero. Estas guías sirven como punto de partida para los detalles de la vida sostenible en la península. ¿Buscas poner una cerca viva? Consulte nuestra guía sobre cercas vivas para saber por dónde empezar. ¿Quieres saber cómo reducir los residuos? Consulta la Ecoguía Reducir, Reutilizar, Reciclar. ¡Estas guías ecológicas son documentos vivos y dependemos de los comentarios de la comunidad para mantenerlas en la mejor forma!"
     }
   },
-  "nonumero": "no introduzca numeros",
+  "nonumero": "No introduzca numeros",
   "gestionUsuario": {
     "titulo": {
       "login": "Bienvenido",
@@ -188,64 +194,71 @@
       "registrarse": "Regístrate"
     },
     "roles": {
-      "cientifico": "Scientist",
-      "admin": "Administrator",
-      "sinRol": "No role"
+      "cientifico": "Científico",
+      "administrador": "Administrador",
+      "sin_rol": "Sin rol"
     }
   },
   "bdInterfaz": {
     "titulo": "ESPECIES CATEGORIZADAS",
-    "lectura": "Modo Lectura",
-    "nuevoRegistro": "Nuevo Registro",
+    "lectura": "Modo lectura",
+    "nuevoRegistro": "Agregar especie",
     "sinEspecies": "No se encontraron especies",
-    "nuevaEspecie": "Agregar Nueva Especie",
-    "editarEspecie":"Editar Especie",
+    "nuevaEspecie": "Agregar nueva especie",
+    "editarEspecie": "Editar especie",
     "insert": {
-      "Nlatin": "Nombre Latino",
-      "Ncomun": "Nombre Comun",
-      "daSombra":"da sombra ?",
-      "saludSuelo":"salud del suelo ?",
-      "pionero":"Es pionero ?",
-      "nativoAmericano":"Es nativo de America ?",
-      "nativoPanama":"Es nativo de Panamá ?",
-      "nativoAzuero":"Es nativo de Azuero ?",
-      "florDistintiva": "Flor Distintiva",
-      "frutaDistintiva":"Fruta Distintiva",
-      "huespedes":"huespedes",
-      "Aves":"Ave",
-      "Mono":"Mono",
-      "formaCrecimiento":"formaCrecimiento",
-      "Rapido":"Rapido",
-      "Lento":"Lento",
-      "polinizador":"polinizador",
-      "Mariposa":"Mariposa",
-      "Abeja":"Abeja",
-      "Mixto":"Mixto",
-      "ambiente":"ambiente",
-      "Seco":"Seco",
-      "Humedo":"Humedo",
-      "estrato":"estrato",
-      "Utilidad": "Utilidad",
+      "Nlatin": "Nombre cientifico",
+      "Ncomun": "Nombre comun",
+      "daSombra": "Da sombra ?",
+      "saludSuelo": "Salud del suelo ?",
+      "pionero": "Es pionero ?",
+      "nativoAmericano": "Es nativo de america ?",
+      "nativoPanama": "Es nativo de panamá ?",
+      "nativoAzuero": "Es nativo de azuero ?",
+      "florDistintiva": "Flor distintiva",
+      "frutaDistintiva": "Fruta distintiva",
+      "huespedes": "Huespedes",
+      "Aves": "Ave",
+      "Mono": "Mono",
+      "formaCrecimiento": "Forma crecimiento",
+      "Rapido": "Rapido",
+      "Lento": "Lento",
+      "polinizador": "Polinizador",
+      "Mariposa": "Mariposa",
+      "Abeja": "Abeja",
+      "Mixto": "Mixto",
+      "ambiente": "Ambiente",
+      "Seco": "Seco",
+      "Humedo": "Humedo",
+      "estrato": "Estrato",
       "Ubicacion": "Ubicación",
-      "Imagenes": "Imagen"
+      "Imagenes": "Imagen",
+      "Utilidad": {
+        "titulo": "Utilidad",
+        "frutal": "Frutal",
+        "maderal": "Maderal",
+        "ganado": "Ganado",
+        "medicinal": "Medicinal"
+      }
     },
-    "buttons":{
-      "addEspecie":"agregar especie"
+    "buttons": {
+      "addEspecie": "Agregar especie"
     }
   },
   "admin": {
     "titulo": "CONSOLA DE ADMINISTRADOR",
     "bienvenida": "Bienvenido a la consola de administrador",
     "tablas": {
-      "inventas": "Inventario Venta",
-      "invsiembra": "Inventario Siembra",
-      "regventas": "Registro Ventas",
-      "regsiembra": "Registro Siembra",
-      "terrenos": "Terrenos Alquilados"
+      "inventas": "Inventario venta",
+      "invsiembra": "Inventario siembra",
+      "regventas": "Registro ventas",
+      "regsiembra": "Registro siembra",
+      "terrenos": "Terrenos alquilados"
     }
   },
   "mapa": {
-    "siembra": "sembrados"
+    "siembra": "Sembrados",
+    "terrenos": "Terrenos alquilados"
   },
   "colaboradores":{
     "Dra_Maria_Gonzalez":{

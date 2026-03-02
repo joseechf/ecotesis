@@ -31,7 +31,7 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      BotonPersonalizado(
+                      /*BotonPersonalizado(
                         texto: "Panel de Control",
                         onPressed: () {
                           Navigator.push(
@@ -43,10 +43,9 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
                         },
                       ),
 
-                      const SizedBox(height: 16),
-
+                      const SizedBox(height: 16),*/
                       BotonPersonalizado(
-                        texto: "Solicitudes de Rol",
+                        texto: context.tr('buttons.rol'),
                         onPressed: () {
                           Navigator.push(
                             context,

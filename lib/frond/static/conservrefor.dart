@@ -116,40 +116,45 @@ class Conservrefor extends StatelessWidget {
               ],
             ),
 
-            Row(
+            ResponsiveLayout(
+              breakpoint: 800,
               children: [
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    height: 400,
-                    color: const Color.fromARGB(255, 12, 61, 16),
-                    padding: EdgeInsets.all(20),
-                    alignment: Alignment.center,
-                    child: Text(
-                      context.tr('titles.titlePrincipal.corredor'),
-                      style: TextStyle(
-                        fontSize:
-                            (!isMobile)
-                                ? (screenWidth * 0.06).clamp(40.0, 60.0)
-                                : 15,
-                        color: Colors.white,
-                      ),
-                    ),
+                SizedBox(
+                  height: 400,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final ancho = constraints.maxWidth;
 
-                    //),
+                      final fontSize = (ancho * 0.15).clamp(22.0, 60.0);
+
+                      return Container(
+                        color: Estilos.verdeOscuro,
+                        alignment: Alignment.center,
+                        child: TextContainerWidget(
+                          text: context.tr('titles.titlePrincipal.corredor'),
+                          margin: EdgeInsets.zero,
+                          padding: 20,
+                          alignment: Alignment.center,
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
-                Expanded(
-                  flex: 8,
-                  child: ImageContainerWidget(
-                    imagePath: 'assets/images/corredor.jpg',
-                    margin: EdgeInsets.zero,
-                    padding: 0,
-                    height: 400,
-                  ),
+
+                ImageContainerWidget(
+                  imagePath: 'assets/images/corredor.jpg',
+                  margin: EdgeInsets.zero,
+                  padding: 0,
+                  height: 400,
                 ),
               ],
             ),
+
             Column(
               children: [
                 TextContainerWidget(

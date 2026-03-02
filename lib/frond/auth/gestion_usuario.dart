@@ -40,30 +40,87 @@ class _GestionUsuarioState extends State<GestionUsuario> {
 
     try {
       if (_esRegistro) {
-        await signup(
+        final response = await signup(
           email: _correoController.text.trim(),
           password: _contrasenaController.text,
           rolSolicitado: _rolSeleccionado,
         );
+
+        if (!mounted) return;
+
+        if (response.session == null) {
+          _mostrarMensaje(
+            "Registro exitoso. Revisa tu correo para confirmar tu cuenta.",
+            esError: false,
+          );
+        } else {
+          _mostrarMensaje("Registro exitoso. Bienvenido 🌱", esError: false);
+          Navigator.pop(context);
+        }
       } else {
-        await login(
+        final response = await login(
           email: _correoController.text.trim(),
           password: _contrasenaController.text,
         );
-      }
-      //registro o autenticacion exitoso
-      if (mounted) {
-        Navigator.pop(context);
+
+        if (!mounted) return;
+
+        if (response.session != null) {
+          _mostrarMensaje("Inicio de sesión exitoso 🌿", esError: false);
+          Navigator.pop(context);
+        } else {
+          _mostrarMensaje(
+            "No se pudo iniciar sesión. Intenta nuevamente.",
+            esError: true,
+          );
+        }
       }
     } catch (e) {
       if (!mounted) return;
-      debugPrint(e.toString());
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+
+      final mensajeError = _traducirError(e.toString());
+
+      _mostrarMensaje(mensajeError, esError: true);
     } finally {
-      setState(() => _cargando = false);
+      if (mounted) {
+        setState(() => _cargando = false);
+      }
     }
+  }
+
+  void _mostrarMensaje(String mensaje, {required bool esError}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: esError ? Colors.red.shade600 : Colors.green.shade600,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  String _traducirError(String error) {
+    if (error.contains('Invalid login credentials')) {
+      return "Correo o contraseña incorrectos.";
+    }
+
+    if (error.contains('Email not confirmed')) {
+      return "Debes confirmar tu correo antes de iniciar sesión.";
+    }
+
+    if (error.contains('User already registered')) {
+      return "Este correo ya está registrado.";
+    }
+
+    if (error.contains('Password should be at least')) {
+      return "La contraseña es demasiado corta.";
+    }
+
+    if (error.contains('Network')) {
+      return "Error de conexión. Verifica tu internet.";
+    }
+
+    return "Ocurrió un error inesperado.";
   }
 
   @override

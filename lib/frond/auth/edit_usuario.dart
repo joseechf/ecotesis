@@ -30,7 +30,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
 
   // Controllers
   late final TextEditingController _emailController;
-  late final TextEditingController _rolController;
+  late final String _rolController;
   late final TextEditingController _estadoRolController;
   final TextEditingController _passwordController = TextEditingController();
 
@@ -42,14 +42,14 @@ class _EditarUsuarioState extends State<EditarUsuario> {
     super.initState();
 
     _emailController = TextEditingController(text: widget.email);
-    _rolController = TextEditingController(text: widget.rolActual);
+    _rolController = widget.rolActual;
     _estadoRolController = TextEditingController(text: widget.estadoRol);
   }
 
   @override
   void dispose() {
     _emailController.dispose();
-    _rolController.dispose();
+    _rolController = '';
     _estadoRolController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -105,12 +105,22 @@ class _EditarUsuarioState extends State<EditarUsuario> {
         ),
         const SizedBox(height: Estilos.paddingMedio),
         // Rol actual
-        CampoTextoPersonalizado(
-          controlador: _rolController,
-          etiqueta: context.tr('gestionUsuario.campos.rol'),
-          icono: Icons.security_outlined,
-          habilitado: puedeEditarRol,
+        DropdownButtonFormField<String>(
+          initialValue: _rolController,
+          items: _dropItems(context, [
+            'cientifico',
+            'administrador',
+            'sin_rol',
+          ]),
+          onChanged:
+              puedeEditarRol
+                  ? (v) => setState(() => _rolController = v!)
+                  : null,
+          decoration: InputDecoration(
+            labelText: context.tr('gestionUsuario.campos.rol'),
+          ),
         ),
+
         const SizedBox(height: Estilos.paddingMedio),
         // Estado del rol (solo lectura)
         CampoTextoPersonalizado(
@@ -177,4 +187,17 @@ class _EditarUsuarioState extends State<EditarUsuario> {
       ],
     );
   }
+
+  List<DropdownMenuItem<String>> _dropItems(
+    BuildContext ctx,
+    List<String> values,
+  ) =>
+      values
+          .map(
+            (v) => DropdownMenuItem(
+              value: v,
+              child: Text(ctx.tr('gestionUsuario.roles.$v')),
+            ),
+          )
+          .toList();
 }

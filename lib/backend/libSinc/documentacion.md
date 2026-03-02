@@ -165,74 +165,8 @@ final especie = Especie(...);      // UI / Dominio
 final dto = especie.toDto();       // Mapper
 final body = dto.toJson();         // JSON
 
-ENVÍO AL API
-{
-  "nombre_cientifico": "Tabebuia rosea",
-  "da_sombra": 1,
-  "flor_distintiva": "rosada",
-  "fruta_distintiva": null,
-  "salud_suelo": 1,
-  "huespedes": "abejas",
-  "forma_crecimiento": "árbol",
-  "pionero": 0,
-  "polinizador": "abejas",
-  "ambiente": "bosque seco",
-  "nativo_america": 1,
-  "nativo_panama": 1,
-  "nativo_azuero": 1,
-  "estrato": "dosel",
+------------------------------------------------------------------------------
+SOFT DELETE
 
-  "NombreComun": [
-    { "nombre_comun": "Roble" }
-  ],
-  "Utilidad": [
-    { "utilidad": "madera" }
-  ],
-  "Origen": [
-    { "origen": "América Central" }
-  ],
-  "Imagen": [
-    {
-      "url_foto": "https://...",
-      "estado": "aprobada"
-    }
-  ]
-}
-
-OBTENER DEL API
-final json = response.data;
-final dto = EspecieDto.fromJson(json);
-final especie = EspecieMapper.fromDto(dto);
-
-{
-  "nombre_cientifico": "Tabebuia rosea",
-  "da_sombra": 1,
-  "flor_distintiva": "rosada",
-  "fruta_distintiva": null,
-  "salud_suelo": 1,
-  "huespedes": "abejas",
-  "forma_crecimiento": "árbol",
-  "pionero": 0,
-  "polinizador": "abejas",
-  "ambiente": "bosque seco",
-  "nativo_america": 1,
-  "nativo_panama": 1,
-  "nativo_azuero": 1,
-  "estrato": "dosel",
-
-  "NombreComun": [
-    { "nombre_comun": "Roble" }
-  ],
-  "Utilidad": [
-    { "utilidad": "madera" }
-  ],
-  "Origen": [
-    { "origen": "América Central" }
-  ],
-  "Imagen": [
-    {
-      "url_foto": "https://...",
-      "estado": "aprobada"
-    }
-  ]
-}
+en remoto no se debe eliminar completamente un registro, simplemente se marga is_delete = true, pero en la tabla Flora se deja igual. En local se debe marcar el is_delete y dejar Flora igual hasta que se haga la sincronización y luego se puede decidir si eliminar completamente el registro en caso que 1. Remoto también tenga is_delete = true (en la app is_delete = 1). 2. Remoto no tenga ese registro, nunca se sincronizo. 
+Si está is_delete=1 en local pero no en remoto depende de la versión lo que va a pasar 1. version remoto mayor gana remoto y se quita el is_delete de local 2. version local mayor se elimina remoto (soft delete) y se elimina completamente local (tanto tabla flora como tabla sincronización) 3. versiones iguales gana remoto

@@ -35,10 +35,12 @@ class TextContainerWidget extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       color: backgroundColor,
       alignment: alignment,
-      child: SelectableText(
+      child: Text(
         text,
         textAlign: textAlign,
         maxLines: maxLines,
+        overflow: overflow,
+        softWrap: true,
         style: style,
       ),
     );

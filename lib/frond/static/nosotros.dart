@@ -9,8 +9,8 @@ class Nosotros extends StatelessWidget {
   const Nosotros({super.key});
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 800;
+    double anchoPantalla = MediaQuery.of(context).size.width;
+    final isMobile = anchoPantalla < 800;
     return Builder(
       builder: (context) {
         return Scaffold(
@@ -29,33 +29,42 @@ class Nosotros extends StatelessWidget {
                   height: 400,
                 ),
 
-                Container(
-                  width: double.infinity,
-                  constraints: BoxConstraints(maxHeight: 400),
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: Stack(
-                    children: [
-                      Opacity(
-                        opacity: 0.8,
-                        child: Image.asset(
-                          'assets/images/bosque.jpg',
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          context.tr('titles.titlePrincipal.nosotros'),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 100,
-                            fontWeight: FontWeight.bold,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    double ancho = constraints.maxWidth;
+
+                    double tamanioResponsive = (ancho * 0.08).clamp(18.0, 48.0);
+
+                    return Container(
+                      width: double.infinity,
+                      constraints: const BoxConstraints(maxHeight: 400),
+                      margin: const EdgeInsets.only(bottom: 20),
+                      child: Stack(
+                        children: [
+                          Opacity(
+                            opacity: 0.8,
+                            child: Image.asset(
+                              'assets/images/bosque.jpg',
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
                           ),
-                        ),
+                          Center(
+                            child: Text(
+                              context.tr('titles.titlePrincipal.nosotros'),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: tamanioResponsive,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
 
                 ResponsiveLayout(
@@ -179,6 +188,7 @@ class Nosotros extends StatelessWidget {
                     }
                     final lista = snapshot.data!;
                     return Wrap(
+                      alignment: WrapAlignment.center,
                       spacing: 10,
                       runSpacing: 10,
                       children: List.generate(lista.length, (index) {

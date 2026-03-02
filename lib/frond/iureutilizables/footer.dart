@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../estilos.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -36,7 +38,7 @@ class Footer extends StatelessWidget {
         children: [
           // Donaciones
           Text(
-            'Apoya Nuestro Trabajo',
+            context.tr('mensajes.apoyo'),
             style: TextStyle(
               color: Estilos.blanco,
               fontSize: 20,
@@ -109,11 +111,14 @@ class Footer extends StatelessWidget {
         children: [
           _iconButton(Icons.facebook, 'https://www.facebook.com/proecoazuero'),
           const SizedBox(width: Estilos.margenMedio),
-          _iconButton(Icons.link, 'https://twitter.com/proecoazuero'),
+          _iconButton(
+            FontAwesomeIcons.xTwitter,
+            'https://twitter.com/proecoazuero',
+          ),
           const SizedBox(width: Estilos.margenMedio),
           _iconButton(
             Icons.play_arrow,
-            'https://www.youtube.com/@proecoazuero',
+            'https://www.youtube.com/@proecoazuero4588',
           ),
         ],
       ),
