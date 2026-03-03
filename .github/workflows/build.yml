@@ -30,8 +30,18 @@ jobs:
         with:
           channel: stable
 
+      - name: Disable Flutter analytics
+        run: flutter config --no-analytics
+
       - name: Flutter version
         run: flutter --version
+
+      # Crear .env dinámico 
+      - name: Create .env file
+        run: |
+          mkdir -p assets
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > assets/.env
+          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> assets/.env
 
       # Instalar dependencias
       - name: Get dependencies
