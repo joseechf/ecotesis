@@ -60,7 +60,7 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
                 )
                 : Text(
                   context.tr('bdInterfaz.lectura'),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Estilos.grisMedio,
                     fontSize: Estilos.textoPequeno,
                   ),
