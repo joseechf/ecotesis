@@ -29,7 +29,8 @@ void main() async {
 }
 
 class AppLoader extends StatefulWidget {
-  const AppLoader({super.key});
+  final bool disableSessionInit; // si estoy en test
+  const AppLoader({super.key, this.disableSessionInit = false});
 
   @override
   State<AppLoader> createState() => _AppLoaderState();
@@ -42,10 +43,12 @@ class _AppLoaderState extends State<AppLoader> {
     super.initState();
     _sessionProvider = SessionProvider();
 
-    //para evitar que movil se congele se inicia el provider despues del primer frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _sessionProvider.init();
-    });
+    if (!widget.disableSessionInit) {
+      // si no estoy en test inicializo supabase
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _sessionProvider.init();
+      });
+    }
   }
 
   @override

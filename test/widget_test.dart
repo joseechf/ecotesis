@@ -9,20 +9,27 @@ void main() {
 
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
-
     await EasyLocalization.ensureInitialized();
   });
 
   testWidgets('App loads correctly', (WidgetTester tester) async {
+    tester.binding.window.physicalSizeTestValue = const Size(1200, 2000);
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+
     await tester.pumpWidget(
       EasyLocalization(
         supportedLocales: const [Locale('en'), Locale('es')],
         path: 'assets/translations',
         fallbackLocale: const Locale('es'),
         startLocale: const Locale('es'),
-        child: const AppLoader(),
+        child: const AppLoader(disableSessionInit: true),
       ),
     );
+
+    addTearDown(() {
+      tester.binding.window.clearPhysicalSizeTestValue();
+      tester.binding.window.clearDevicePixelRatioTestValue();
+    });
 
     await tester.pumpAndSettle();
 
