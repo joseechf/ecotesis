@@ -2,7 +2,7 @@ import 'package:ecoazuero/frond/estilos.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ecoazuero/frond/iureutilizables/custom_appbar.dart';
-import 'siembray_ventas/page/tablasadmin.dart';
+//import 'siembray_ventas/page/tablasadmin.dart';
 import 'auth/solicitudes_rol.dart';
 import '../iureutilizables/reglas_rol.dart';
 import '../iureutilizables/widget_edicion.dart';
