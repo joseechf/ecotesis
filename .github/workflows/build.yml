@@ -1,21 +1,44 @@
 name: Build
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      # The analysis requires to retrieve dependencies and build successfully
-      - name: Build
-        run: <mark><commands_to_build_your_project></mark>
+          fetch-depth: 0
+
+      # Configurar Java (requerido por Sonar)
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Instalar Flutter
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+
+      # Instalar dependencias
+      - name: Get dependencies
+        run: flutter pub get
+
+      # Ejecutar tests
+      - name: Run tests
+        run: flutter test
+
+      # Análisis Sonar
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
