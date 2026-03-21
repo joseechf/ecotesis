@@ -7,7 +7,6 @@ import '../../backend/auth/llamadas_api.dart';
 import '../iureutilizables/widget_edicion.dart';
 import 'package:provider/provider.dart';
 import '../../data/auth/session_provider.dart';
-import '../static/home.dart';
 
 class EditarUsuario extends StatefulWidget {
   final String email;
@@ -28,14 +27,14 @@ class EditarUsuario extends StatefulWidget {
 class _EditarUsuarioState extends State<EditarUsuario> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
   late final TextEditingController _emailController;
-  late final String _rolController;
+  late String _rolController;
   late final TextEditingController _estadoRolController;
   final TextEditingController _passwordController = TextEditingController();
 
   bool _ocultarPassword = true;
   bool _cargando = false;
+  String? _errorMensaje;
 
   @override
   void initState() {
@@ -49,7 +48,6 @@ class _EditarUsuarioState extends State<EditarUsuario> {
   @override
   void dispose() {
     _emailController.dispose();
-    _rolController = '';
     _estadoRolController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -57,23 +55,23 @@ class _EditarUsuarioState extends State<EditarUsuario> {
 
   Future<void> _guardarCambios() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _cargando = true);
+    setState(() {
+      _cargando = true;
+      _errorMensaje = null;
+    });
     try {
-      await actualizarPassword(_passwordController.text);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.tr('mensajes.usuarioActualizado')),
-          backgroundColor: Estilos.verdePrincipal,
-        ),
-      );
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const MyHomePage()),
-        (route) => false,
-      );
+      if (_passwordController.text.isNotEmpty) {
+        await actualizarPassword(_passwordController.text);
+      }
+      if (_rolController != widget.rolActual) {
+        debugPrint('$_rolController solicitando rol ...');
+        await solicitarNuevoRol(_rolController);
+      }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      setState(() {
+        _errorMensaje = e.toString();
+      });
     } finally {
       if (mounted) {
         setState(() => _cargando = false);
@@ -83,7 +81,8 @@ class _EditarUsuarioState extends State<EditarUsuario> {
 
   @override
   Widget build(BuildContext context) {
-    final bool puedeEditarRol = widget.estadoRol == 'aprobado';
+    final bool puedeEditarRol =
+        widget.estadoRol == 'aprobado' || widget.estadoRol == 'rechazado';
 
     return FormularioAuthBase(
       formKey: _formKey,
@@ -139,6 +138,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
               _ocultarPassword = !_ocultarPassword;
             });
           },
+          obligatorio: false,
         ),
       ],
 
@@ -162,10 +162,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
                   backgroundColor: Estilos.red,
                 ),
               );
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const MyHomePage()),
-                (route) => false,
-              );
+              Navigator.pop(context, "usuario_eliminado");
             }
           },
         ),
@@ -175,16 +172,17 @@ class _EditarUsuarioState extends State<EditarUsuario> {
           icono: const Icon(Icons.logout_outlined),
           onPressed: () {
             context.read<SessionProvider>().logout();
-            Navigator.pop(context);
+            Navigator.pop(context, "logout");
           },
         ),
         const SizedBox(height: Estilos.paddingGrande),
         BotonPersonalizado(
-          texto: context.tr('buttons.cancelar'),
+          texto: context.tr('buttons.cerrar'),
           icono: const Icon(Icons.arrow_back_outlined),
           onPressed: () => Navigator.pop(context),
         ),
       ],
+      errorMensaje: (_errorMensaje != null) ? _errorMensaje : null,
     );
   }
 

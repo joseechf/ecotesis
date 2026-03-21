@@ -1,17 +1,23 @@
-import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 Future<bool> validarRed() async {
   try {
-    // Intentamos buscar el host de Google
-    final resultado = await InternetAddress.lookup('google.com');
-
-    // Si la lista no está vacía y tiene una dirección válida, hay internet
-    if (resultado.isNotEmpty && resultado[0].rawAddress.isNotEmpty) {
-      return true;
-    }
-    return false;
-  } on SocketException catch (_) {
-    // Si falla la búsqueda (DNS), no hay internet
+    final response = await http
+        .get(
+          Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),
+          headers: {'Accept': 'application/json'},
+        )
+        .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            debugPrint('tiempo limite de verificacion de red alcanzado');
+            throw Exception('Timeout');
+          },
+        );
+    debugPrint('wifi ? ${response.statusCode == 200}');
+    return response.statusCode == 200;
+  } catch (e) {
     return false;
   }
 }

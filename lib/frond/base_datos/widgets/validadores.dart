@@ -1,34 +1,41 @@
 class ValidadorTexto {
+  static final RegExp _regexTexto = RegExp(r'^[\p{L}\s.-]+$', unicode: true);
+
   static String? validaObligatorio(String? value) {
-    if (value == null || value.trim().isEmpty) {
+    if (value == null) return 'Campo obligatorio';
+
+    final texto = value.trim();
+
+    if (texto.isEmpty) {
       return 'Campo obligatorio';
     }
 
-    if (value.length > 50) {
-      return 'Maximo 50 caracteres';
+    if (texto.length > 100) {
+      return 'Máximo 100 caracteres';
     }
 
-    final regex = RegExp(r'^[a-zA-Z]+$');
-
-    if (!regex.hasMatch(value)) {
-      return 'Solo letras (a-z, A-Z)';
+    if (!_regexTexto.hasMatch(texto)) {
+      return 'Solo letras, espacios, puntos o guiones';
     }
 
     return null;
   }
 
   static String? validaNoObligatorio(String? value) {
-    if (value == null || value.trim().isEmpty) {
+    if (value == null) return null;
+
+    final texto = value.trim();
+
+    if (texto.isEmpty) {
       return null;
     }
-    if (value.length > 50) {
-      return 'Maximo 50 caracteres';
+
+    if (texto.length > 100) {
+      return 'Máximo 100 caracteres';
     }
 
-    final regex = RegExp(r'^[a-zA-Z]+$');
-
-    if (!regex.hasMatch(value)) {
-      return 'Solo letras (a-z, A-Z)';
+    if (!_regexTexto.hasMatch(texto)) {
+      return 'Solo letras, espacios, puntos o guiones';
     }
 
     return null;

@@ -1,5 +1,3 @@
-//para documentacion: el usuario no lo voy a modificar, se reemplaza
-
 class UsuarioModel {
   final String id;
   final String email;

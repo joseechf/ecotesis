@@ -18,288 +18,250 @@ import '../estilos.dart';
 import '../admin/consola_admin.dart';
 import 'reglas_rol.dart';
 import '../../data/auth/session_provider.dart';
+import '../static/doc_sincronizacion.dart';
 
-/// Punto de quiebre entre diseño móvil y escritorio.
 const double _mobileBreakpoint = 800;
 
-/// AppBar personalizada que se adapta a escritorio y móvil.
+// configunación boton icono navegacion
+final _menuItems = [
+  _Item('buttons.somos', Icons.groups, () => Nosotros()),
+  _Item.group('buttons.trabajo', [
+    _Item('buttons.conservref', Icons.forest, () => Conservrefor()),
+    _Item('buttons.educacion', Icons.school, () => Educacion()),
+    _Item('buttons.comunidad', Icons.groups, () => Comunidad()),
+  ]),
+  _Item.group('buttons.recursos', [
+    _Item('buttons.mapa', Icons.map, () => MappAzuero()),
+    _Item('buttons.ecoguias', Icons.eco, () => Ecoguias()),
+    _Item('buttons.basedatos', Icons.storage, () => const CatalogoPage()),
+    if (kIsWeb)
+      _Item(
+        'buttons.biblioteca',
+        Icons.local_library,
+        null,
+        url: 'https://www.librarything.com/catalog/ProEcoAzuero',
+      ),
+  ]),
+  _Item('buttons.doc', Icons.description, () => ExplicacionSincronizacion()),
+];
+
+class _Item {
+  final String key;
+  final IconData? icon;
+  final Widget Function()? page;
+  final String? url;
+  final List<_Item>? children;
+
+  bool get isGroup => children != null;
+  bool get isExternal => url != null;
+
+  const _Item(this.key, this.icon, this.page, {this.url}) : children = null;
+
+  const _Item.group(this.key, List<_Item> items)
+    : icon = null,
+      page = null,
+      url = null,
+      children = items;
+}
+
+// AppBar principal
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
   const CustomAppBar({super.key, required this.context});
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobile = MediaQuery.sizeOf(context).width < _mobileBreakpoint;
+    final isMobile = MediaQuery.sizeOf(context).width < _mobileBreakpoint;
     return AppBar(
       backgroundColor: Estilos.verdePrincipal,
       elevation: 2,
       titleSpacing: 0,
       title: Row(
         children: [
-          _LogoTitle(
-            onTap:
-                () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MyApp()),
-                ),
-          ),
+          _Logo(onTap: () => _navigate(context, () => const MyApp())),
           const Spacer(),
-          isMobile
-              ? Row(
-                children: const [
-                  _LanguageToggleButton(),
-                  SizedBox(width: Estilos.margenPequeno),
-                ],
-              )
-              : const _DesktopMenu(),
+          if (isMobile) ...const [_LangBtn(), SizedBox(width: 8)] else
+            _DesktopMenu(),
         ],
       ),
     );
   }
 }
 
-/// Logo + título.
-class _LogoTitle extends StatelessWidget {
-  const _LogoTitle({required this.onTap});
+class _Logo extends StatelessWidget {
   final VoidCallback onTap;
+  const _Logo({required this.onTap});
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(Estilos.radioBorde),
-      child: const Padding(
-        padding: EdgeInsets.all(Estilos.paddingPequeno),
-        child: Row(
-          children: [
-            FlutterLogo(),
-            SizedBox(width: Estilos.paddingPequeno),
-            Text(
-              'PRO ECO AZUERO',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: Estilos.textoGrande,
-                color: Estilos.blanco,
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    child: const Padding(
+      padding: EdgeInsets.all(Estilos.paddingPequeno),
+      child: Text(
+        'PRO ECO AZUERO',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: Estilos.textoGrande,
+          color: Estilos.blanco,
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
-/// Menú horizontal para escritorio.
+// menu de pantalla grande
 class _DesktopMenu extends StatelessWidget {
-  const _DesktopMenu();
-
   @override
   Widget build(BuildContext context) {
-    final sesionActual = context.watch<SessionProvider>();
+    final session = context.watch<SessionProvider>();
     return Row(
       children: [
-        _NavItem(context.tr('buttons.somos'), () => _go(context, Nosotros())),
-        _NavItem(
-          context.tr('buttons.trabajo'),
-          null,
-          subItems: _trabajoItems(context),
-        ),
-        _NavItem(
-          context.tr('buttons.recursos'),
-          null,
-          subItems: _recursosItems(context),
-        ),
-        tieneAlgunoDeLosRoles(context, ['administrador'])
-            ? IconButton(
-              icon: const Icon(Icons.assignment_ind, color: Estilos.blanco),
-              onPressed:
-                  () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ConsolaAdmin()),
-                  ),
-            )
-            : const SizedBox.shrink(),
-        const _LanguageToggleButton(),
-        IconButton(
-          icon: const Icon(Icons.account_circle_rounded, color: Estilos.blanco),
-          onPressed:
-              (!sesionActual.isAuthenticated)
-                  ? () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const GestionUsuario()),
-                  )
-                  : () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => EditarUsuario(
-                            email: sesionActual.usuario!.email,
-                            rolActual: sesionActual.usuario!.rolActual,
-                            estadoRol: sesionActual.usuario!.estadoRol,
-                          ),
-                    ),
-                  ),
+        ..._menuItems.map((i) => i.isGroup ? _Dropdown(i) : _Link(i)),
+        if (_isAdmin(context))
+          _IconBtn(
+            Icons.assignment_ind,
+            () => _navigate(context, () => const ConsolaAdmin()),
+          ),
+        const _LangBtn(),
+        _IconBtn(
+          Icons.account_circle_rounded,
+          () => _navigate(
+            context,
+            !session.isAuthenticated
+                ? () => const GestionUsuario()
+                : () => EditarUsuario(
+                  email: session.usuario!.email,
+                  rolActual: session.usuario!.rolActual,
+                  estadoRol: session.usuario!.estadoRol,
+                ),
+          ),
         ),
       ],
     );
   }
+}
 
-  /* ---------- submenús ---------- */
-  List<PopupMenuEntry<String>> _trabajoItems(BuildContext context) => [
-    _popup(context, 'buttons.conservref', () => _go(context, Conservrefor())),
-    _popup(context, 'buttons.educacion', () => _go(context, Educacion())),
-    _popup(context, 'buttons.comunidad', () => _go(context, Comunidad())),
-  ];
+class _Link extends StatelessWidget {
+  final _Item item;
+  const _Link(this.item);
+  @override
+  Widget build(BuildContext context) =>
+      _HoverText(item.key, () => _handle(context, item));
+}
 
-  List<PopupMenuEntry<String>> _recursosItems(BuildContext context) => [
-    _popup(context, 'buttons.mapa', () => _go(context, MappAzuero())),
-    _popup(context, 'buttons.ecoguias', () => _go(context, Ecoguias())),
-    _popup(
-      context,
-      'buttons.basedatos',
-      () => _go(context, const CatalogoPage()),
+class _Dropdown extends StatelessWidget {
+  final _Item group;
+  const _Dropdown(this.group);
+  @override
+  Widget build(BuildContext context) => PopupMenuButton<String>(
+    offset: const Offset(0, 40),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(Estilos.radioBorde),
     ),
-    if (kIsWeb)
-      _popup(
-        context,
-        'buttons.biblioteca',
-        () => _launchUrl(
-          context,
-          'https://www.librarything.com/catalog/ProEcoAzuero',
+    color: Estilos.blanco,
+    itemBuilder:
+        (_) =>
+            group.children!
+                .map<PopupMenuEntry<String>>(
+                  (c) => PopupMenuItem<String>(
+                    onTap: () => _handle(context, c),
+                    child: Row(
+                      children: [
+                        Icon(c.icon, color: Estilos.verdeOscuro, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            context.tr(c.key),
+                            style: const TextStyle(
+                              color: Estilos.verdeOscuro,
+                              fontSize: Estilos.textoGrande,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                .toList(),
+    child: _HoverText(
+      group.key,
+      null,
+      suffix: const Icon(Icons.arrow_drop_down, size: 18),
+    ),
+  );
+}
+
+class _HoverText extends StatefulWidget {
+  final String labelKey;
+  final VoidCallback? onTap;
+  final Widget? suffix;
+  const _HoverText(this.labelKey, this.onTap, {this.suffix});
+
+  @override
+  State<_HoverText> createState() => _HoverTextState();
+}
+
+class _HoverTextState extends State<_HoverText> {
+  bool _hover = false;
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    onEnter: (_) => setState(() => _hover = true),
+    onExit: (_) => setState(() => _hover = false),
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Estilos.paddingPequeno,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: _hover ? Estilos.verdeOscuro : Colors.transparent,
+            width: 2,
+          ),
         ),
       ),
-    _popup(context, 'buttons.blog', () => _go(context, Conservrefor())),
-  ];
-
-  PopupMenuItem<String> _popup(
-    BuildContext context,
-    String key,
-    VoidCallback onTap,
-  ) => PopupMenuItem<String>(
-    onTap: onTap,
-    child: Text(
-      context.tr(key),
-      style: const TextStyle(
-        color: Estilos.verdeOscuro,
-        fontSize: Estilos.textoGrande,
+      child: TextButton(
+        onPressed: widget.onTap,
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          minimumSize: Size.zero,
+        ),
+        child: Row(
+          children: [
+            Text(
+              context.tr(widget.labelKey),
+              style: TextStyle(
+                color: _hover ? Estilos.verdeOscuro : Estilos.blanco,
+                fontSize: Estilos.textoGrande,
+              ),
+            ),
+            if (widget.suffix != null) ...[
+              const SizedBox(width: 4),
+              IconTheme(
+                data: IconThemeData(
+                  color: _hover ? Estilos.verdeOscuro : Estilos.blanco,
+                  size: 18,
+                ),
+                child: widget.suffix!,
+              ),
+            ],
+          ],
+        ),
       ),
     ),
   );
-
-  void _go(BuildContext contexto, Widget pagina) {
-    Navigator.pushReplacement(
-      contexto,
-      MaterialPageRoute(builder: (contextoRuta) => pagina),
-    );
-  }
-
-  Future<void> _launchUrl(BuildContext context, String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      launchUrl(uri, mode: LaunchMode.platformDefault);
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo abrir el enlace.')),
-        );
-      }
-    }
-  }
 }
 
-class _NavItem extends StatefulWidget {
-  const _NavItem(this.title, this.onTap, {this.subItems});
-  final String title;
-  final VoidCallback? onTap;
-  final List<PopupMenuEntry<String>>? subItems;
-
-  @override
-  State<_NavItem> createState() => _NavItemState();
-}
-
-class _NavItemState extends State<_NavItem> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool hasMenu = widget.subItems?.isNotEmpty == true;
-    final border = BorderSide(
-      color: _hovered ? Estilos.verdeOscuro : Colors.transparent,
-      width: 2,
-    );
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child:
-          hasMenu
-              ? PopupMenuButton<String>(
-                offset: const Offset(0, 40),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(Estilos.radioBorde),
-                ),
-                color: Estilos.blanco,
-                itemBuilder: (_) => widget.subItems!,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Estilos.paddingPequeno,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(border: Border(bottom: border)),
-                  child: Row(
-                    children: [
-                      Text(
-                        widget.title,
-                        style: TextStyle(
-                          color:
-                              _hovered ? Estilos.verdeOscuro : Estilos.blanco,
-                          fontSize: Estilos.textoGrande,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_drop_down,
-                        color: _hovered ? Estilos.verdeOscuro : Estilos.blanco,
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
-              )
-              : Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Estilos.paddingPequeno,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(border: Border(bottom: border)),
-                child: TextButton(
-                  onPressed: widget.onTap,
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                  ),
-                  child: Text(
-                    widget.title,
-                    style: TextStyle(
-                      color: _hovered ? Estilos.verdeOscuro : Estilos.blanco,
-                      fontSize: Estilos.textoGrande,
-                    ),
-                  ),
-                ),
-              ),
-    );
-  }
-}
-
-// Menú lateral para pantallas pequeñas
+//menu movil
 class MobileMenu extends StatelessWidget {
   const MobileMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final sesionActual = context.watch<SessionProvider>();
+    final session = context.watch<SessionProvider>();
     return Drawer(
       backgroundColor: Estilos.verdePrincipal,
       shape: const RoundedRectangleBorder(
@@ -316,128 +278,57 @@ class MobileMenu extends StatelessWidget {
                 bottom: Radius.circular(Estilos.radioBordeGrande),
               ),
             ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FlutterLogo(size: 60),
-                SizedBox(height: Estilos.margenPequeno),
-                Text(
-                  'PRO ECO AZUERO',
-                  style: TextStyle(
-                    color: Estilos.blanco,
-                    fontWeight: FontWeight.bold,
-                    fontSize: Estilos.textoMuyGrande,
-                  ),
+            child: const Center(
+              child: Text(
+                'PRO ECO AZUERO',
+                style: TextStyle(
+                  color: Estilos.blanco,
+                  fontWeight: FontWeight.bold,
+                  fontSize: Estilos.textoMuyGrande,
                 ),
-              ],
+              ),
             ),
           ),
           Expanded(
             child: ListView(
-              padding: EdgeInsets.zero,
               children: [
-                _drawerTile(context, 'buttons.somos', Nosotros()),
-                _drawerTile(context, 'buttons.conservref', Conservrefor()),
-                _drawerTile(context, 'buttons.educacion', Educacion()),
-                _drawerTile(context, 'buttons.comunidad', Comunidad()),
-                _drawerTile(context, 'buttons.mapa', MappAzuero()),
-                _drawerTile(context, 'buttons.ecoguias', Ecoguias()),
-                _drawerTile(context, 'buttons.basedatos', CatalogoPage()),
-                if (kIsWeb)
-                  ListTile(
-                    title: Text(
-                      context.tr('buttons.biblioteca'),
-                      style: TextStyle(
-                        color: Estilos.blanco,
-                        fontWeight: FontWeight.w100,
-                        fontSize: Estilos.textoPequeno,
-                      ),
-                    ),
-                    onTap:
-                        () => _launchUrl(
-                          context,
-                          'https://www.librarything.com/catalog/ProEcoAzuero',
-                        ),
-                  ),
+                ..._expandItems(_menuItems, context),
                 const Divider(),
-                ListTile(
-                  leading: const Icon(
-                    Icons.account_circle_rounded,
-                    color: Estilos.blanco,
-                  ),
-                  title: Text(
-                    context.tr('titles.login'),
-                    style: TextStyle(
-                      color: Estilos.blanco,
-                      fontWeight: FontWeight.w100,
-                      fontSize: Estilos.textoMedio,
-                    ),
-                  ),
-                  onTap:
-                      (!sesionActual.isAuthenticated)
-                          ? () async {
-                            final resultado = await Navigator.push<String>(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const GestionUsuario(),
-                              ),
-                            );
-
-                            if (!context.mounted || resultado == null) return;
-
-                            final esError = resultado.startsWith("ERROR:");
-                            final mensaje =
-                                esError
-                                    ? resultado.replaceFirst("ERROR:", "")
-                                    : resultado;
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(mensaje),
-                                backgroundColor:
-                                    esError
-                                        ? Colors.red.shade600
-                                        : Colors.green.shade600,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                          : () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => EditarUsuario(
-                                    email: sesionActual.usuario!.email,
-                                    rolActual: sesionActual.usuario!.rolActual,
-                                    estadoRol: sesionActual.usuario!.estadoRol,
-                                  ),
-                            ),
-                          ),
-                ),
-                const Divider(),
-                tieneAlgunoDeLosRoles(context, ['administrador'])
-                    ? ListTile(
-                      leading: const Icon(
-                        Icons.assignment_ind,
-                        color: Estilos.blanco,
-                      ),
-                      title: Text(
-                        context.tr('titles.admin'),
-                        style: TextStyle(
-                          color: Estilos.blanco,
-                          fontWeight: FontWeight.w100,
-                          fontSize: Estilos.textoMedio,
+                _Tile(Icons.account_circle_rounded, 'titles.login', () async {
+                  Navigator.pop(context);
+                  if (!session.isAuthenticated) {
+                    final r = await Navigator.push<String>(
+                      context,
+                      MaterialPageRoute(builder: (_) => const GestionUsuario()),
+                    );
+                    if (context.mounted && r != null) {
+                      final err = r.startsWith("ERROR:");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(err ? r.replaceFirst("ERROR:", "") : r),
+                          backgroundColor:
+                              err ? Colors.red.shade600 : Colors.green.shade600,
+                          behavior: SnackBarBehavior.floating,
                         ),
+                      );
+                    }
+                  } else {
+                    _navigate(
+                      context,
+                      () => EditarUsuario(
+                        email: session.usuario!.email,
+                        rolActual: session.usuario!.rolActual,
+                        estadoRol: session.usuario!.estadoRol,
                       ),
-                      onTap:
-                          () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ConsolaAdmin(),
-                            ),
-                          ),
-                    )
-                    : const SizedBox.shrink(),
+                    );
+                  }
+                }),
+                if (_isAdmin(context))
+                  _Tile(
+                    Icons.assignment_ind,
+                    'titles.admin',
+                    () => _navigate(context, () => const ConsolaAdmin()),
+                  ),
               ],
             ),
           ),
@@ -446,9 +337,37 @@ class MobileMenu extends StatelessWidget {
     );
   }
 
-  Widget _drawerTile(BuildContext context, String key, Widget page) => ListTile(
+  List<Widget> _expandItems(List<_Item> items, BuildContext context) {
+    List<Widget> widgets = [];
+    for (final item in items) {
+      if (item.isGroup) {
+        widgets.add(const Divider());
+
+        for (final hijo in item.children!) {
+          widgets.add(
+            _Tile(hijo.icon!, hijo.key, () => _handle(context, hijo)),
+          );
+        }
+        widgets.add(const Divider());
+      } else {
+        widgets.add(_Tile(item.icon!, item.key, () => _handle(context, item)));
+      }
+    }
+    return widgets;
+  }
+}
+
+class _Tile extends StatelessWidget {
+  final IconData icon;
+  final String labelKey;
+  final VoidCallback onTap;
+  const _Tile(this.icon, this.labelKey, this.onTap);
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    leading: Icon(icon, color: Estilos.blanco, size: 22),
     title: Text(
-      context.tr(key),
+      context.tr(labelKey),
       style: const TextStyle(
         fontSize: Estilos.textoGrande,
         color: Estilos.blanco,
@@ -456,36 +375,15 @@ class MobileMenu extends StatelessWidget {
         fontFamily: 'Oswald',
       ),
     ),
-    onTap: () {
-      Navigator.pop(context); // cierra drawer
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => page),
-      );
-    },
+    onTap: onTap,
   );
-
-  Future<void> _launchUrl(BuildContext context, String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      launchUrl(uri);
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo abrir el enlace.')),
-        );
-      }
-    }
-  }
 }
 
-// boton para cambiar idioma
-class _LanguageToggleButton extends StatelessWidget {
-  const _LanguageToggleButton();
-
+class _LangBtn extends StatelessWidget {
+  const _LangBtn();
   @override
   Widget build(BuildContext context) {
-    final bool isEn = context.locale == const Locale('en');
+    final isEn = context.locale == const Locale('en');
     return TextButton(
       onPressed:
           () =>
@@ -503,3 +401,38 @@ class _LanguageToggleButton extends StatelessWidget {
     );
   }
 }
+
+class _IconBtn extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _IconBtn(this.icon, this.onTap);
+  @override
+  Widget build(BuildContext context) =>
+      IconButton(icon: Icon(icon, color: Estilos.blanco), onPressed: onTap);
+}
+
+void _navigate(BuildContext c, Widget Function() b) {
+  Navigator.push(c, MaterialPageRoute(builder: (_) => b()));
+}
+
+void _handle(BuildContext c, _Item i) {
+  if (i.url != null) {
+    _launch(c, i.url!);
+  } else {
+    _navigate(c, i.page!);
+  }
+}
+
+Future<void> _launch(BuildContext c, String u) async {
+  final uri = Uri.parse(u);
+
+  if (await canLaunchUrl(uri)) {
+    launchUrl(uri, mode: LaunchMode.platformDefault);
+  } else if (c.mounted) {
+    ScaffoldMessenger.of(c).showSnackBar(
+      const SnackBar(content: Text('No se pudo abrir el enlace.')),
+    );
+  }
+}
+
+bool _isAdmin(BuildContext c) => tieneAlgunoDeLosRoles(c, ['administrador']);

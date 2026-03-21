@@ -25,6 +25,7 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   bool _cargando = false;
   bool _ocultarContrasena = true;
   String _rolSeleccionado = 'sin_rol';
+  String? _errorMensaje;
 
   @override
   void dispose() {
@@ -36,7 +37,10 @@ class _GestionUsuarioState extends State<GestionUsuario> {
   Future<void> _procesarFormulario() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _cargando = true);
+    setState(() {
+      _cargando = true;
+      _errorMensaje = null;
+    });
 
     try {
       if (_esRegistro) {
@@ -67,39 +71,12 @@ class _GestionUsuarioState extends State<GestionUsuario> {
       }
     } catch (e) {
       if (!mounted) return;
-
-      final mensajeError = _traducirError(e.toString());
-
-      Navigator.pop(context, "ERROR:$mensajeError");
+      _errorMensaje = e.toString();
     } finally {
       if (mounted) {
         setState(() => _cargando = false);
       }
     }
-  }
-
-  String _traducirError(String error) {
-    if (error.contains('Invalid login credentials')) {
-      return "Correo o contraseña incorrectos.";
-    }
-
-    if (error.contains('Email not confirmed')) {
-      return "Debes confirmar tu correo antes de iniciar sesión.";
-    }
-
-    if (error.contains('User already registered')) {
-      return "Este correo ya está registrado.";
-    }
-
-    if (error.contains('Password should be at least')) {
-      return "La contraseña es demasiado corta.";
-    }
-
-    if (error.contains('Network')) {
-      return "Error de conexión. Verifica tu internet.";
-    }
-
-    return "Ocurrió un error inesperado.";
   }
 
   @override
@@ -135,6 +112,7 @@ class _GestionUsuarioState extends State<GestionUsuario> {
               _ocultarContrasena = !_ocultarContrasena;
             });
           },
+          obligatorio: true,
         ),
       ],
 
@@ -150,7 +128,14 @@ class _GestionUsuarioState extends State<GestionUsuario> {
               icono: const Icon(Icons.logout_outlined),
               onPressed: _procesarFormulario,
             ),
+        const SizedBox(height: Estilos.paddingGrande),
+        BotonPersonalizado(
+          texto: context.tr('buttons.cancelar'),
+          icono: const Icon(Icons.arrow_back_outlined),
+          onPressed: () => Navigator.pop(context),
+        ),
       ],
+      errorMensaje: (_errorMensaje != null) ? _errorMensaje : null,
 
       footer: Wrap(
         children: [

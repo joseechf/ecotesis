@@ -4,7 +4,7 @@ import '../providers/especies_provider.dart';
 import '../widgets/mostrar_tarjeta/especie_card.dart';
 import '../widgets/mostrar_tarjeta/especie_modal.dart';
 import '../widgets/mostrar_tarjeta/filtro_dialog.dart';
-//import '../widgets/insertar_dialog.dart';
+import '../../../validar_red.dart';
 import '../../estilos.dart';
 import '../../../domain/entities/especie_unificada.dart';
 import '../../iureutilizables/widgetpersonalizados.dart';
@@ -23,10 +23,13 @@ class CatalogoPage extends StatefulWidget {
 }
 
 class _CatalogoPageState extends State<CatalogoPage> {
+  late Future<bool> _tieneInternet;
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    _tieneInternet = validarRed();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<EspeciesProvider>().cargarFlora();
       }
@@ -35,16 +38,21 @@ class _CatalogoPageState extends State<CatalogoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     final provider = Provider.of<EspeciesProvider>(context);
 
     if (provider.cargandoData) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        appBar: CustomAppBar(context: context),
+        drawer: isMobile ? const MobileMenu() : null,
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     return Scaffold(
       appBar: CustomAppBar(context: context),
-      drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+      drawer: isMobile ? const MobileMenu() : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Estilos.paddingMedio),
         child: Column(
@@ -72,7 +80,7 @@ class _CatalogoPageState extends State<CatalogoPage> {
               children: [
                 BotonPersonalizado(
                   texto: context.tr('buttons.filtrar'),
-                  icono: const Icon(Icons.filter_list),
+                  icono: const Icon(Icons.search),
                   onPressed: () async {
                     final res = await mostrarFiltroDialog(
                       context,
@@ -83,7 +91,7 @@ class _CatalogoPageState extends State<CatalogoPage> {
                       provider.setFiltros(res);
                     }
                   },
-                  ancho: 120,
+                  ancho: 125,
                 ),
 
                 tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
@@ -92,7 +100,6 @@ class _CatalogoPageState extends State<CatalogoPage> {
                       icono: const Icon(Icons.add),
                       ancho: 210,
                       onPressed: () async {
-                        //final resultado = await mostrarInsertarDialog(context);
                         final resultado = await showDialog<bool>(
                           context: context,
                           builder: (_) => const EspecieDialog(),
@@ -114,21 +121,45 @@ class _CatalogoPageState extends State<CatalogoPage> {
                         }
                       },
                     )
-                    : Text(
-                      context.tr('bdInterfaz.lectura'),
-                      style: const TextStyle(
-                        color: Estilos.grisMedio,
-                        fontSize: Estilos.textoPequeno,
-                      ),
+                    : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.visibility,
+                          color: Estilos.grisMedio,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          context.tr('bdInterfaz.lectura'),
+                          style: const TextStyle(
+                            color: Estilos.grisMedio,
+                            fontSize: Estilos.textoPequeno,
+                          ),
+                        ),
+                      ],
                     ),
 
-                OutlinedButton.icon(
-                  onPressed:
-                      provider.sincronizando
-                          ? null
-                          : provider.sincronizarManual,
-                  icon: const Icon(Icons.cloud_upload),
-                  label: Text(context.tr('buttons.sincronizar')),
+                FutureBuilder<bool>(
+                  future: _tieneInternet,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                    }
+
+                    if (snapshot.data != true) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return OutlinedButton.icon(
+                      onPressed:
+                          provider.sincronizando
+                              ? null
+                              : provider.sincronizarManual,
+                      icon: const Icon(Icons.sync_alt),
+                      label: Text(context.tr('buttons.sincronizar')),
+                    );
+                  },
                 ),
               ],
             ),
@@ -183,10 +214,6 @@ class _CatalogoPageState extends State<CatalogoPage> {
           (_) => EspecieModal(
             especie: especie,
             onEditar: () async {
-              /*final especieEditada = await mostrarEditarDialog(
-                context,
-                especie,
-              );*/
               final especieEditada = await showDialog<bool>(
                 context: context,
                 builder: (_) => EspecieDialog(especieInicial: especie),

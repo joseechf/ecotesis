@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+//import '../iureutilizables/custom_appbar.dart';
 import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import '../iureutilizables/footer.dart';
-import 'listas_lazy_loading/listas_lazy.dart';
+import 'listas_dinamicas/listas_dinamicas.dart';
 
 class Nosotros extends StatelessWidget {
   const Nosotros({super.key});
@@ -14,11 +15,13 @@ class Nosotros extends StatelessWidget {
     return Builder(
       builder: (context) {
         return Scaffold(
-          appBar: CustomAppBar(context: context),
+          /*appBar: CustomAppBar(context: context),
           drawer:
               MediaQuery.sizeOf(context).width < 800
                   ? const MobileMenu()
-                  : null,
+                  : null,*/
+          appBar: CustomAppBar(context: context),
+          drawer: isMobile ? const MobileMenu() : null,
           body: SafeArea(
             child: ListView(
               children: [
@@ -269,6 +272,41 @@ class Nosotros extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                // aquí va una lista de compañeros
+                FutureBuilder<List<Map<String, String>>>(
+                  future: cargarCompanieros(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error al cargar los datos');
+                    }
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    final lista = snapshot.data!;
+                    return Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: List.generate(lista.length, (index) {
+                        return Container(
+                          width: 350,
+                          child: ListaWidgetOrdenada(
+                            datos: lista[index],
+                            radioImg: 10,
+                            onNavegar: (ctx, ruta) {
+                              debugPrint("Ir a $ruta");
+                            },
+                          ),
+                        );
+                      }),
+                    );
+                  },
                 ),
                 const Footer(),
               ],

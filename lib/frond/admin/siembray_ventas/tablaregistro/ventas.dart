@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import '../../model/models.dart';
 import 'package:ecoazuero/frond/estilos.dart';
@@ -236,3 +237,4 @@ class _SalesRecordsState extends State<SalesRecords> {
     );
   }
 }
+*/

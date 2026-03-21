@@ -15,10 +15,11 @@ class Ecoguias extends StatelessWidget {
     double alturaPantalla = MediaQuery.of(context).size.height;
 
     final listaGuias = _obtenerListaGuias(context);
-
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: CustomAppBar(context: context),
-      drawer: anchoPantalla < 800 ? const MobileMenu() : null,
+      drawer: isMobile ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [

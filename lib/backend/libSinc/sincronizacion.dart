@@ -1,12 +1,12 @@
 import '../llamadas_locales/llamadas_flora.dart';
 import '../llamadas_remotas/llamadas_flora.dart';
 import '../llamadas_locales/sqlite_helper.dart';
-import '../../data/flora/mapper.dart';
+import '../../domain/adapter/mapper.dart';
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/especie_unificada.dart';
 import '../llamadas_locales/tabla_sinc.dart';
 
-class FilasPorSincronizar {
+/*class FilasPorSincronizar {
   final List<String> insertToLocal = [],
       updateToLocal = [],
       deleteToLocal = [],
@@ -15,6 +15,44 @@ class FilasPorSincronizar {
       updateToRemote = [],
       deleteToRemote = [];
   final List<String> discardedLocal = [];
+  void clear() {
+    insertToLocal.clear();
+    updateToLocal.clear();
+    deleteToLocal.clear();
+
+    insertToRemote.clear();
+    updateToRemote.clear();
+    deleteToRemote.clear();
+
+    discardedLocal.clear();
+    eliminarFisicoLocal.clear();
+  }
+}*/
+
+class FilasPorSincronizar {
+  // Instancia única (Singleton)
+  static final FilasPorSincronizar _instancia =
+      FilasPorSincronizar._singleton();
+
+  // Factory constructor que siempre devuelve la misma instancia
+  factory FilasPorSincronizar() {
+    return _instancia;
+  }
+
+  // Constructor privado
+  FilasPorSincronizar._singleton();
+
+  final List<String> insertToLocal = [],
+      updateToLocal = [],
+      deleteToLocal = [],
+      eliminarFisicoLocal = [];
+
+  final List<String> insertToRemote = [],
+      updateToRemote = [],
+      deleteToRemote = [];
+
+  final List<String> discardedLocal = [];
+
   void clear() {
     insertToLocal.clear();
     updateToLocal.clear();
@@ -69,56 +107,56 @@ class ComparadorFilas {
       final localFila = mapLocalCompleto[id];
       final remoteFila = mapRemoteCompleto[id];
 
-      debugPrint('🔎 Analizando ID: $id');
+      debugPrint(' Analizando ID: $id');
 
-      // 1️⃣ Existe en ambos lados
+      // Existe en ambos lados
       if (localExiste && remoteExiste) {
         final local = localFila!;
         final remote = remoteFila!;
 
         // DELETE conflict
         if (local['is_delete'] == 1 || remote['is_delete'] == 1) {
-          debugPrint('   ⚠️ Conflicto DELETE detectado');
+          debugPrint('  Conflicto DELETE detectado');
           _resolverConflictoDelete(id, local, remote);
           continue;
         }
 
         // Ambos cambiaron
         if (localCambio != null && remoteCambio != null) {
-          debugPrint('   ⚠️ Ambos modificaron → resolver conflicto');
+          debugPrint('   Ambos modificaron → resolver conflicto');
           _resolverConflicto(id, local, remote);
           continue;
         }
 
         // Solo local cambió
         if (localCambio != null) {
-          debugPrint('   🔄 Update local → enviar a remoto');
+          debugPrint('   Update local → enviar a remoto');
           filasSinc.updateToRemote.add(id);
           continue;
         }
 
         // Solo remoto cambió
         if (remoteCambio != null) {
-          debugPrint('   🔄 Update remoto → aplicar en local');
+          debugPrint('  Update remoto → aplicar en local');
           filasSinc.updateToLocal.add(id);
           continue;
         }
 
-        debugPrint('   ✅ Sin cambios');
+        debugPrint(' Sin cambios');
       }
-      // 2️⃣ Existe solo en remoto
+      // Existe solo en remoto
       else if (!localExiste && remoteExiste) {
         final remote = remoteFila!;
         if (remote['is_delete'] == 0) {
-          debugPrint('   ➕ Nuevo en remoto → insertar en local');
+          debugPrint('  Nuevo en remoto → insertar en local');
           filasSinc.insertToLocal.add(id);
         }
       }
-      // 3️⃣ Existe solo en local
+      // Existe solo en local
       else if (localExiste && !remoteExiste) {
         final local = localFila!;
         if (local['is_delete'] == 0) {
-          debugPrint('   ➕ Nuevo en local → insertar en remoto');
+          debugPrint('  Nuevo en local → insertar en remoto');
           filasSinc.insertToRemote.add(id);
         } else {
           //eliminar por completo especie local
@@ -144,13 +182,14 @@ class ComparadorFilas {
     final vLocal = local['version'];
     final vRemoto = remoto['version'];
 
-    debugPrint('🗑 Resolver conflicto DELETE: $id');
+    debugPrint('Resolver conflicto DELETE: $id');
     debugPrint('   Local version: $vLocal');
     debugPrint('   Remote version: $vRemoto');
 
     // Ambos ya eliminados
     if (local['is_delete'] == 1 && remoto['is_delete'] == 1) {
       debugPrint('   Ambos eliminados → limpieza posterior');
+      filasSinc.eliminarFisicoLocal.add(id);
       return;
     }
 
@@ -214,10 +253,10 @@ class SincronizadorLocal {
   Future<bool> ejecutar(FilasPorSincronizar filas) async {
     debugPrint('=========== SINCRONIZADOR LOCAL ===========');
 
-    debugPrint('🗑 deleteToLocal: ${filas.deleteToLocal}');
-    debugPrint('🗑 eliminar Fisicamente: ${filas.eliminarFisicoLocal}');
-    debugPrint('➕ insertToLocal: ${filas.insertToLocal}');
-    debugPrint('🔄 updateToLocal: ${filas.updateToLocal}');
+    debugPrint(' deleteToLocal: ${filas.deleteToLocal}');
+    debugPrint(' eliminar Fisicamente: ${filas.eliminarFisicoLocal}');
+    debugPrint(' insertToLocal: ${filas.insertToLocal}');
+    debugPrint(' updateToLocal: ${filas.updateToLocal}');
 
     for (final String id in filas.deleteToLocal) {
       debugPrint('Aplicando soft delete LOCAL: $id');
@@ -305,11 +344,17 @@ class SincronizadorRemoto {
 }
 
 class ControlSincronizacion {
+  static final ControlSincronizacion _instancia =
+      ControlSincronizacion._singleton();
   final FilasPorSincronizar state;
   late final ComparadorFilas detector;
-  ControlSincronizacion() : state = FilasPorSincronizar() {
+  factory ControlSincronizacion() {
+    return _instancia;
+  }
+  ControlSincronizacion._singleton() : state = FilasPorSincronizar() {
     detector = ComparadorFilas(state);
   }
+
   final SincronizadorLocal localSync = SincronizadorLocal();
   final SincronizadorRemoto remoteSync = SincronizadorRemoto();
   final TablaSyncLocal tablaSyncLocal = TablaSyncLocal();
@@ -328,11 +373,22 @@ class ControlSincronizacion {
 
     debugPrint('Última sincronización: $ultSinc');
 
-    final localCompleto = await obtenerLocalCompleto();
-    final remoteCompleto = await obtenerRemotoCompleto();
-
     final localCambios = await obtenerCambiosLocales(ultSinc);
     final remoteCambios = await obtenerCambiosRemotos(ultSinc);
+    List<Map<String, dynamic>>? localCompleto = [];
+    List<Map<String, dynamic>>? remoteCompleto = [];
+
+    if (localCambios.isNotEmpty && ultSinc != '1970-01-01T00:00:00Z') {
+      localCompleto = await obtenerLocalCompleto();
+    } else {
+      localCompleto = localCambios;
+    }
+
+    if (remoteCambios.isNotEmpty && ultSinc != '1970-01-01T00:00:00Z') {
+      remoteCompleto = await obtenerRemotoCompleto();
+    } else {
+      remoteCompleto = remoteCambios;
+    }
 
     debugPrint(
       'localCambios IDs: ${localCambios.map((e) => e['id']).toList()}',

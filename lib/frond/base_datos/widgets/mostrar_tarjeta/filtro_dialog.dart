@@ -14,7 +14,7 @@ Future<Set<String>?> mostrarFiltroDialog(
       'Pionero',
     ],
     'Ecología': [
-      'Mejora suelo',
+      'Salud del suelo',
       'Crecimiento rápido',
       'Crecimiento lento',
       'Ambiente seco',
@@ -97,7 +97,7 @@ Future<Set<String>?> mostrarFiltroDialog(
                             setState(() {});
                           },
                           child: Text(
-                            context.tr('bdInterfaz.limpiar'),
+                            context.tr('buttons.limpiar'),
                             style: TextStyle(color: Estilos.grisMedio),
                           ),
                         ),
@@ -105,7 +105,7 @@ Future<Set<String>?> mostrarFiltroDialog(
                         ElevatedButton(
                           onPressed:
                               () => Navigator.pop(context, seleccionados),
-                          child: Text(context.tr('bdInterfaz.filtrar')),
+                          child: Text(context.tr('buttons.filtrar')),
                         ),
                       ],
                     ),

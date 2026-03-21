@@ -6,7 +6,7 @@ import 'conservrefor.dart';
 import 'educacion.dart';
 import 'comunidad.dart';
 import '../iureutilizables/footer.dart';
-import 'listas_lazy_loading/listas_lazy.dart';
+import 'listas_dinamicas/listas_dinamicas.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -25,8 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: CustomAppBar(context: context),
-      drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+      drawer: isMobile ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [

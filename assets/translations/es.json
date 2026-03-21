@@ -30,13 +30,14 @@
     "change_language": "Cambiar Idioma",
     "enviar": "Enviar",
     "somos": "Quiénes Somos",
+    "doc": "Guía",
     "trabajo": "Nuestro Trabajo",
     "conservref": "Conservación Y Reforestación",
     "educacion": "Educación",
     "comunidad": "Hacer Crecer La Comunidad",
     "recursos": "Recursos",
     "mapa": "Mapa De Azuero",
-    "ecoguias": "Ecoguias",
+    "ecoguias": "Ecoguias", 
     "basedatos": "Base De Datos De Plantas De Azuero",
     "biblioteca": "Biblioteca",
     "blog": "Blog",
@@ -51,7 +52,8 @@
     "logout": "Cerrar Sesion",
     "sincronizar": "Sincronizar",
     "limpiar": "Limpiar",
-    "rol":"Solicitudes de Rol"
+    "rol":"Solicitudes de Rol",
+    "cerrar": "cerrar"
   },
   "texts": {
     "textsHome": {
@@ -156,7 +158,26 @@
     "ecoguias": {
       "titulo": "ECO-GUIAS",
       "texto": "En esta página encontrará guías para impulsar su viaje ecológico en Azuero. Estas guías sirven como punto de partida para los detalles de la vida sostenible en la península. ¿Buscas poner una cerca viva? Consulte nuestra guía sobre cercas vivas para saber por dónde empezar. ¿Quieres saber cómo reducir los residuos? Consulta la Ecoguía Reducir, Reutilizar, Reciclar. ¡Estas guías ecológicas son documentos vivos y dependemos de los comentarios de la comunidad para mantenerlas en la mejor forma!"
-    }
+    },
+    "doc_sinc": {
+  "titulo": "¿Cómo funciona la sincronización?",
+
+  "proposito": "La sincronización permite mantener iguales la base de datos local y la base de datos remota.",
+
+  "uso": "Al hacer clic en el botón sincronizar, las dos bases de datos (local y remota) se comparan y se actualizan para quedar iguales.",
+
+  "requisitos": "La base de datos local se usa cuando no hay internet. Cuando el internet vuelve y recargas la pantalla, se vuelve a utilizar la base de datos remota. Sin embargo, la sincronización no se ejecuta automáticamente.",
+
+  "conflictos": "Reglas para resolver conflictos:",
+
+  "regla1": "La base de datos remota tiene la verdad final en caso de conflicto.",
+  "regla2": "Las especies descartadas de la base de datos local se envían a la tabla 'descartados'.",
+  "regla3": "Las especies de la base de datos remota no se eliminan, solo se bloquean."
+},
+"donacion": {
+    "p1": "Tus donaciones nos ayudan a trabajar con las comunidades de Azuero para reforestar el vulnerable ecosistema del bosque seco tropical. Nuestra visión es la de una península de Azuero renovada, con un bosque seco protegido, apoyada por una población amorosa. Sus donaciones marcan una gran diferencia para lograr nuestros objetivos.",
+    "p2": "Tus aportes son deducibles de impuestos según la Resolución DGI N° 201-4940 del 2 de septiembre de 2019."
+  }
   },
   "nonumero": "No introduzca numeros",
   "gestionUsuario": {
@@ -182,9 +203,9 @@
     },
     "validaciones": {
       "correoVacio": "Por favor ingrese su correo",
-      "correoInvalido": "Ingrese un correo válido",
+      "correoInvalido": "formato nombre@correo.com",
       "contrasenaVacia": "Por favor ingrese su contraseña",
-      "contrasenaInvalida": "La contraseña debe tener al menos 6 caracteres",
+      "contrasenaInvalida": "La contraseña > 6 caracteres",
       "nombreVacio": "Por favor ingrese su nombre"
     },
     "textoCambio": {

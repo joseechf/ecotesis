@@ -7,9 +7,8 @@ class FormularioAuthBase extends StatelessWidget {
   final String titulo;
   final Widget icono;
   final List<Widget> campos;
-  //final String textoBoton;
-  //final VoidCallback onSubmit;
   final List<Widget> acciones;
+  final String? errorMensaje;
   final Widget? footer;
 
   const FormularioAuthBase({
@@ -19,9 +18,8 @@ class FormularioAuthBase extends StatelessWidget {
     required this.titulo,
     required this.icono,
     required this.campos,
-    //required this.textoBoton,
-    //required this.onSubmit,
     required this.acciones,
+    this.errorMensaje,
     this.footer,
   });
 
@@ -43,16 +41,19 @@ class FormularioAuthBase extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ...campos,
-
+              const SizedBox(height: Estilos.paddingGrande),
+              if (errorMensaje != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    errorMensaje!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
               const SizedBox(height: Estilos.paddingGrande),
               ...acciones,
               const SizedBox(height: Estilos.paddingGrande),
 
-              /*BotonPersonalizado(
-                texto: textoBoton,
-                onPressed: cargando ? () {} : onSubmit,
-                ancho: 200,
-              ),*/
               const SizedBox(height: Estilos.paddingMedio),
 
               if (cargando)

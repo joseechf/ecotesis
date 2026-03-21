@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+//import '../iureutilizables/custom_appbar.dart';
 import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import 'package:ecoazuero/frond/iureutilizables/footer.dart';
-import 'listas_lazy_loading/listas_lazy.dart';
+import 'listas_dinamicas/listas_dinamicas.dart';
 
 class Educacion extends StatelessWidget {
   const Educacion({super.key});
@@ -12,9 +13,11 @@ class Educacion extends StatelessWidget {
     double anchoPantalla = MediaQuery.of(context).size.width;
     final isMobile = anchoPantalla < 800;
     return Scaffold(
-      appBar: CustomAppBar(context: context),
+      /*appBar: CustomAppBar(context: context),
       drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,*/
+      appBar: CustomAppBar(context: context),
+      drawer: isMobile ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [

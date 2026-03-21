@@ -27,11 +27,11 @@ class DatabaseHelper {
       onCreate: (db, version) async {
         // 1. Tabla Flora
         await db.execute('''
-    CREATE TABLE Flora (
+    CREATE TABLE IF NOT EXISTS Flora (
       nombre_cientifico TEXT PRIMARY KEY,
       da_sombra INTEGER CHECK (da_sombra IN (1, 0)),
-      flor_distintiva TEXT,
-      fruta_distintiva TEXT,
+      flor_distintiva TEXT CHECK (length(flor_distintiva) <= 50),
+      fruta_distintiva TEXT CHECK (length(fruta_distintiva) <= 50),
       salud_suelo INTEGER CHECK (salud_suelo IN (1, 0)),
       huespedes TEXT CHECK (huespedes IS NULL OR huespedes IN ('Mono', 'Aves')),
       forma_crecimiento TEXT CHECK (forma_crecimiento IN ('Rapido', 'Lento')),
@@ -41,15 +41,15 @@ class DatabaseHelper {
       nativo_america INTEGER CHECK (nativo_america IN (1, 0)),
       nativo_panama INTEGER CHECK (nativo_panama IN (1, 0)),
       nativo_azuero INTEGER CHECK (nativo_azuero IN (1, 0)),
-      estrato TEXT
+      estrato TEXT CHECK (length(estrato) <= 50)
     )
   ''');
 
         // 2. Tabla NombreComun
         await db.execute('''
-    CREATE TABLE NombreComun (
-      nombre_comun TEXT NOT NULL,
-      nombre_cientifico TEXT NOT NULL,
+    CREATE TABLE IF NOT EXISTS NombreComun (
+      nombre_comun TEXT CHECK (length(nombre_comun) <= 50) NOT NULL,
+      nombre_cientifico TEXT CHECK (length(nombre_cientifico) <= 50) NOT NULL,
       PRIMARY KEY (nombre_cientifico, nombre_comun),
       FOREIGN KEY (nombre_cientifico)
         REFERENCES Flora(nombre_cientifico)
@@ -59,10 +59,10 @@ class DatabaseHelper {
 
         // 3. Tabla Utilidad
         await db.execute('''
-    CREATE TABLE Utilidad (
+    CREATE TABLE IF NOT EXISTS Utilidad (
       utilidad TEXT NOT NULL
         CHECK (utilidad IN ('Frutal', 'Maderal', 'Ganado', 'Medicinal')),
-      nombre_cientifico TEXT NOT NULL,
+      nombre_cientifico TEXT CHECK (length(nombre_cientifico) <= 50) NOT NULL,
       PRIMARY KEY (nombre_cientifico, utilidad),
       FOREIGN KEY (nombre_cientifico)
         REFERENCES Flora(nombre_cientifico)
@@ -72,9 +72,9 @@ class DatabaseHelper {
 
         // 4. Tabla Origen
         await db.execute('''
-    CREATE TABLE Origen (
-      origen TEXT,
-      nombre_cientifico TEXT NOT NULL,
+    CREATE TABLE IF NOT EXISTS Origen (
+      origen TEXT CHECK (length(origen) <= 50),
+      nombre_cientifico TEXT CHECK (length(nombre_cientifico) <= 50) NOT NULL,
       PRIMARY KEY (origen, nombre_cientifico),
       FOREIGN KEY (nombre_cientifico)
         REFERENCES Flora(nombre_cientifico)
@@ -84,21 +84,21 @@ class DatabaseHelper {
 
         // 5. Tabla de sincronización
         await db.execute('''
-    CREATE TABLE sincronizacion (
-      id TEXT PRIMARY KEY, -- nombre_cientifico
-      is_new INTEGER,
-      is_update INTEGER,
-      is_delete INTEGER,
-      hash TEXT,
-      version INTEGER,
+    CREATE TABLE IF NOT EXISTS sincronizacion (
+      id TEXT PRIMARY KEY, 
+      is_new INTEGER NOT NULL DEFAULT 0 CHECK (is_new IN (0,1)),
+      is_update INTEGER NOT NULL DEFAULT 0 CHECK (is_update IN (0,1)),
+      is_delete INTEGER NOT NULL DEFAULT 0 CHECK (is_delete IN (0,1)),
+      hash TEXT NOT NULL,
+      version INTEGER NOT NULL DEFAULT 1,
       device TEXT,
-      last_upd TEXT DEFAULT CURRENT_TIMESTAMP
-    )
+      last_upd TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
   ''');
 
         // 6. Tabla de última sincronización
         await db.execute('''
-    CREATE TABLE ultima_sinc (
+    CREATE TABLE IF NOT EXISTS ultima_sinc (
       id INTEGER PRIMARY KEY CHECK (id = 1),
       fecha_sincronizacion TEXT NOT NULL,
       registros_locales_procesados TEXT, -- JSON array de strings

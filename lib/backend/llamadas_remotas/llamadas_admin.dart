@@ -1,3 +1,4 @@
+/*
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:ecoazuero/config/config.dart';
@@ -63,3 +64,4 @@ Future<bool> llamarInsert(RSiembra modelo, String metodo) async {
     return false;
   }
 }
+*/

@@ -46,6 +46,27 @@ class Footer extends StatelessWidget {
             ),
           ),
           const SizedBox(height: Estilos.margenMedio),
+          Text(
+            context.tr('texts.donacion.p1'),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Estilos.blanco.withValues(alpha: 0.9),
+              fontSize: Estilos.textoMedio,
+            ),
+          ),
+
+          const SizedBox(height: Estilos.margenMedio),
+
+          Text(
+            context.tr('texts.donacion.p2'),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Estilos.blanco.withValues(alpha: 0.9),
+              fontSize: Estilos.textoPequeno,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          const SizedBox(height: Estilos.margenMedio),
           Wrap(
             spacing: Estilos.margenMedio,
             runSpacing: Estilos.margenMedio,

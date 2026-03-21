@@ -47,7 +47,6 @@ class Especie {
        imagenes = List.unmodifiable(imagenes);
 
   Especie copyWith({
-    String? nombreCientifico,
     int? daSombra,
     String? florDistintiva,
     String? frutaDistintiva,
@@ -67,7 +66,7 @@ class Especie {
     List<ImagenTemp>? imagenes,
   }) {
     return Especie(
-      nombreCientifico: nombreCientifico ?? this.nombreCientifico,
+      nombreCientifico: nombreCientifico,
       daSombra: daSombra ?? this.daSombra,
       florDistintiva: florDistintiva ?? this.florDistintiva,
       frutaDistintiva: frutaDistintiva ?? this.frutaDistintiva,

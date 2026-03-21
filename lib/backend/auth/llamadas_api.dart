@@ -37,10 +37,8 @@ Future<AuthResponse> login({
     debugPrint('ERROR AuthException en login: ${e.message}');
     debugPrintStack(stackTrace: stack);
     throw Exception(e.message);
-  } catch (e, stack) {
-    debugPrint('ERROR inesperado en login: $e');
-    debugPrintStack(stackTrace: stack);
-    throw Exception('Error inesperado en login');
+  } catch (e) {
+    throw Exception(e.toString());
   }
 }
 
@@ -71,10 +69,8 @@ Future<AuthResponse> signup({
     debugPrint('ERROR AuthException en signup: ${e.message}');
     debugPrintStack(stackTrace: stack);
     throw Exception(e.message);
-  } catch (e, stack) {
-    debugPrint('ERROR inesperado en signup: $e');
-    debugPrintStack(stackTrace: stack);
-    throw Exception('Error inesperado en signup');
+  } catch (e) {
+    throw Exception(e.toString());
   }
 }
 
@@ -94,8 +90,33 @@ Future<void> actualizarPassword(String nuevaPassword) async {
     debugPrint('Password actualizada correctamente');
     debugPrint('User ID: ${response.user!.id}');
     debugPrint('========== FIN PASSWORD OK ==========');
+  } catch (e) {
+    throw Exception(e.toString());
+  }
+}
+
+Future<void> solicitarNuevoRol(String rol) async {
+  debugPrint('========== SOLICITAR NUEVO ROL ==========');
+
+  try {
+    debugPrint('rol: $rol');
+    final userId = SupabaseClientSingleton.client.auth.currentUser!.id;
+
+    final response =
+        await SupabaseClientSingleton.client
+            .from('profiles')
+            .update({'rol_solicitado': rol, 'estado_rol': 'pendiente'})
+            .eq('id', userId)
+            .select();
+
+    if (response.isEmpty) {
+      throw Exception('No se encontró el perfil del usuario');
+    }
+
+    debugPrint('Solicitud de rol enviada correctamente');
+    debugPrint('========== FIN SOLICITUD OK ==========');
   } catch (e, stack) {
-    debugPrint('ERROR en actualizarPassword: $e');
+    debugPrint('ERROR EN SOLICITAR ROL: $e');
     debugPrintStack(stackTrace: stack);
     rethrow;
   }
@@ -127,9 +148,7 @@ Future<bool> eliminarUsuario() async {
     debugPrint('========== FIN ELIMINAR USUARIO OK ==========');
 
     return true;
-  } catch (e, stack) {
-    debugPrint('ERROR en eliminarUsuario: $e');
-    debugPrintStack(stackTrace: stack);
-    return false;
+  } catch (e) {
+    throw Exception(e.toString());
   }
 }

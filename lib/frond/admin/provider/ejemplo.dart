@@ -1,3 +1,4 @@
+/*
 import '../model/models.dart';
 
 final List<Sembrable> paraSiembra = [
@@ -54,3 +55,4 @@ final List<TerrenosAlquilados> terrenos = [
     estado: 'en alquiler',
   ),
 ];
+*/

@@ -1,4 +1,4 @@
-import 'package:latlong2/latlong.dart';
+/*import 'package:latlong2/latlong.dart';
 
 class Sembrable {
   final String idSiembra;
@@ -152,3 +152,4 @@ class TerrenosAlquilados {
     required this.estado,
   });
 }
+*/

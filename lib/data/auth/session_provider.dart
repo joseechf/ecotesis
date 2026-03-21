@@ -74,7 +74,7 @@ class SessionProvider extends ChangeNotifier {
           id: user.id,
           email: user.email ?? '',
           rolActual: 'sin_rol',
-          estadoRol: 'pendiente',
+          estadoRol: 'aprobado',
         );
       } else {
         _usuario = UsuarioModel.fromProfile(response);

@@ -22,7 +22,6 @@ class TextContainerWidget extends StatelessWidget {
     this.backgroundColor,
     this.alignment,
     required this.style,
-
     this.textAlign = TextAlign.center,
     this.maxLines,
     this.overflow,
@@ -92,7 +91,7 @@ class ImageContainerWidget extends StatelessWidget {
   }
 }
 
-//detecta hover, aplica sombra y escalado (animación)
+// Detecta hover, aplica sombra y escalado
 class HoverImageWidget extends StatefulWidget {
   final String imagePath;
   final double width;
@@ -119,20 +118,10 @@ class HoverImageWidgetState extends State<HoverImageWidget> {
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedScale(
         scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 300),
+        duration: Estilos.animacionMedia,
         child: Container(
           decoration: BoxDecoration(
-            boxShadow:
-                _isHovered
-                    ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.15),
-                        spreadRadius: 1,
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                    : [],
+            boxShadow: _isHovered ? Estilos.sombraSuave : [],
           ),
           child: Image.asset(
             widget.imagePath,
@@ -147,7 +136,7 @@ class HoverImageWidgetState extends State<HoverImageWidget> {
   }
 }
 
-// Widget de diseño responsivo elige fila o columna
+// Layout responsivo que elige fila o columna
 class ResponsiveLayout extends StatelessWidget {
   final List<Widget> children;
   final double breakpoint;
@@ -172,42 +161,7 @@ class ResponsiveLayout extends StatelessWidget {
   }
 }
 
-// Widget de indicador de carga personalizado
-class IndicadorCarga extends StatelessWidget {
-  final String? mensaje;
-  final Color? color;
-
-  const IndicadorCarga({super.key, this.mensaje, this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(
-              color ?? Estilos.verdePrincipal,
-            ),
-          ),
-          if (mensaje != null) ...[
-            SizedBox(height: Estilos.paddingMedio),
-            Text(
-              mensaje!,
-              style: TextStyle(
-                fontSize: Estilos.textoMedio,
-                color: Estilos.grisMedio,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
 // Widget que construye una lista ordenada de elementos
-// mostrando imagen, título, botón y textos adicionales.
 class ListaWidgetOrdenada extends StatelessWidget {
   final Map<String, dynamic> datos;
   final double radioImg;
@@ -233,7 +187,9 @@ class ListaWidgetOrdenada extends StatelessWidget {
         case 'imagen':
           widgets.add(
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
+              padding: const EdgeInsets.symmetric(
+                vertical: Estilos.paddingPequeno,
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(radioImg),
                 child: HoverImageWidget(
@@ -249,14 +205,16 @@ class ListaWidgetOrdenada extends StatelessWidget {
         case 'titulo':
           widgets.add(
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
+              padding: const EdgeInsets.symmetric(
+                vertical: Estilos.paddingPequeno,
+              ),
               child: SelectableText(
                 valor.toString(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  color: Color.fromARGB(255, 2, 30, 2),
-                  fontSize: 30,
-                  fontFamily: 'Oswald',
+                  color: Estilos.verdeOscuro,
+                  fontSize: Estilos.textoMuyGrande,
+                  fontFamily: Estilos.tipografia,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -267,7 +225,9 @@ class ListaWidgetOrdenada extends StatelessWidget {
         case 'boton':
           widgets.add(
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
+              padding: const EdgeInsets.symmetric(
+                vertical: Estilos.paddingPequeno,
+              ),
               child: ElevatedButton(
                 onPressed:
                     onNavegar != null
@@ -286,14 +246,14 @@ class ListaWidgetOrdenada extends StatelessWidget {
 
       widgets.add(
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: Estilos.paddingMedio),
           child: SelectableText(
             valor.toString(),
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: Color.fromARGB(255, 4, 53, 3),
-              fontSize: 18,
-              fontFamily: 'Oswald',
+              color: Estilos.verdeOscuro,
+              fontSize: Estilos.textoGrande,
+              fontFamily: Estilos.tipografia,
               fontWeight: FontWeight.w300,
             ),
           ),

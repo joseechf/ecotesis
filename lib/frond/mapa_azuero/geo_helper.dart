@@ -82,7 +82,6 @@ Future<GeoData> loadGeoJson(
       case 'Polygon':
         final rings = geom['coordinates'];
         if (rings is List && rings.isNotEmpty) {
-          // Tomar solo el primer anillo (exterior)
           final exteriorRing = rings[0];
           if (exteriorRing is List) {
             final puntos =
@@ -131,7 +130,6 @@ Future<GeoData> loadGeoJson(
               point: point,
               width: 40,
               height: 40,
-              // Usamos key para almacenar las propiedades
               key: ValueKey(props),
               child: GestureDetector(
                 onTap:
@@ -155,39 +153,32 @@ Future<GeoData> loadGeoJson(
   );
 }
 
-void mostrarInfoPunto(
+Future<void> mostrarInfoGeometrica(
   BuildContext context,
+  String titulo,
   LatLng punto,
   Map<String, dynamic> propiedades,
 ) {
-  showDialog(
+  return showDialog(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
-        title: const Text('Información de la siembra'),
+        title: Text(titulo),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              _fila(Icons.fingerprint, 'ID', propiedades['id']),
-              _fila(
-                Icons.science,
-                'Nombre científico',
-                propiedades['nombre_cientifico'],
-              ),
-              _fila(Icons.numbers, 'Cantidad', propiedades['cantidad']),
-              _fila(Icons.info_outline, 'Estado', propiedades['estado']),
-              _fila(
-                Icons.calendar_month,
-                'Fecha plantación',
-                propiedades['fecha_plantacion'],
-              ),
-              _fila(Icons.person, 'Usuario', propiedades['usuario']),
+              ...propiedades.entries.map((e) {
+                return _fila(
+                  Icons.info_outline,
+                  _formatearTitulo(e.key),
+                  e.value,
+                );
+              }),
               _fila(
                 Icons.place,
                 'Coordenadas',
-                '${punto.latitude.toStringAsFixed(6)}, ${punto.longitude.toStringAsFixed(6)}',
+                '${punto.latitude.toStringAsFixed(6)},${punto.longitude.toStringAsFixed(6)}',
               ),
             ],
           ),
@@ -203,46 +194,16 @@ void mostrarInfoPunto(
   );
 }
 
-Future<void> mostrarInfoTerreno(
-  BuildContext context,
-  LatLng centro,
-  Map<String, dynamic> props,
-) {
-  return showDialog(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: const Text('Terreno alquilado'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _fila(Icons.fingerprint, 'ID', props['id']),
-              _fila(Icons.square_foot, 'Tamaño (m²)', props['tamano_m2']),
-              _fila(Icons.person, 'Dueño', props['dueno']),
-              _fila(
-                Icons.date_range,
-                'Inicio alquiler',
-                props['inicio_alquiler'],
-              ),
-              _fila(Icons.event_busy, 'Fin alquiler', props['fin_alquiler']),
-              _fila(
-                Icons.place,
-                'Centro aproximado',
-                '${centro.latitude.toStringAsFixed(6)}, ${centro.longitude.toStringAsFixed(6)}',
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cerrar'),
-          ),
-        ],
-      );
-    },
-  );
+String _formatearTitulo(String key) {
+  String texto = key.replaceAll('_', ' ');
+  if (texto.isEmpty) {
+    return texto;
+  }
+  String primerletra = texto[0];
+  String mayuscula = primerletra.toUpperCase();
+  String restoText = texto.substring(1);
+  String completo = mayuscula + restoText;
+  return completo;
 }
 
 Widget _fila(IconData icono, String titulo, dynamic valor) {

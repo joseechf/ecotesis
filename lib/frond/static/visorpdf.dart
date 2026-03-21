@@ -9,10 +9,11 @@ class VisorPDF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     return Scaffold(
-      appBar: AppBar(title: Text("Visor PDF")),
-      drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+      appBar: CustomAppBar(context: context),
+      drawer: isMobile ? const MobileMenu() : null,
       body: SfPdfViewer.network(url),
     );
   }

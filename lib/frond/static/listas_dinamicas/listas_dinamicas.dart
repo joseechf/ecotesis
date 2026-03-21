@@ -19,11 +19,22 @@ Future<List<Map<String, String>>> cargarColaboradores(
       'descripcion': context.tr('colaboradores.Carlos_Mendez.descripcion'),
     },
     {
-      'imagen': 'assets/images/colaborador1.jpg',
-      'titulo': 'Dra. María González',
+      'imagen': 'assets/images/colaborador4.jpg',
+      'titulo': 'Dra. Ana Antonieta',
       'puesto': context.tr('colaboradores.Dra_Maria_Gonzalez.puesto'),
       'descripcion': context.tr('colaboradores.Dra_Maria_Gonzalez.descripcion'),
     },
+  ];
+}
+
+//compañeros
+Future<List<Map<String, String>>> cargarCompanieros(
+  BuildContext context,
+) async {
+  return [
+    {'imagen': 'assets/images/colaborador1.jpg', 'titulo': 'Juan Jose'},
+    {'imagen': 'assets/images/colaborador2.jpg', 'titulo': 'Jose Juan'},
+    {'imagen': 'assets/images/colaborador1.jpg', 'titulo': 'Julio Jaramillo'},
   ];
 }
 
@@ -39,13 +50,13 @@ Future<List<Map<String, String>>> cargarListasHacemos(
       'boton': 'conservacion',
     },
     {
-      'imagen': 'assets/images/mono1.jpg',
+      'imagen': 'assets/images/educacion.jpg',
       'titulo': context.tr('texts.textsHome.hacemos.titulo.educDiv'),
       'resumen': context.tr('texts.textsHome.hacemos.texto.educDiv'),
       'boton': 'educDiv',
     },
     {
-      'imagen': 'assets/images/mono1.jpg',
+      'imagen': 'assets/images/colaborador3.jpg',
       'titulo': context.tr('texts.textsHome.hacemos.titulo.colaboracion'),
       'resumen': context.tr('texts.textsHome.hacemos.texto.colaboracion'),
       'boton': 'colaboracion',

@@ -17,12 +17,16 @@ class ConsolaAdmin extends StatefulWidget {
 class _ConsolaAdminState extends State<ConsolaAdmin> {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     final esAdmin = tieneAlgunoDeLosRoles(context, ['administrador']);
 
     return Scaffold(
-      appBar: CustomAppBar(context: context),
+      /*appBar: CustomAppBar(context: context),
       drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,*/
+      appBar: CustomAppBar(context: context),
+      drawer: isMobile ? const MobileMenu() : null,
       body: SingleChildScrollView(
         child:
             esAdmin

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../data/auth/auth_admin_provider.dart';
+import '../../iureutilizables/custom_appbar.dart';
 
 class SolicitudesRolScreen extends StatefulWidget {
   const SolicitudesRolScreen({super.key});
@@ -29,7 +29,14 @@ class _SolicitudesRolScreenState extends State<SolicitudesRolScreen> {
       body: Builder(
         builder: (_) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Scaffold(
+              appBar: CustomAppBar(context: context),
+              drawer:
+                  MediaQuery.sizeOf(context).width < 800
+                      ? const MobileMenu()
+                      : null,
+              body: const Center(child: CircularProgressIndicator()),
+            );
           }
 
           if (provider.error != null) {

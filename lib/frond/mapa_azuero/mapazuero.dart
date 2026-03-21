@@ -13,10 +13,11 @@ class MappAzuero extends StatefulWidget {
 class _MapaAzueroState extends State<MappAzuero> {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: CustomAppBar(context: context),
-      drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+      drawer: isMobile ? const MobileMenu() : null,
 
       body: const SafeArea(child: MiniMap()),
     );

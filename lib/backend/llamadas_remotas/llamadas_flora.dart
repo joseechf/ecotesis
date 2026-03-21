@@ -16,14 +16,14 @@ Future<List<Map<String, dynamic>>> getFloraRemoto() async {
       headers: {'Content-Type': 'application/json'},
     );
 
-    final json = jsonDecode(resp.body);
-
-    if (json['ok'] != true) {
-      debugPrint('getFloraRemoto error');
+    if (resp.statusCode != 200) {
+      debugPrint('Error HTTP: ${resp.statusCode}');
       return [];
     }
 
-    return (json['respuesta'] as List).cast<Map<String, dynamic>>();
+    final json = jsonDecode(resp.body);
+
+    return validarRespuesta(json);
   } catch (e) {
     debugPrint('getFloraRemoto excepción: $e');
     return [];
@@ -70,14 +70,14 @@ Future<List<Map<String, dynamic>>> getFloraRemoteSincronizacion({
       return [];
     }
 
-    final json = jsonDecode(resp.body);
-
-    if (json['ok'] != true) {
-      debugPrint('getFloraRemoteSincronizacion error: $json');
+    if (resp.statusCode != 200) {
+      debugPrint('Error HTTP: ${resp.statusCode}');
       return [];
     }
 
-    return List<Map<String, dynamic>>.from(json['respuesta']);
+    final json = jsonDecode(resp.body);
+
+    return validarRespuesta(json);
   } catch (e) {
     debugPrint('getFloraRemoteSincronizacion error: $e');
     return [];
@@ -120,14 +120,14 @@ Future<List<Map<String, dynamic>>> obtenerFloraRemotaById(
       return [];
     }
 
-    final json = jsonDecode(resp.body);
-
-    if (json['ok'] != true) {
-      debugPrint('obtenerFloraRemotaById error: $json');
+    if (resp.statusCode != 200) {
+      debugPrint('Error HTTP: ${resp.statusCode}');
       return [];
     }
 
-    return (json['respuesta'] as List).cast<Map<String, dynamic>>();
+    final json = jsonDecode(resp.body);
+
+    return validarRespuesta(json);
   } catch (e) {
     debugPrint('getFloraRemotoPorIds error: $e');
     return [];
@@ -159,7 +159,7 @@ Future<ApiResponse<void>> insertFloraRemoto(
         )
         .timeout(const Duration(seconds: 10));
 
-    final body = jsonDecode(response.body);
+    final Map<String, dynamic> body = jsonDecode(response.body);
 
     if (response.statusCode == 401) {
       return ApiResponse(ok: false, message: "Sesión expirada");
@@ -172,12 +172,10 @@ Future<ApiResponse<void>> insertFloraRemoto(
     if (body['ok'] != true) {
       return ApiResponse(
         ok: false,
-        message:
-            body['message'] ??
-            body['error'] ??
-            "Error desconocido del servidor",
+        message: body['message'] ?? "Error del servidor",
       );
     }
+
     return ApiResponse(ok: true, message: "Insertado correctamente");
   } catch (e) {
     return ApiResponse(ok: false, message: "Error de conexión: $e");
@@ -188,6 +186,7 @@ Future<ApiResponse<void>> updateFloraRemoto(
   Map<String, dynamic> especie,
 ) async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
+  debugPrint('=================session token: $session');
 
   if (session == null) {
     return ApiResponse(ok: false, message: "Usuario no autenticado");
@@ -215,8 +214,6 @@ Future<ApiResponse<void>> updateFloraRemoto(
         )
         .timeout(const Duration(seconds: 10));
 
-    final body = jsonDecode(response.body);
-
     if (response.statusCode == 401) {
       return ApiResponse(ok: false, message: "Sesión expirada");
     }
@@ -225,15 +222,20 @@ Future<ApiResponse<void>> updateFloraRemoto(
       return ApiResponse(ok: false, message: "No tienes permisos");
     }
 
+    final Map<String, dynamic> body = jsonDecode(response.body);
+
     if (body['ok'] != true) {
       return ApiResponse(
         ok: false,
         message:
-            body['error'] ?? body['message'] ?? "Error actualizando especie",
+            body['message'] ?? body['error'] ?? "Error actualizando especie",
       );
     }
 
-    return ApiResponse(ok: true, message: "Actualización completada");
+    return ApiResponse(
+      ok: true,
+      message: body['message'] ?? "Actualización completada",
+    );
   } catch (e) {
     return ApiResponse(ok: false, message: "Error de conexión: $e");
   }
@@ -259,8 +261,6 @@ Future<ApiResponse<void>> softDeleteFloraRemoto(String nombreCientifico) async {
         )
         .timeout(const Duration(seconds: 10));
 
-    final body = jsonDecode(response.body);
-
     if (response.statusCode == 401) {
       return ApiResponse(ok: false, message: "Sesión expirada");
     }
@@ -269,15 +269,19 @@ Future<ApiResponse<void>> softDeleteFloraRemoto(String nombreCientifico) async {
       return ApiResponse(ok: false, message: "No tienes permisos");
     }
 
+    final Map<String, dynamic> body = jsonDecode(response.body);
+
     if (body['ok'] != true) {
       return ApiResponse(
         ok: false,
-        message:
-            body['error'] ?? body['message'] ?? "Error eliminando registro",
+        message: body['message'] ?? "Error eliminando registro",
       );
     }
 
-    return ApiResponse(ok: true, message: "Registro eliminado");
+    return ApiResponse(
+      ok: true,
+      message: body['message'] ?? "Soft delete correcto",
+    );
   } catch (e) {
     return ApiResponse(ok: false, message: "Error de conexión: $e");
   }
@@ -300,6 +304,7 @@ Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
   }
 
   final url = Uri.parse('$baseUrl/insertImagen');
+  debugPrint('la url : $url');
 
   try {
     final request = http.MultipartRequest('POST', url);
@@ -330,8 +335,13 @@ Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
       throw Exception('Sin permisos');
     }
 
-    final resp = jsonDecode(body);
-    return resp['ok'] == true ? (resp['url'] ?? '') : '';
+    final json = jsonDecode(body);
+
+    if (json['ok'] != true) {
+      throw Exception(json['message'] ?? 'Error al subir imagen');
+    }
+
+    return json['data'] ?? '';
   } catch (e) {
     debugPrint('insertImagen: $e');
     return '';
@@ -349,6 +359,13 @@ Future<void> deleteImagen(String urlImagen) async {
   }
 
   try {
+    final uri = Uri.parse(urlImagen);
+    final fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '';
+
+    if (fileName.isEmpty) {
+      debugPrint('Nombre de archivo inválido: $urlImagen');
+      return;
+    }
     final response = await http
         .delete(
           Uri.parse('$baseUrl/deleteImagen'),
@@ -356,22 +373,26 @@ Future<void> deleteImagen(String urlImagen) async {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${session.accessToken}',
           },
-          body: jsonEncode({'url': urlImagen}),
+          body: jsonEncode({'fileName': fileName}),
         )
         .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 401) {
       debugPrint('token expirado o no autorizado');
+      return;
     }
 
     if (response.statusCode == 403) {
       debugPrint('rol no autorizado');
+      return;
     }
 
-    final body = jsonDecode(response.body);
+    final Map<String, dynamic> json = jsonDecode(response.body);
 
-    if (response.statusCode != 200 || body['ok'] != true) {
-      debugPrint('No se pudo borrar la imagen $urlImagen');
+    if (json['ok'] != true) {
+      debugPrint(
+        'No se pudo borrar la imagen $urlImagen: ${json['message'] ?? 'error desconocido'}',
+      );
     }
   } catch (e) {
     debugPrint('deleteImagen: $e');
@@ -384,4 +405,9 @@ class ApiResponse<T> {
   final T? data;
 
   ApiResponse({required this.ok, required this.message, this.data});
+}
+
+List<Map<String, dynamic>> validarRespuesta(Map<String, dynamic> json) {
+  if (json['ok'] != true) return [];
+  return (json['data'] as List).cast<Map<String, dynamic>>();
 }

@@ -35,12 +35,14 @@ class CampoContrasena extends StatelessWidget {
   final TextEditingController controladorC;
   final bool ocultar;
   final VoidCallback onCambiarVisibilidad;
+  final bool obligatorio;
 
   const CampoContrasena({
     super.key,
     required this.controladorC,
     required this.ocultar,
     required this.onCambiarVisibilidad,
+    required this.obligatorio,
   });
 
   @override
@@ -53,8 +55,11 @@ class CampoContrasena extends StatelessWidget {
       ocultarTexto: ocultar,
       onPressedIcono: onCambiarVisibilidad,
       validador: (value) {
-        if (value == null || value.isEmpty) {
+        if ((value == null || value.isEmpty) && obligatorio) {
           return context.tr('gestionUsuario.validaciones.contrasenaVacia');
+        }
+        if ((value == null || value.isEmpty)) {
+          return null;
         }
         if (value.length < 6) {
           return context.tr('gestionUsuario.validaciones.contrasenaInvalida');

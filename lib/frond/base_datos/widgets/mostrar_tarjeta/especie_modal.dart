@@ -212,12 +212,23 @@ class EspecieModal extends StatelessWidget {
                 ),
               ]
               : [
-                Text(
-                  context.tr('bdInterfaz.lectura'),
-                  style: TextStyle(
-                    color: Estilos.grisMedio,
-                    fontSize: Estilos.textoPequeno,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.visibility,
+                      color: Estilos.grisMedio,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      context.tr('bdInterfaz.lectura'),
+                      style: const TextStyle(
+                        color: Estilos.grisMedio,
+                        fontSize: Estilos.textoPequeno,
+                      ),
+                    ),
+                  ],
                 ),
               ],
     );
@@ -256,35 +267,4 @@ class EspecieModal extends StatelessWidget {
       ),
     );
   }
-
-  /// Decide cómo renderizar la imagen principal
-  /*Widget _imagenWidget(ImagenTemp? img) {
-    if (img == null) {
-      return const Center(child: Icon(Icons.broken_image, size: 50));
-    }
-
-    if (img.bytes != null) {
-      return Image.memory(
-        img.bytes!,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      );
-    }
-
-    if (img.urlFoto.isNotEmpty) {
-      return Image.network(
-        img.urlFoto,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder:
-            (_, __, ___) => Image.asset(
-              'assets/placeholder.png',
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-      );
-    }
-
-    return const Center(child: Icon(Icons.broken_image, size: 50));
-  }*/
 }

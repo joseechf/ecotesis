@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import '../../model/models.dart';
 import '../../provider/ejemplo.dart';
@@ -262,3 +263,4 @@ class _RentedLandState extends State<RentedLand> {
     );
   }
 }
+*/

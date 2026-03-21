@@ -3,23 +3,19 @@ import '../utilidades/calcular_hash.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-class TablaSyncLocal {
-  /*Future<List<Map<String, dynamic>>> obtenerPendientes() async {
-    final Database db = await dbLocal.instancia;
-    return await db.query('sincronizacion');
-  }*/
+const String ide = 'id';
 
+class TablaSyncLocal {
   Future<bool> registrarSync({
     required Transaction tx,
     required String id,
     required Map<String, Object?> fila,
-    required String device,
   }) async {
     final hash = calcularHash(fila);
 
     final existente = await tx.query(
       'sincronizacion',
-      where: 'id = ?',
+      where: '$ide = ?',
       whereArgs: [id],
       limit: 1,
     );
@@ -34,7 +30,6 @@ class TablaSyncLocal {
           'is_delete': 0,
           'hash': hash,
           'version': 1,
-          'device': device,
           'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
         debugPrint('metadatos sinc local insert ok');
@@ -55,10 +50,9 @@ class TablaSyncLocal {
             'is_delete': 0,
             'hash': hash,
             'version': versionActual + 1,
-            'device': device,
             'last_upd': DateTime.now().toUtc().toIso8601String(),
           },
-          where: 'id = ?',
+          where: '$ide = ?',
           whereArgs: [id],
         );
         debugPrint('metadatos sinc local update ok');
@@ -70,26 +64,26 @@ class TablaSyncLocal {
     }
   }
 
-  Future<bool> registrarUpsert(
+  /* Future<bool> registrarUpsert(
     Transaction tx,
     String id,
     Map<String, dynamic> fila,
   ) async {
     try {
-      await registrarSync(tx: tx, id: id, fila: fila, device: 'mobile');
+      await registrarSync(tx: tx, id: id, fila: fila);
       debugPrint('metadatos sinc local registro ok');
       return true;
     } catch (e) {
       debugPrint(' registro upsert error: $e');
       return false;
     }
-  }
+  }*/
 
   Future<bool> registrarBorrado(Transaction tx, String id) async {
     try {
       final existente = await tx.query(
         'sincronizacion',
-        where: 'id = ?',
+        where: '$ide = ?',
         whereArgs: [id],
         limit: 1,
       );
@@ -102,7 +96,6 @@ class TablaSyncLocal {
           'is_delete': 1,
           'hash': '',
           'version': 1,
-          'device': 'mobile',
           'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
       } else {
@@ -116,10 +109,9 @@ class TablaSyncLocal {
             'is_delete': 1,
             'hash': '',
             'version': versionActual + 1,
-            'device': 'mobile',
             'last_upd': DateTime.now().toUtc().toIso8601String(),
           },
-          where: 'id = ?',
+          where: '$ide = ?',
           whereArgs: [id],
         );
       }
@@ -131,10 +123,10 @@ class TablaSyncLocal {
       return false;
     }
   }
-
+  /*
   Future<void> limpiarSincronizacion(Database db) async {
     await db.delete('sincronizacion');
-  }
+  }*/
 
   Future<void> guardarUltimaSincronizacion({
     required Database db,

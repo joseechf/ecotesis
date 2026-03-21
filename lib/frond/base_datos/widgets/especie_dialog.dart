@@ -4,7 +4,6 @@ import 'widget_form_insert.dart';
 import '../../../domain/value_objects.dart';
 import '../../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
-//import 'package:image_picker/image_picker.dart';
 import '../providers/especies_provider.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
@@ -50,38 +49,40 @@ class _EspecieDialogState extends State<EspecieDialog> {
   @override
   void initState() {
     super.initState();
-    final e = widget.especieInicial;
+    final especieAuxiliar = widget.especieInicial;
 
     nombreCientificoCtrl = TextEditingController(
-      text: e?.nombreCientifico ?? '',
+      text: especieAuxiliar?.nombreCientifico ?? '',
     );
-    florCtrl = TextEditingController(text: e?.florDistintiva ?? '');
-    frutaCtrl = TextEditingController(text: e?.frutaDistintiva ?? '');
-    huespedes = e?.huespedes;
-    formaCrecimiento = e?.formaCrecimiento;
-    polinizador = e?.polinizador;
-    ambiente = e?.ambiente;
-    estratoCtrl = TextEditingController(text: e?.estrato ?? '');
+    florCtrl = TextEditingController(
+      text: especieAuxiliar?.florDistintiva ?? '',
+    );
+    frutaCtrl = TextEditingController(
+      text: especieAuxiliar?.frutaDistintiva ?? '',
+    );
+    huespedes = especieAuxiliar?.huespedes;
+    formaCrecimiento = especieAuxiliar?.formaCrecimiento;
+    polinizador = especieAuxiliar?.polinizador;
+    ambiente = especieAuxiliar?.ambiente;
+    estratoCtrl = TextEditingController(text: especieAuxiliar?.estrato ?? '');
 
-    daSombra = e?.daSombra == 1;
-    saludSuelo = e?.saludSuelo == 1;
-    pionero = e?.pionero == 1;
-    nativoAmerica = e?.nativoAmerica == 1;
-    nativoPanama = e?.nativoPanama == 1;
-    nativoAzuero = e?.nativoAzuero == 1;
+    daSombra = especieAuxiliar?.daSombra == 1;
+    saludSuelo = especieAuxiliar?.saludSuelo == 1;
+    pionero = especieAuxiliar?.pionero == 1;
+    nativoAmerica = especieAuxiliar?.nativoAmerica == 1;
+    nativoPanama = especieAuxiliar?.nativoPanama == 1;
+    nativoAzuero = especieAuxiliar?.nativoAzuero == 1;
 
-    nombresComunes = List.from(e?.nombresComunes ?? []);
-    utilidades = List.from(e?.utilidades ?? []);
-    origenes = List.from(e?.origenes ?? []);
+    nombresComunes = List.from(especieAuxiliar?.nombresComunes ?? []);
+    utilidades = List.from(especieAuxiliar?.utilidades ?? []);
+    origenes = List.from(especieAuxiliar?.origenes ?? []);
     imagenes =
-        e != null && e.imagenes.isNotEmpty
-            ? e.imagenes
+        especieAuxiliar != null && especieAuxiliar.imagenes.isNotEmpty
+            ? especieAuxiliar.imagenes
                 .map((i) => ImagenTemp(urlFoto: i.urlFoto, bytes: i.bytes))
                 .toList()
             : [ImagenTemp()];
   }
-
-  //int? _boolToInt(bool v) => v ? 1 : 0;
 
   void guardar() async {
     if (!_formKey.currentState!.validate()) return;

@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import '../tablainventario/ventas.dart';
 import '../tablainventario/siembra.dart';
@@ -108,3 +109,4 @@ class _TablasAdministrativasState extends State<TablasAdministrativas> {
     return lista;
   }
 }
+*/

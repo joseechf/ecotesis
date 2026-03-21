@@ -6,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'frond/static/home.dart';
 import 'frond/estilos.dart';
 import 'frond/base_datos/providers/especies_provider.dart';
-import 'frond/admin/provider/admin_providers.dart';
+//import 'frond/admin/provider/admin_providers.dart';
 import 'data/auth/session_provider.dart';
 import 'data/auth/auth_admin_provider.dart';
 import 'core/supabase_client.dart';
@@ -58,7 +58,7 @@ class _AppLoaderState extends State<AppLoader> {
         ChangeNotifierProvider.value(value: _sessionProvider),
         ChangeNotifierProvider(create: (_) => AuthAdminProvider()),
         ChangeNotifierProvider(create: (_) => EspeciesProvider()),
-        ChangeNotifierProvider(create: (_) => RegSiembraProvider()),
+        //ChangeNotifierProvider(create: (_) => RegSiembraProvider()),
       ],
       child: const MyApp(),
     );

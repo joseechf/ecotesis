@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/entities/especie_unificada.dart';
 import '../../../estilos.dart';
 import '../../../../domain/value_objects.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class EspecieCard extends StatelessWidget {
   final Especie especie;
@@ -96,7 +97,26 @@ class EspecieCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Text(especie.estrato ?? '—'),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Estilos.paddingPequeno,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Estilos.verdeClaro,
+                      borderRadius: BorderRadius.circular(Estilos.radioBorde),
+                    ),
+                    child:
+                        (especie.estrato != null)
+                            ? Text(
+                              especie.estrato!,
+                              style: const TextStyle(
+                                fontSize: Estilos.textoPequeno,
+                                color: Estilos.verdeOscuro,
+                              ),
+                            )
+                            : const SizedBox.shrink(),
+                  ),
                 ],
               ),
             ),
@@ -110,7 +130,7 @@ class EspecieCard extends StatelessWidget {
     if (img == null) {
       return const Center(child: Icon(Icons.broken_image, size: 50));
     }
-
+    //si la imagen aun la tengo en local muestro los bytes
     if (img.bytes != null) {
       return Image.memory(
         img.bytes!,
@@ -118,24 +138,21 @@ class EspecieCard extends StatelessWidget {
         fit: BoxFit.cover,
       );
     }
-
+    //si la imagen esta en el servidor uso la direccion
     if (img.urlFoto.isNotEmpty) {
       debugPrint('Intentando cargar imagen: ${img.urlFoto}');
-      return Image.network(
-        img.urlFoto,
+      return CachedNetworkImage(
+        imageUrl: img.urlFoto,
         width: double.infinity,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          debugPrint('Error cargando imagen: $error');
-          return Image.asset(
-            'assets/placeholder.png',
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return const Center(child: Icon(Icons.broken_image, size: 50));
-            },
-          );
-        },
+        progressIndicatorBuilder:
+            (_, _, _) => const Center(child: CircularProgressIndicator()),
+        errorWidget:
+            (_, _, _) => Image.asset(
+              'assets/placeholder.png',
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
       );
     }
 

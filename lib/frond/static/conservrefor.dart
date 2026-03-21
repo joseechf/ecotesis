@@ -4,7 +4,7 @@ import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import '../estilos.dart';
-import 'listas_lazy_loading/listas_lazy.dart';
+import 'listas_dinamicas/listas_dinamicas.dart';
 
 class Conservrefor extends StatelessWidget {
   const Conservrefor({super.key});
@@ -15,8 +15,7 @@ class Conservrefor extends StatelessWidget {
     final isMobile = screenWidth < 800;
     return Scaffold(
       appBar: CustomAppBar(context: context),
-      drawer:
-          MediaQuery.sizeOf(context).width < 800 ? const MobileMenu() : null,
+      drawer: isMobile ? const MobileMenu() : null,
       body: SafeArea(
         child: ListView(
           children: [

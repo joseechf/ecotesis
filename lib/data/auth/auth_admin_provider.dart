@@ -7,11 +7,11 @@ Estados de loading y error
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import '../../core/supabase_client.dart';
 import 'usuario_solicitud_modelo.dart';
 
 class AuthAdminProvider extends ChangeNotifier {
-  final SupabaseClient _supabase = Supabase.instance.client;
+  final SupabaseClient _supabase = SupabaseClientSingleton.client;
 
   List<UsuarioSolicitudModel> solicitudes = [];
   bool isLoading = false;

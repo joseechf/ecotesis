@@ -265,100 +265,58 @@ class EspeciesProvider with ChangeNotifier {
     return ok;
   }
 
+  static bool tieneValor(String? valor) {
+    return valor != null && valor.trim().isNotEmpty;
+  }
+
+  static bool esUno(int? v) => v == 1;
+
+  final Map<String, bool Function(Especie)> _mapaFiltros = {
+    'Da sombra': (e) => esUno(e.daSombra),
+    'Flor distintiva': (e) => tieneValor(e.florDistintiva),
+    'Fruta distintiva': (e) => tieneValor(e.frutaDistintiva),
+    'Pionero': (e) => esUno(e.pionero),
+    'Salud del suelo': (e) => esUno(e.saludSuelo),
+    'Crecimiento rápido': (e) => tieneValor(e.formaCrecimiento),
+    'Crecimiento lento': (e) => tieneValor(e.formaCrecimiento),
+    'Ambiente seco': (e) => tieneValor(e.ambiente),
+    'Ambiente húmedo': (e) => tieneValor(e.ambiente),
+    'Ambiente mixto': (e) => tieneValor(e.ambiente),
+    'Hospeda monos':
+        (e) => e.huespedes?.toLowerCase().contains('mono') ?? false,
+    'Hospeda aves': (e) => e.huespedes?.toLowerCase().contains('ave') ?? false,
+    'Polinizador abeja':
+        (e) => e.polinizador?.toLowerCase().contains('abeja') ?? false,
+    'Polinizador mariposa':
+        (e) => e.polinizador?.toLowerCase().contains('mariposa') ?? false,
+    'Polinizador mixto':
+        (e) => e.polinizador?.toLowerCase().contains('mixto') ?? false,
+    'Nativa América': (e) => esUno(e.nativoAmerica),
+    'Nativa Panamá': (e) => esUno(e.nativoPanama),
+    'Nativa Azuero': (e) => esUno(e.nativoAzuero),
+    'Frutal':
+        (e) => e.utilidades.any((u) => u.utilidad.toLowerCase() == 'frutal'),
+
+    'Maderal':
+        (e) => e.utilidades.any((u) => u.utilidad.toLowerCase() == 'maderal'),
+
+    'Ganado':
+        (e) => e.utilidades.any((u) => u.utilidad.toLowerCase() == 'ganado'),
+
+    'Medicinal':
+        (e) => e.utilidades.any((u) => u.utilidad.toLowerCase() == 'medicinal'),
+  };
   List<Especie> get especiesFiltradas {
     if (_filtrosActivos.isEmpty) return _especies;
 
     return _especies.where((e) {
       for (final filtro in _filtrosActivos) {
-        switch (filtro) {
-          case 'Flor distintiva':
-            return e.florDistintiva != null && e.florDistintiva!.isNotEmpty;
+        final evaluador = _mapaFiltros[filtro];
 
-          case 'Fruta distintiva':
-            return e.frutaDistintiva != null && e.frutaDistintiva!.isNotEmpty;
-
-          case 'Da sombra':
-            return e.daSombra == 1;
-
-          case 'Pionero':
-            return e.pionero == 1;
-
-          case 'Estrato alto':
-            return e.estrato?.toLowerCase() == 'alto';
-
-          case 'Estrato medio':
-            return e.estrato?.toLowerCase() == 'medio';
-
-          case 'Estrato bajo':
-            return e.estrato?.toLowerCase() == 'bajo';
-
-          case 'Mejora suelo':
-            return e.saludSuelo == 1;
-
-          case 'Ambiente seco':
-            return e.ambiente?.toLowerCase() == 'seco';
-
-          case 'Ambiente húmedo':
-            return e.ambiente?.toLowerCase() == 'humedo';
-
-          case 'Ambiente mixto':
-            return e.ambiente?.toLowerCase() == 'mixto';
-
-          case 'Crecimiento rápido':
-            return e.formaCrecimiento?.toLowerCase() == 'rapido';
-
-          case 'Crecimiento lento':
-            return e.formaCrecimiento?.toLowerCase() == 'lento';
-
-          case 'Hospeda monos':
-            return e.huespedes == 'Mono';
-
-          case 'Hospeda aves':
-            return e.huespedes == 'Aves';
-
-          case 'Polinizador abeja':
-            return e.polinizador == 'Abeja';
-
-          case 'Polinizador mariposa':
-            return e.polinizador == 'Mariposa';
-
-          case 'Polinizador mixto':
-            return e.polinizador == 'Mixto';
-
-          case 'Nativa América':
-            return e.nativoAmerica == 1;
-
-          case 'Nativa Panamá':
-            return e.nativoPanama == 1;
-
-          case 'Nativa Azuero':
-            return e.nativoAzuero == 1;
-
-          case 'Frutal':
-            return e.utilidades.any(
-              (u) => u.utilidad.toLowerCase() == 'frutal',
-            );
-
-          case 'Maderal':
-            return e.utilidades.any(
-              (u) => u.utilidad.toLowerCase() == 'maderal',
-            );
-
-          case 'Ganado':
-            return e.utilidades.any(
-              (u) => u.utilidad.toLowerCase() == 'ganado',
-            );
-
-          case 'Medicinal':
-            return e.utilidades.any(
-              (u) => u.utilidad.toLowerCase() == 'medicinal',
-            );
-
-          default:
-            return true;
+        if (evaluador != null && !evaluador(e)) {
+          return false;
         }
       }
-
       return true;
     }).toList();
   }

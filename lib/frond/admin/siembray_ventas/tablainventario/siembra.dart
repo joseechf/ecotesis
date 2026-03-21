@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import '../../provider/ejemplo.dart';
 import 'package:ecoazuero/frond/estilos.dart';
@@ -221,3 +222,4 @@ class _RentalInventoryState extends State<RentalInventory> {
     );
   }
 }
+*/

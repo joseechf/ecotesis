@@ -1,0 +1,119 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "escuela1",
+        "nombre": "Centro Educativo El Guayacán",
+        "provincia": "Herrera",
+        "distrito": "Chitré",
+        "corregimiento": "La Arena",
+        "electricidad": "Sí",
+        "internet": "Sí",
+        "tipo_servicio": "Fibra",
+        "nivel": "Primaria",
+        "estado": "Activo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.4321, 7.9632]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "escuela2",
+        "nombre": "Escuela Rural La Esperanza",
+        "provincia": "Los Santos",
+        "distrito": "Las Tablas",
+        "corregimiento": "San José",
+        "electricidad": "Sí",
+        "internet": "No",
+        "tipo_servicio": "Ninguno",
+        "nivel": "Primaria",
+        "estado": "Activo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.2775, 7.7689]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "escuela3",
+        "nombre": "Instituto Educativo Santa María",
+        "provincia": "Herrera",
+        "distrito": "Parita",
+        "corregimiento": "Cabecera",
+        "electricidad": "Sí",
+        "internet": "Sí",
+        "tipo_servicio": "Satelital",
+        "nivel": "Secundaria",
+        "estado": "Activo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.5213, 7.9934]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "escuela4",
+        "nombre": "Centro Básico Nuevo Horizonte",
+        "provincia": "Los Santos",
+        "distrito": "Guararé",
+        "corregimiento": "El Espinal",
+        "electricidad": "Sí",
+        "internet": "Sí",
+        "tipo_servicio": "ADSL",
+        "nivel": "Básica",
+        "estado": "Activo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.3098, 7.8145]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "escuela5",
+        "nombre": "Escuela Comunitaria San Miguel",
+        "provincia": "Veraguas",
+        "distrito": "Santiago",
+        "corregimiento": "Ponuga",
+        "electricidad": "Sí",
+        "internet": "Sí",
+        "tipo_servicio": "Satelital",
+        "nivel": "Primaria",
+        "estado": "Activo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.4892, 7.9321]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "escuela6",
+        "nombre": "Colegio Técnico Azuero Digital",
+        "provincia": "Herrera",
+        "distrito": "Ocú",
+        "corregimiento": "Cabecera",
+        "electricidad": "Sí",
+        "internet": "Sí",
+        "tipo_servicio": "Fibra",
+        "nivel": "Secundaria",
+        "estado": "Activo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.7785, 7.9398]
+      }
+    }
+  ]
+}

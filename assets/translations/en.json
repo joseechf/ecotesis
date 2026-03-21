@@ -30,6 +30,7 @@
     "change_language": "Change Language",
     "enviar": "Send",
     "somos": "Who We Are",
+    "doc": "Guides",
     "trabajo": "What We Do",
     "conservref": "Conservation And Restoration",
     "educacion": "Education",
@@ -51,7 +52,8 @@
     "logout": "Logout",
     "sincronizar": "Synchronize",
     "limpiar": "Clear",
-    "rol":"Role Requests"
+    "rol":"Role Requests",
+    "cerrar": "close"
   },
     "texts": {
     "textsHome": {
@@ -156,7 +158,26 @@
     "ecoguias": {
       "titulo": "ECO-GUIDES",
       "texto": "On this page you will find guides to jumpstart your eco-journey in Azuero. These guides serve as the jumping off point for the specifics of sustainable living on the peninsula. Looking to put in a live fence? Check out our guide on live fences for where to start. Want to know how to reduce waste? Check out the Reduce, Reuse, Recycle Eco-guide. These eco-guides are living documents and we rely on community feedback to keep them in top shape!"
-    }
+    },
+  "doc_sinc": {
+    "titulo": "How does synchronization work?",
+
+    "proposito": "Synchronization allows the local database and the remote database to stay consistent with each other.",
+
+    "uso": "When the synchronize button is clicked, the two databases (local and remote) are compared and updated so they contain the same information.",
+
+    "requisitos": "The local database is used when there is no internet connection. When the internet connection returns and the screen is refreshed, the application accesses the remote database again. However, synchronization is not executed automatically.",
+
+    "conflictos": "Rules for conflict resolution:",
+
+    "regla1": "The remote database has the final truth in case of conflicts.",
+    "regla2": "Species discarded from the local database (in case of conflict) are sent to the 'discarded' table.",
+    "regla3": "Species in the remote database are not deleted, they are only blocked and can be unlocked later."
+  },
+  "donacion": {
+    "p1": "Your donations help us work with the communities of Azuero to reforest the vulnerable tropical dry forest ecosystem. Our vision is a renewed Azuero Peninsula, with a protected dry forest, supported by a caring population. Your donations make a big difference in achieving our goals.",
+    "p2": "Your contributions are tax-deductible according to DGI Resolution No. 201-4940 of September 2, 2019."
+  }
   },
   "nonumero": "Dont set numbers",
   "gestionUsuario": {
@@ -182,9 +203,9 @@
     },
     "validaciones": {
       "correoVacio": "Please enter your email",
-      "correoInvalido": "Enter a valid email",
+      "correoInvalido": "name@email.com format",
       "contrasenaVacia": "Please enter your password",
-      "contrasenaInvalida": "Password must be at least 6 characters",
+      "contrasenaInvalida": "Password > 6 characters",
       "nombreVacio": "Please enter your name"
     },
     "textoCambio": {
