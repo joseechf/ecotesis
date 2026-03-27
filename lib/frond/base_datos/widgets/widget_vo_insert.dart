@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../domain/value_objects.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // widgets genéricos
 Widget campoVectorGenerico<T>({
@@ -65,6 +66,63 @@ Widget campoVectorGenerico<T>({
                 icon: const Icon(Icons.add),
                 tooltip: 'Agregar',
                 onPressed: () => setState(() => items.add(crearVacio())),
+              ),
+            ],
+          );
+        }).toList(),
+  );
+}
+
+Widget campoUtilidades({
+  required List<Utilidad> items,
+  required void Function(VoidCallback fn) setState,
+  required String label,
+  required BuildContext context,
+}) {
+  final opciones = {
+    'Frutal': context.tr('bdInterfaz.insert.Utilidad.frutal'),
+    'Maderal': context.tr('bdInterfaz.insert.Utilidad.maderal'),
+    'Ganado': context.tr('bdInterfaz.insert.Utilidad.ganado'),
+    'Medicinal': context.tr('bdInterfaz.insert.Utilidad.medicinal'),
+  };
+
+  if (items.isEmpty) items.add(Utilidad(utilidad: ''));
+
+  return Column(
+    children:
+        items.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final item = entry.value;
+
+          return Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: item.utilidad.isEmpty ? null : item.utilidad,
+                  decoration: InputDecoration(labelText: label),
+                  items:
+                      opciones.entries
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e.key,
+                              child: Text(e.value),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (v) => setState(() => item.utilidad = v ?? ''),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.remove_circle),
+                onPressed:
+                    items.length == 1
+                        ? null
+                        : () => setState(() => items.removeAt(idx)),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed:
+                    () => setState(() => items.add(Utilidad(utilidad: ''))),
               ),
             ],
           );

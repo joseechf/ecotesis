@@ -123,7 +123,7 @@ Future<void> solicitarNuevoRol(String rol) async {
 }
 
 Future<bool> eliminarUsuario() async {
-  debugPrint('========== ELIMINAR USUARIO (SOFT DELETE) ==========');
+  debugPrint('========== ELIMINAR USUARIO (SEGURO) ==========');
 
   try {
     final user = Supabase.instance.client.auth.currentUser;
@@ -135,10 +135,7 @@ Future<bool> eliminarUsuario() async {
 
     debugPrint('User ID a desactivar: ${user.id}');
 
-    await Supabase.instance.client
-        .from('profiles')
-        .update({'activo': false})
-        .eq('id', user.id);
+    await Supabase.instance.client.rpc('desactivar_mi_usuario');
 
     debugPrint('Perfil marcado como inactivo');
 
@@ -149,6 +146,7 @@ Future<bool> eliminarUsuario() async {
 
     return true;
   } catch (e) {
-    throw Exception(e.toString());
+    debugPrint('ERROR AL ELIMINAR: $e');
+    rethrow;
   }
 }

@@ -90,7 +90,7 @@ class DatabaseHelper {
       is_update INTEGER NOT NULL DEFAULT 0 CHECK (is_update IN (0,1)),
       is_delete INTEGER NOT NULL DEFAULT 0 CHECK (is_delete IN (0,1)),
       hash TEXT NOT NULL,
-      version INTEGER NOT NULL DEFAULT 1,
+      version INTEGER NOT NULL DEFAULT 1 CHECK (version >= 1),
       device TEXT,
       last_upd TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );

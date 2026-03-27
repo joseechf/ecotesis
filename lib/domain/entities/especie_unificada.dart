@@ -41,7 +41,11 @@ class Especie {
     List<Utilidad> utilidades = const [],
     List<Origen> origenes = const [],
     List<ImagenTemp> imagenes = const [],
-  }) : nombresComunes = List.unmodifiable(nombresComunes),
+  }) : assert(nombresComunes.length <= 50, 'Máximo 50 nombres comunes'),
+       assert(utilidades.length <= 20, 'Máximo 20 utilidades'),
+       assert(origenes.length <= 10, 'Máximo 10 orígenes'),
+       assert(imagenes.length <= 5, 'Máximo 5 imágenes'),
+       nombresComunes = List.unmodifiable(nombresComunes),
        utilidades = List.unmodifiable(utilidades),
        origenes = List.unmodifiable(origenes),
        imagenes = List.unmodifiable(imagenes);

@@ -5,41 +5,16 @@ import '../../domain/adapter/mapper.dart';
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/especie_unificada.dart';
 import '../llamadas_locales/tabla_sinc.dart';
-
-/*class FilasPorSincronizar {
-  final List<String> insertToLocal = [],
-      updateToLocal = [],
-      deleteToLocal = [],
-      eliminarFisicoLocal = [];
-  final List<String> insertToRemote = [],
-      updateToRemote = [],
-      deleteToRemote = [];
-  final List<String> discardedLocal = [];
-  void clear() {
-    insertToLocal.clear();
-    updateToLocal.clear();
-    deleteToLocal.clear();
-
-    insertToRemote.clear();
-    updateToRemote.clear();
-    deleteToRemote.clear();
-
-    discardedLocal.clear();
-    eliminarFisicoLocal.clear();
-  }
-}*/
+import 'validar_metadatos.dart';
 
 class FilasPorSincronizar {
-  // Instancia única (Singleton)
   static final FilasPorSincronizar _instancia =
       FilasPorSincronizar._singleton();
 
-  // Factory constructor que siempre devuelve la misma instancia
   factory FilasPorSincronizar() {
     return _instancia;
   }
 
-  // Constructor privado
   FilasPorSincronizar._singleton();
 
   final List<String> insertToLocal = [],
@@ -81,7 +56,6 @@ class ComparadorFilas {
     debugPrint('Local cambios: ${localCambios.length}');
     debugPrint('Remote cambios: ${remoteCambios.length}');
 
-    // Universo completo (existencia real)
     final mapLocalCompleto = {
       for (var e in localCompleto) e['id'] as String: e,
     };
@@ -89,7 +63,6 @@ class ComparadorFilas {
       for (var e in remoteCompleto) e['id'] as String: e,
     };
 
-    // Solo los que cambiaron
     final mapLocalCambios = {for (var e in localCambios) e['id'] as String: e};
     final mapRemoteCambios = {
       for (var e in remoteCambios) e['id'] as String: e,
@@ -208,8 +181,10 @@ class ComparadorFilas {
       if (local['is_delete'] == 1) {
         //eliminar en remoto y luego eliminar por completo local porque ya no se va a usar
         filasSinc.deleteToRemote.add(id);
+        debugPrint('eliminar remoto: $id');
         filasSinc.eliminarFisicoLocal.add(id);
       } else {
+        debugPrint('no se elimina: $id');
         filasSinc.updateToRemote.add(id);
       }
     } else {
@@ -253,6 +228,8 @@ class SincronizadorLocal {
   Future<bool> ejecutar(FilasPorSincronizar filas) async {
     debugPrint('=========== SINCRONIZADOR LOCAL ===========');
 
+    final db = await dbLocal.instancia;
+
     debugPrint(' deleteToLocal: ${filas.deleteToLocal}');
     debugPrint(' eliminar Fisicamente: ${filas.eliminarFisicoLocal}');
     debugPrint(' insertToLocal: ${filas.insertToLocal}');
@@ -284,7 +261,7 @@ class SincronizadorLocal {
       }
 
       if (especies.isNotEmpty) {
-        await insertFloraLocal(especies);
+        await insertFloraLocal(db, especies);
       }
     }
 
@@ -301,27 +278,30 @@ class SincronizadorLocal {
 
       for (final esp in especies) {
         debugPrint('Actualizando LOCAL especie: ${esp.nombreCientifico}');
-        await updateFloraLocal(esp);
+        await updateFloraLocal(db, esp);
       }
     }
     return true;
   }
 
   Future<void> _softDeleteLocal(String id) async {
-    await softDeleteLocal(id);
+    final db = await dbLocal.instancia;
+    await softDeleteLocal(db, id);
   }
 
   Future<void> _deleteFisicoLocal(String id) async {
-    await deleteFloraLocal(id);
+    final db = await dbLocal.instancia;
+    await deleteFloraLocal(db, id);
   }
 }
 
 class SincronizadorRemoto {
   //cada id es una query, puedo cambiarlo para trerlos de golpe
   Future<bool> ejecutar(FilasPorSincronizar filas) async {
+    final db = await dbLocal.instancia;
     // 1️ Altas locales → remoto
     for (final id in filas.insertToRemote) {
-      final especie = await obtenerFloraLocalById(id);
+      final especie = await obtenerFloraLocalById(db, id);
       if (especie != null) {
         await insertFloraRemoto(especie);
       }
@@ -329,7 +309,7 @@ class SincronizadorRemoto {
 
     // 2️ Updates locales → remoto
     for (final id in filas.updateToRemote) {
-      final especie = await obtenerFloraLocalById(id);
+      final especie = await obtenerFloraLocalById(db, id);
       if (especie != null) {
         await updateFloraRemoto(especie);
       }
@@ -360,6 +340,9 @@ class ControlSincronizacion {
   final TablaSyncLocal tablaSyncLocal = TablaSyncLocal();
 
   Future<void> sincronizar() async {
+    debugPrint(' ============= limpiar metadatos huerfanos ==============');
+    await limpiarHuerfanos();
+
     debugPrint('================ SINCRONIZACIÓN INICIADA ================');
 
     final db = await dbLocal.instancia;
@@ -378,17 +361,8 @@ class ControlSincronizacion {
     List<Map<String, dynamic>>? localCompleto = [];
     List<Map<String, dynamic>>? remoteCompleto = [];
 
-    if (localCambios.isNotEmpty && ultSinc != '1970-01-01T00:00:00Z') {
-      localCompleto = await obtenerLocalCompleto();
-    } else {
-      localCompleto = localCambios;
-    }
-
-    if (remoteCambios.isNotEmpty && ultSinc != '1970-01-01T00:00:00Z') {
-      remoteCompleto = await obtenerRemotoCompleto();
-    } else {
-      remoteCompleto = remoteCambios;
-    }
+    localCompleto = await obtenerLocalCompleto();
+    remoteCompleto = await obtenerRemotoCompleto();
 
     debugPrint(
       'localCambios IDs: ${localCambios.map((e) => e['id']).toList()}',
@@ -437,7 +411,9 @@ class ControlSincronizacion {
   Future<List<Map<String, dynamic>>> obtenerCambiosLocales(
     String ultSinc,
   ) async {
+    final db = await dbLocal.instancia;
     final data = await selectLocal(
+      db: db,
       tabla: 'sincronizacion',
       where: 'last_upd > ?',
       whereArgs: [ultSinc],
@@ -449,7 +425,8 @@ class ControlSincronizacion {
   }
 
   Future<List<Map<String, dynamic>>> obtenerLocalCompleto() async {
-    final datos = await selectLocal(tabla: 'sincronizacion');
+    final db = await dbLocal.instancia;
+    final datos = await selectLocal(db: db, tabla: 'sincronizacion');
     return datos;
   }
 

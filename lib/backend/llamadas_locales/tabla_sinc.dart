@@ -64,21 +64,6 @@ class TablaSyncLocal {
     }
   }
 
-  /* Future<bool> registrarUpsert(
-    Transaction tx,
-    String id,
-    Map<String, dynamic> fila,
-  ) async {
-    try {
-      await registrarSync(tx: tx, id: id, fila: fila);
-      debugPrint('metadatos sinc local registro ok');
-      return true;
-    } catch (e) {
-      debugPrint(' registro upsert error: $e');
-      return false;
-    }
-  }*/
-
   Future<bool> registrarBorrado(Transaction tx, String id) async {
     try {
       final existente = await tx.query(
@@ -123,10 +108,10 @@ class TablaSyncLocal {
       return false;
     }
   }
-  /*
+
   Future<void> limpiarSincronizacion(Database db) async {
     await db.delete('sincronizacion');
-  }*/
+  }
 
   Future<void> guardarUltimaSincronizacion({
     required Database db,

@@ -13,7 +13,7 @@ import '../../iureutilizables/custom_appbar.dart';
 import '../../iureutilizables/reglas_rol.dart';
 import '../../iureutilizables/widget_edicion.dart';
 import '../widgets/especie_dialog.dart';
-//import '../widgets/tarjeta_incercion.dart';
+import '../../../backend/llamadas_locales/llamadas_flora.dart';
 
 class CatalogoPage extends StatefulWidget {
   const CatalogoPage({super.key});
@@ -94,6 +94,48 @@ class _CatalogoPageState extends State<CatalogoPage> {
                   ancho: 125,
                 ),
 
+                FutureBuilder<bool>(
+                  future: _tieneInternet,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                    }
+                    if (snapshot.data == true) {
+                      return const SizedBox.shrink();
+                    }
+                    return BotonPersonalizado(
+                      texto: context.tr('bd local'),
+                      icono: const Icon(Icons.cleaning_services),
+                      onPressed: () async {
+                        provider.reinciarLocal();
+                      },
+                      ancho: 140,
+                    );
+                  },
+                ),
+
+                FutureBuilder<bool>(
+                  future: _tieneInternet,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                    }
+
+                    if (snapshot.data != true) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return OutlinedButton.icon(
+                      onPressed:
+                          provider.sincronizando
+                              ? null
+                              : provider.sincronizarManual,
+                      icon: const Icon(Icons.sync_alt),
+                      label: Text(context.tr('buttons.sincronizar')),
+                    );
+                  },
+                ),
+
                 tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
                     ? BotonPersonalizado(
                       texto: context.tr('bdInterfaz.nuevoRegistro'),
@@ -139,28 +181,6 @@ class _CatalogoPageState extends State<CatalogoPage> {
                         ),
                       ],
                     ),
-
-                FutureBuilder<bool>(
-                  future: _tieneInternet,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
-                    }
-
-                    if (snapshot.data != true) {
-                      return const SizedBox.shrink();
-                    }
-
-                    return OutlinedButton.icon(
-                      onPressed:
-                          provider.sincronizando
-                              ? null
-                              : provider.sincronizarManual,
-                      icon: const Icon(Icons.sync_alt),
-                      label: Text(context.tr('buttons.sincronizar')),
-                    );
-                  },
-                ),
               ],
             ),
 

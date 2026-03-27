@@ -290,20 +290,11 @@ class _EspecieDialogState extends State<EspecieDialog> {
                     validator: ValidadorTexto.validaNoObligatorio,
                   ),
                   const SizedBox(height: Estilos.paddingMedio),
-                  campoVectorGenerico<Utilidad>(
+                  campoUtilidades(
                     items: utilidades,
                     setState: setState,
                     label: context.tr('bdInterfaz.insert.Utilidad.titulo'),
-                    getValor: (u) => u.utilidad,
-                    setValor: (u, v) => u.utilidad = v,
-                    crearVacio: () => Utilidad(utilidad: ''),
-                    opcionesDropdown: [
-                      context.tr('bdInterfaz.insert.Utilidad.frutal'),
-                      context.tr('bdInterfaz.insert.Utilidad.maderal'),
-                      context.tr('bdInterfaz.insert.Utilidad.ganado'),
-                      context.tr('bdInterfaz.insert.Utilidad.medicinal'),
-                    ],
-                    validator: ValidadorTexto.validaNoObligatorio,
+                    context: context,
                   ),
                   const SizedBox(height: Estilos.paddingMedio),
                   campoVectorGenerico<Origen>(

@@ -185,6 +185,8 @@ Future<ApiResponse<void>> insertFloraRemoto(
 Future<ApiResponse<void>> updateFloraRemoto(
   Map<String, dynamic> especie,
 ) async {
+  debugPrint(jsonEncode({'fila': especie}));
+
   final session = SupabaseClientSingleton.client.auth.currentSession;
   debugPrint('=================session token: $session');
 
@@ -208,9 +210,7 @@ Future<ApiResponse<void>> updateFloraRemoto(
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${session.accessToken}',
           },
-          body: jsonEncode({
-            'filas': [especie],
-          }),
+          body: jsonEncode({'fila': especie}),
         )
         .timeout(const Duration(seconds: 10));
 

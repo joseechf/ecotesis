@@ -69,6 +69,8 @@ dependencies:
   json_annotation: ^4.8.1 
   # para el logo de Twitter
   font_awesome_flutter: ^10.7.0 
+  #pruebas sqlite
+  sqflite_common_ffi:
 
 
 dev_dependencies:

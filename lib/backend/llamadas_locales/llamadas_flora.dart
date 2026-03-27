@@ -1,44 +1,31 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/foundation.dart';
-import '../../../domain/entities/especie_unificada.dart';
-import 'sqlite_helper.dart';
+import '../../domain/entities/especie_unificada.dart';
 import 'tabla_sinc.dart';
 import '../../domain/value_objects.dart';
 
 final _sync = TablaSyncLocal();
-final _db = dbLocal.instancia;
 const String campoNombreCientifico = 'nombre_cientifico';
 
 Future<List<Map<String, dynamic>>> selectLocal({
+  required Database db,
   required String tabla,
   String? where,
   List<Object?>? whereArgs,
 }) async {
-  final db = await _db;
-
   const tablasPermitidas = {'sincronizacion', 'Flora'};
   if (!tablasPermitidas.contains(tabla)) {
     throw Exception('Tabla no permitida');
   }
   return await db.query(
     tabla,
-    columns: [
-      'id',
-      'hash',
-      'version',
-      'is_new',
-      'is_update',
-      'is_delete',
-      'last_upd',
-    ],
+    columns: ['*'],
     where: where,
     whereArgs: whereArgs,
   );
 }
 
-Future<List<Especie>> cargarFloraLocal() async {
-  final db = await _db;
-
+Future<List<Especie>> cargarFloraLocal(DatabaseExecutor db) async {
   final floraMaps = await db.query('Flora');
   if (floraMaps.isEmpty) return [];
 
@@ -53,10 +40,9 @@ Future<List<Especie>> cargarFloraLocal() async {
 }
 
 Future<Map<String, dynamic>?> obtenerFloraLocalById(
+  Database db,
   String nombreCientifico,
 ) async {
-  final db = await _db;
-
   final floraMaps = await db.query(
     'Flora',
     where: '$campoNombreCientifico = ?',
@@ -70,7 +56,7 @@ Future<Map<String, dynamic>?> obtenerFloraLocalById(
 }
 
 Future<Especie> _mapearEspecieCompleta(
-  Database db,
+  DatabaseExecutor db,
   Map<String, dynamic> flora,
 ) async {
   final nombreC = flora[campoNombreCientifico] as String;
@@ -157,9 +143,7 @@ Future<void> _guardarRelacionesYSync(
   }
 }
 
-Future<bool> insertFloraLocal(List<Especie> especies) async {
-  final db = await _db;
-
+Future<bool> insertFloraLocal(Database db, List<Especie> especies) async {
   try {
     await db.transaction((txn) async {
       for (final esp in especies) {
@@ -182,19 +166,21 @@ Future<bool> insertFloraLocal(List<Especie> especies) async {
   }
 }
 
-Future<bool> updateFloraLocal(Especie esp) async {
-  final db = await _db;
-
+Future<bool> updateFloraLocal(Database db, Especie esp) async {
   try {
     await db.transaction((txn) async {
       final floraRow = esp.toDbRow();
 
-      await txn.update(
+      final filas = await txn.update(
         'Flora',
         floraRow,
         where: '$campoNombreCientifico = ?',
         whereArgs: [esp.nombreCientifico],
       );
+
+      if (filas == 0) {
+        throw Exception('Especie no existe');
+      }
 
       await _borrarVO(txn, esp.nombreCientifico);
 
@@ -208,32 +194,29 @@ Future<bool> updateFloraLocal(Especie esp) async {
   }
 }
 
-Future<bool> deleteFloraLocal(String nombreCientifico) async {
-  final db = await _db;
-
+Future<bool> deleteFloraLocal(Database db, String? nombreCientifico) async {
   try {
     await db.transaction((txn) async {
-      await _borrarVO(txn, nombreCientifico);
-
-      final ok = await txn.delete(
-        'sincronizacion',
-        where: '$campoNombreCientifico = ?',
-        whereArgs: [nombreCientifico],
-      );
-
-      if (ok == 0) {
-        throw 'no existe metadatos de especie a eliminar';
-      }
-
-      final filas = await txn.delete(
-        'Flora',
-        where: '$campoNombreCientifico = ?',
-        whereArgs: [nombreCientifico],
-      );
-
+      final filas =
+          (nombreCientifico != null)
+              ? await txn.delete(
+                'Flora',
+                where: '$campoNombreCientifico = ?',
+                whereArgs: [nombreCientifico],
+              )
+              : await txn.delete('Flora');
       if (filas == 0) {
         throw 'no existe la especie a eliminar';
       }
+
+      const String identificador = 'id';
+      (nombreCientifico != null)
+          ? await txn.delete(
+            'sincronizacion',
+            where: '$identificador = ?',
+            whereArgs: [nombreCientifico],
+          )
+          : await txn.delete('sincronizacion');
     });
     return true;
   } catch (e) {
@@ -264,9 +247,7 @@ Future<void> _borrarVO(Transaction txn, String nombreCientifico) async {
   }
 }
 
-Future<bool> softDeleteLocal(String id) async {
-  final db = await _db;
-
+Future<bool> softDeleteLocal(Database db, String id) async {
   try {
     await db.transaction((txn) async {
       final ok = await _sync.registrarBorrado(txn, id);

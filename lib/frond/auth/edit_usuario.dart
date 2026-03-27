@@ -158,7 +158,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
             if (ok && context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(context.tr('mensaje.delete')),
+                  content: Text(context.tr('mensajes.delete')),
                   backgroundColor: Estilos.red,
                 ),
               );

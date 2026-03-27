@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../backend/llamadas_remotas/llamadas_flora.dart';
 import '../../../backend/llamadas_locales/llamadas_flora.dart';
+import '../../../backend/llamadas_locales/sqlite_helper.dart';
 import '../../../validar_red.dart';
 import '../../../domain/value_objects.dart';
 import '../../../backend/libSinc/sincronizacion.dart';
@@ -66,7 +67,8 @@ class EspeciesProvider with ChangeNotifier {
           response.map<Especie>((json) => Especie.fromJson(json)).toList(),
         );
       } else {
-        final especies = await cargarFloraLocal();
+        final db = await dbLocal.instancia;
+        final especies = await cargarFloraLocal(db);
         _especies.addAll(especies);
       }
     } catch (e) {
@@ -84,18 +86,37 @@ class EspeciesProvider with ChangeNotifier {
 
     try {
       final destino = await _elegirBD();
-
+      // si el registro ya existe pero está soft delete se revive
       if (destino == 'remoto') {
-        final resp = await _insertarRemoto(nueva, imgsBytes ?? []);
-
+        final resp =
+            (imgsBytes != null)
+                ? await _insertarRemoto(nueva, imgsBytes)
+                : await insertFloraRemoto(nueva.toJson());
         if (!resp.ok) {
-          _setMensaje(resp.message, esError: true);
-          return false;
+          final updateResp =
+              (imgsBytes != null)
+                  ? await _updateRemoto(nueva, imgsBytes)
+                  : await updateFloraRemoto(nueva.toJson());
+          if (!updateResp.ok) {
+            _setMensaje(updateResp.message, esError: true);
+            return false;
+          }
+          _setMensaje(updateResp.message);
+          return true;
         }
-
         _setMensaje(resp.message);
+        return true;
       } else {
-        await _insertarLocal(nueva);
+        final db = await dbLocal.instancia;
+        final duplicado = await obtenerFloraLocalById(
+          db,
+          nueva.nombreCientifico,
+        );
+        if (duplicado != null) {
+          await updateFloraLocal(db, nueva);
+        } else {
+          await _insertarLocal(nueva);
+        }
         _setMensaje("Insertado localmente");
       }
 
@@ -132,6 +153,16 @@ class EspeciesProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> reinciarLocal() async {
+    final db = await dbLocal.instancia;
+    try {
+      final ok = await deleteFloraLocal(db, null);
+      return ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> eliminar(String nombreCientifico) async {
     final destino = await _elegirBD();
 
@@ -147,7 +178,9 @@ class EspeciesProvider with ChangeNotifier {
 
       _setMensaje(resp.message);
     } else {
-      final ok = await deleteFloraLocal(nombreCientifico);
+      final db = await dbLocal.instancia;
+      //final ok = await deleteFloraLocal(db, nombreCientifico);
+      final ok = await softDeleteLocal(db, nombreCientifico);
 
       if (!ok) {
         _setMensaje("Error eliminando local", esError: true);
@@ -202,7 +235,8 @@ class EspeciesProvider with ChangeNotifier {
   }
 
   Future<void> _insertarLocal(Especie nueva) async {
-    final ok = await insertFloraLocal([nueva]);
+    final db = await dbLocal.instancia;
+    final ok = await insertFloraLocal(db, [nueva]);
     if (ok) await cargarFlora();
   }
 
@@ -223,8 +257,13 @@ class EspeciesProvider with ChangeNotifier {
         editado.add(ImagenTemp(urlFoto: url, estado: 'comprobado'));
       }
 
+      final imagenesValidas =
+          nueva.imagenes.where((i) {
+            return i.urlFoto.trim().isNotEmpty;
+          }).toList();
+
       final especieConUrls = nueva.copyWith(
-        imagenes: [...nueva.imagenes, ...editado],
+        imagenes: [...imagenesValidas, ...editado],
       );
 
       final resp = await updateFloraRemoto(especieConUrls.toJson());
@@ -254,7 +293,8 @@ class EspeciesProvider with ChangeNotifier {
   }
 
   Future<bool> _updateLocal(Especie nueva) async {
-    final ok = await updateFloraLocal(nueva);
+    final db = await dbLocal.instancia;
+    final ok = await updateFloraLocal(db, nueva);
     if (ok) {
       final index = _especies.indexWhere(
         (e) => e.nombreCientifico == nueva.nombreCientifico,
@@ -306,6 +346,7 @@ class EspeciesProvider with ChangeNotifier {
     'Medicinal':
         (e) => e.utilidades.any((u) => u.utilidad.toLowerCase() == 'medicinal'),
   };
+
   List<Especie> get especiesFiltradas {
     if (_filtrosActivos.isEmpty) return _especies;
 
