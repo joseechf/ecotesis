@@ -171,8 +171,10 @@
     "conflictos": "Rules for conflict resolution:",
 
     "regla1": "The remote database has the final truth in case of conflicts.",
-    "regla2": "Species discarded from the local database (in case of conflict) are sent to the 'discarded' table.",
-    "regla3": "Species in the remote database are not deleted, they are only blocked and can be unlocked later."
+    "regla2": "Species in the remote database are not deleted, they are only blocked and can be unlocked later.",
+    "regla3": "Species in the local database, once deleted, are unrecoverable.",
+
+    "limpieza": "The local database can be cleaned and then synchronized to obtain the remote records."
   },
   "donacion": {
     "p1": "Your donations help us work with the communities of Azuero to reforest the vulnerable tropical dry forest ecosystem. Our vision is a renewed Azuero Peninsula, with a protected dry forest, supported by a caring population. Your donations make a big difference in achieving our goals.",

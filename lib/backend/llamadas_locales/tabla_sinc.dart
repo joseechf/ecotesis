@@ -3,9 +3,16 @@ import '../utilidades/calcular_hash.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
+import '../../core/supabase_client.dart';
+
 const String ide = 'id';
 
 class TablaSyncLocal {
+  String get correo {
+    final session = SupabaseClientSingleton.client.auth.currentSession;
+    return session?.user.email ?? '';
+  }
+
   Future<bool> registrarSync({
     required Transaction tx,
     required String id,
@@ -30,6 +37,7 @@ class TablaSyncLocal {
           'is_delete': 0,
           'hash': hash,
           'version': 1,
+          'usuario': correo,
           'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
         debugPrint('metadatos sinc local insert ok');
@@ -81,6 +89,7 @@ class TablaSyncLocal {
           'is_delete': 1,
           'hash': '',
           'version': 1,
+          'usuario': correo,
           'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
       } else {
@@ -94,6 +103,7 @@ class TablaSyncLocal {
             'is_delete': 1,
             'hash': '',
             'version': versionActual + 1,
+            'usuario': correo,
             'last_upd': DateTime.now().toUtc().toIso8601String(),
           },
           where: '$ide = ?',

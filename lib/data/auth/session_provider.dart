@@ -23,6 +23,7 @@ class SessionProvider extends ChangeNotifier {
   UsuarioModel? get usuario => _usuario;
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
+  String? get email => _usuario?.email;
 
   SessionProvider();
 

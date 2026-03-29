@@ -33,6 +33,7 @@ class PolygonTapData {
 Future<GeoData> loadGeoJson(
   String path, {
   Color color = Colors.blue,
+  IconData icon = Icons.location_on,
   void Function(LatLng, Map<String, dynamic>)? onMarkerTap,
   void Function(LatLng, Map<String, dynamic>)? onPolygonTap,
 }) async {
@@ -93,15 +94,52 @@ Future<GeoData> loadGeoJson(
               color: color.withValues(alpha: 0.3),
               borderColor: color,
               borderStrokeWidth: 2,
-              label: props['id']?.toString(),
             );
 
             polygons.add(polygon);
+
             polygonTaps.add(
               PolygonTapData(
                 polygon: polygon,
                 center: centro,
                 properties: props,
+              ),
+            );
+
+            markers.add(
+              Marker(
+                point: centro,
+                width: 120,
+                height: 40,
+                child: GestureDetector(
+                  onTap: () => onPolygonTap?.call(centro, props),
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(
+                        255,
+                        250,
+                        163,
+                        32,
+                      ).withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      props['id']?.toString() ?? '',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             );
           }
@@ -136,7 +174,7 @@ Future<GeoData> loadGeoJson(
                     onMarkerTap == null
                         ? null
                         : () => onMarkerTap(point, props),
-                child: Icon(Icons.local_florist, size: 32, color: color),
+                child: Icon(icon, size: 32, color: color),
               ),
             ),
           );

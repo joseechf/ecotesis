@@ -171,8 +171,10 @@
   "conflictos": "Reglas para resolver conflictos:",
 
   "regla1": "La base de datos remota tiene la verdad final en caso de conflicto.",
-  "regla2": "Las especies descartadas de la base de datos local se envían a la tabla 'descartados'.",
-  "regla3": "Las especies de la base de datos remota no se eliminan, solo se bloquean."
+  "regla2": "Las especies de la base de datos remota no se eliminan, solo se bloquean.",
+  "regla3": "Las especies de la base de datos locales una vez eliminadas son irrecuperables.",
+
+  "limpieza": "la base de datos local se puede limpiar y luego sincronizar para obtener los registros remotos"
 },
 "donacion": {
     "p1": "Tus donaciones nos ayudan a trabajar con las comunidades de Azuero para reforestar el vulnerable ecosistema del bosque seco tropical. Nuestra visión es la de una península de Azuero renovada, con un bosque seco protegido, apoyada por una población amorosa. Sus donaciones marcan una gran diferencia para lograr nuestros objetivos.",

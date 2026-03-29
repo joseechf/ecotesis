@@ -38,69 +38,25 @@ class _MiniMapState extends State<MiniMap> {
         icon: Icons.school,
       ),
     ];
+
     _cargarCapas();
   }
 
   Future<void> _cargarCapas() async {
     for (final capa in capas) {
-      capa.data = await loadGeoJson(capa.assetPath, color: capa.color);
+      capa.data = await loadGeoJson(
+        capa.assetPath,
+        color: capa.color,
+        icon: capa.icon,
+        onPolygonTap: (punto, props) {
+          mostrarInfoGeometrica(context, capa.id, punto, props);
+        },
+        onMarkerTap: (punto, props) {
+          mostrarInfoGeometrica(context, capa.id, punto, props);
+        },
+      );
     }
     setState(() {});
-  }
-
-  bool _puntoEnPoligono(LatLng punto, List<LatLng> poligono) {
-    bool dentro = false;
-
-    // Coordenadas del punto a evaluar
-    double px = punto.longitude;
-    double py = punto.latitude;
-
-    int j = poligono.length - 1;
-
-    for (int i = 0; i < poligono.length; j = i++) {
-      // Coordenadas del segmento del polígono
-      double xi = poligono[i].longitude;
-      double yi = poligono[i].latitude;
-
-      double xj = poligono[j].longitude;
-      double yj = poligono[j].latitude;
-
-      // Verifica si el segmento está a ambos lados horizontales del punto
-      bool segmentoCruzaVerticalDelPunto = (xi > px) != (xj > px);
-      //evitar division por cero
-      double validar = (xj - xi);
-      if (validar == 0) continue;
-      //Calcula la altura donde el segmento cruza la vertical del punto
-      double yDondeSegmentoCruzaVertical = (yj - yi) * (px - xi) / validar + yi;
-
-      // Verifica si el rayo horizontal del punto intercepta el segmento
-      bool rayoHorizontalIntersecaSegmento = py < yDondeSegmentoCruzaVertical;
-
-      //Si el rayo cruza el segmento, invertimos el estado
-      if (segmentoCruzaVerticalDelPunto && rayoHorizontalIntersecaSegmento) {
-        dentro = !dentro;
-      }
-    }
-
-    return dentro;
-  }
-
-  void _onMapTap(TapPosition tapPosition, LatLng latLng) {
-    for (final capa in capas) {
-      if (!capa.visible || capa.data == null) {
-        continue;
-      }
-      final polygonTaps = capa.data!.polygonTaps;
-      if (polygonTaps.isEmpty) {
-        continue;
-      }
-      for (final pt in polygonTaps) {
-        if (_puntoEnPoligono(latLng, pt.polygon.points)) {
-          mostrarInfoGeometrica(context, capa.id, pt.center, pt.properties);
-          return;
-        }
-      }
-    }
   }
 
   @override
@@ -120,7 +76,6 @@ class _MiniMapState extends State<MiniMap> {
             options: MapOptions(
               initialCenter: LatLng(7.7, -80.4),
               initialZoom: 10,
-              onTap: _onMapTap,
             ),
             children: [
               TileLayer(
@@ -140,36 +95,7 @@ class _MiniMapState extends State<MiniMap> {
                         ),
 
                       if (data.markers.isNotEmpty)
-                        MarkerLayer(
-                          markers:
-                              data.markers.map((m) {
-                                final propiedades =
-                                    (m.key is ValueKey)
-                                        ? (m.key as ValueKey).value
-                                            as Map<String, dynamic>
-                                        : <String, dynamic>{};
-                                return Marker(
-                                  point: m.point,
-                                  width: 40,
-                                  height: 40,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      mostrarInfoGeometrica(
-                                        context,
-                                        capa.id,
-                                        m.point,
-                                        propiedades,
-                                      );
-                                    },
-                                    child: Icon(
-                                      capa.icon,
-                                      color: capa.color,
-                                      size: 32,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                        ),
+                        MarkerLayer(markers: data.markers),
                     ];
                   }),
             ],
