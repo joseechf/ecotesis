@@ -66,10 +66,10 @@ class EspecieModal extends StatelessWidget {
                   especie.nombresComunes.map((n) => n.nombreComun).join(', '),
                 ),
 
-              // ¿Da sombra?
+              // da sombra
               if (especie.daSombra != null)
                 _fila(
-                  Icons.wb_sunny,
+                  Icons.grass,
                   context.tr('bdInterfaz.insert.daSombra'),
                   especie.daSombra == 1 ? 'Sí' : 'No',
                 ),
@@ -140,7 +140,14 @@ class EspecieModal extends StatelessWidget {
                   context.tr('bdInterfaz.insert.ambiente'),
                   especie.ambiente!,
                 ),
-
+              //establecidoSolSombra
+              if (especie.establecidoSolSombra != null &&
+                  especie.establecidoSolSombra != '')
+                _fila(
+                  Icons.terrain,
+                  context.tr('bdInterfaz.insert.establecidoSolSombra'),
+                  especie.establecidoSolSombra!,
+                ),
               // Nativo de América
               if (especie.nativoAmerica != null)
                 _fila(
@@ -171,6 +178,14 @@ class EspecieModal extends StatelessWidget {
                   Icons.layers,
                   context.tr('bdInterfaz.insert.estrato'),
                   especie.estrato!,
+                ),
+
+              // Cobertura
+              if (especie.cobertura != 0 && especie.cobertura != null)
+                _fila(
+                  Icons.layers,
+                  context.tr('bdInterfaz.insert.cobertura'),
+                  especie.cobertura.toString(),
                 ),
 
               // Utilidades

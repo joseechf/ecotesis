@@ -12,12 +12,11 @@ Future<AuthResponse> login({
   try {
     final response = await SupabaseClientSingleton.client.auth
         .signInWithPassword(email: email, password: password);
+
     if (response.user != null) {
       final profile =
           await SupabaseClientSingleton.client
-              .from('users_view')
-              .select('activo')
-              .eq('id', response.user!.id)
+              .rpc('leer_usuario')
               .maybeSingle();
 
       if (profile != null && profile['activo'] == false) {
@@ -100,21 +99,11 @@ Future<void> solicitarNuevoRol(String rol) async {
 
   try {
     debugPrint('rol: $rol');
-    final userId = SupabaseClientSingleton.client.auth.currentUser!.id;
 
-    final response =
-        await SupabaseClientSingleton.client
-            .from('profiles')
-            .update({'rol_solicitado': rol, 'estado_rol': 'pendiente'})
-            .eq('id', userId)
-            .select();
-
-    if (response.isEmpty) {
-      throw Exception('No se encontró el perfil del usuario');
-    }
-
-    debugPrint('Solicitud de rol enviada correctamente');
-    debugPrint('========== FIN SOLICITUD OK ==========');
+    await SupabaseClientSingleton.client.rpc(
+      'solicitar_rol',
+      params: {'nuevo_rol': rol},
+    );
   } catch (e, stack) {
     debugPrint('ERROR EN SOLICITAR ROL: $e');
     debugPrintStack(stackTrace: stack);

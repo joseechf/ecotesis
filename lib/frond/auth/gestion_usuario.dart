@@ -4,7 +4,6 @@ import 'package:ecoazuero/backend/auth/llamadas_api.dart';
 import 'validar_entrada_campos.dart';
 import '../estilos.dart';
 import 'formulario_base.dart';
-import '../iureutilizables/widget_edicion.dart';
 
 class GestionUsuario extends StatefulWidget {
   const GestionUsuario({super.key});
@@ -118,21 +117,32 @@ class _GestionUsuarioState extends State<GestionUsuario> {
 
       acciones: [
         _esRegistro
-            ? BotonPersonalizado(
-              texto: context.tr('gestionUsuario.botones.registro'),
-              icono: const Icon(Icons.logout_outlined),
-              onPressed: _procesarFormulario,
+            ? SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _procesarFormulario,
+                icon: const Icon(Icons.logout_outlined),
+                label: Text(context.tr('gestionUsuario.botones.registro')),
+              ),
             )
-            : BotonPersonalizado(
-              texto: context.tr('gestionUsuario.botones.login'),
-              icono: const Icon(Icons.logout_outlined),
-              onPressed: _procesarFormulario,
+            : SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _procesarFormulario,
+                icon: const Icon(Icons.logout_outlined),
+                label: Text(context.tr('gestionUsuario.botones.login')),
+              ),
             ),
+
         const SizedBox(height: Estilos.paddingGrande),
-        BotonPersonalizado(
-          texto: context.tr('buttons.cancelar'),
-          icono: const Icon(Icons.arrow_back_outlined),
-          onPressed: () => Navigator.pop(context),
+
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_outlined),
+            label: Text(context.tr('buttons.cancelar')),
+          ),
         ),
       ],
       errorMensaje: (_errorMensaje != null) ? _errorMensaje : null,

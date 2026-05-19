@@ -64,22 +64,6 @@ Future<List<Map<String, String>>> cargarListasHacemos(
   ];
 }
 
-Future<List<Map<String, String>>> cargarlistaNoticias(
-  BuildContext context,
-) async {
-  return [
-    {
-      'imagen': 'assets/images/mono1.jpg',
-      'fecha': context.tr('texts.textsHome.fecha'),
-      'boton': 'https://www.prensa.com',
-    },
-    {
-      'imagen': 'assets/images/mono1.jpg',
-      'fecha': context.tr('texts.textsHome.fecha'),
-      'boton': 'https://www.prensa.com',
-    },
-  ];
-}
 
 //conservacion y reforestacion
 Future<List<Map<String, String>>> cargarListaIniciativas(
@@ -122,3 +106,24 @@ final List<String> listaEstudiantes = [
   'assets/images/est2.jpg',
   'assets/images/est3.jpg',
 ];
+
+
+// ecoguias pdfs
+Future<List<Map<String, dynamic>>> cargarGuias(BuildContext context) async {
+  return [
+    {
+      "imagen": "assets/images/incendio.jpg",
+      "titulo": "Fire Control: Rights & Regulations",
+      "texto": "A guide to protect your farm from neighboring fires.",
+      "pdfKey": "texts.ecoguias.pdfs.firecontrol",
+    },
+    {
+      "imagen": "assets/images/explorador.jpg",
+      "titulo":
+          "Riparian Zone Conservation: A Guide to Understand & Protect Panamanian Riparian Zones",
+      "texto":
+          "To increase the integrity of these areas, reforest riparian zones using trees that grow well around bodies of water.",
+      "pdfKey": "texts.ecoguias.pdfs.riparianzone",
+    },
+  ];
+}

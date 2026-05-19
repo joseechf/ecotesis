@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../iureutilizables/custom_appbar.dart';
 import '../iureutilizables/footer.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../iureutilizables/widget_edicion.dart';
 
 class ExplicacionSincronizacion extends StatelessWidget {
   const ExplicacionSincronizacion({super.key});
@@ -22,65 +21,77 @@ class ExplicacionSincronizacion extends StatelessWidget {
           children: [
             Column(
               children: [
-                CampoTextoPersonalizado(
-                  controlador: TextEditingController(
-                    text: context.tr('texts.doc_sinc.proposito'),
+                // Campo de propósito
+                TextFormField(
+                  initialValue: context.tr('texts.doc_sinc.proposito'),
+                  decoration: const InputDecoration(
+                    labelText: 'Propósito',
+                    border: OutlineInputBorder(),
                   ),
-                  etiqueta: 'Propósito',
-                  maxLineas: null,
-                  habilitado: false,
+                  maxLines: null,
+                  enabled: false,
                 ),
 
                 const SizedBox(height: 10),
 
-                CampoTextoPersonalizado(
-                  controlador: TextEditingController(
-                    text: context.tr('texts.doc_sinc.uso'),
+                // Campo de uso
+                TextFormField(
+                  initialValue: context.tr('texts.doc_sinc.uso'),
+                  decoration: const InputDecoration(
+                    labelText: 'Uso',
+                    border: OutlineInputBorder(),
                   ),
-                  etiqueta: 'Uso',
-                  maxLineas: null,
-                  habilitado: false,
+                  maxLines: null,
+                  enabled: false,
                 ),
 
                 const SizedBox(height: 10),
 
-                CampoTextoPersonalizado(
-                  controlador: TextEditingController(
-                    text: context.tr('texts.doc_sinc.requisitos'),
+                // Campo de requisitos
+                TextFormField(
+                  initialValue: context.tr('texts.doc_sinc.requisitos'),
+                  decoration: const InputDecoration(
+                    labelText: 'Requisitos',
+                    border: OutlineInputBorder(),
                   ),
-                  etiqueta: 'Requisitos',
-                  maxLineas: null,
-                  habilitado: false,
+                  maxLines: null,
+                  enabled: false,
                 ),
 
                 const SizedBox(height: 20),
 
-                CampoTextoPersonalizado(
-                  controlador: TextEditingController(
-                    text:
-                        "• ${context.tr('texts.doc_sinc.regla1')}\n"
-                        "• ${context.tr('texts.doc_sinc.regla2')}\n"
-                        "• ${context.tr('texts.doc_sinc.regla3')}",
+                // Campo de resolución de conflictos
+                TextFormField(
+                  initialValue:
+                      "• ${context.tr('texts.doc_sinc.regla1')}\n"
+                      "• ${context.tr('texts.doc_sinc.regla2')}\n"
+                      "• ${context.tr('texts.doc_sinc.regla3')}",
+                  decoration: const InputDecoration(
+                    labelText: 'Resolución de conflictos',
+                    border: OutlineInputBorder(),
                   ),
-                  etiqueta: 'Resolución de conflictos',
-                  maxLineas: null,
-                  habilitado: false,
+                  maxLines: null,
+                  enabled: false,
                 ),
 
                 const SizedBox(height: 10),
 
-                CampoTextoPersonalizado(
-                  controlador: TextEditingController(
-                    text: context.tr('texts.doc_sinc.limpieza'),
+                // Campo de limpieza
+                TextFormField(
+                  initialValue: context.tr('texts.doc_sinc.limpieza'),
+                  decoration: const InputDecoration(
+                    labelText: 'Limpieza',
+                    border: OutlineInputBorder(),
                   ),
-                  etiqueta: 'Limpieza',
-                  maxLineas: null,
-                  habilitado: false,
+                  maxLines: null,
+                  enabled: false,
                 ),
               ],
             ),
 
             const SizedBox(height: 40),
+
+            // Pie de página
             const Footer(),
           ],
         ),

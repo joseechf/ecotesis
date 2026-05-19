@@ -131,10 +131,12 @@ class _DesktopMenu extends StatelessWidget {
             context,
             !session.isAuthenticated
                 ? () => const GestionUsuario()
-                : () => EditarUsuario(
-                  email: session.usuario!.email,
-                  rolActual: session.usuario!.rolActual,
-                  estadoRol: session.usuario!.estadoRol,
+                : () => Scaffold(
+                  body: EditarUsuario(
+                    email: session.usuario!.email,
+                    rolActual: session.usuario!.rolActual,
+                    estadoRol: session.usuario!.estadoRol,
+                  ),
                 ),
           ),
         ),

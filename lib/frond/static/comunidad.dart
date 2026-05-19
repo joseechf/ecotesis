@@ -4,6 +4,7 @@ import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:ecoazuero/frond/iureutilizables/widgetpersonalizados.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class Comunidad extends StatelessWidget {
   const Comunidad({super.key});
@@ -19,12 +20,12 @@ class Comunidad extends StatelessWidget {
           children: [
             Column(
               children: [
-                ImageContainerWidget(
+                /*ImageContainerWidget(
                   imagePath: 'assets/images/mono1.jpg',
                   margin: const EdgeInsets.all(0),
                   padding: 0,
                   height: 0,
-                ),
+                ),*/
 
                 Container(
                   width: double.infinity,
@@ -56,12 +57,45 @@ class Comunidad extends StatelessWidget {
                     ],
                   ),
                 ),
-
+                
                 ImageContainerWidget(
-                  imagePath: 'assets/images/mirando.jpg',
+                  imagePath: 'assets/images/artesano.jpg',
                   margin: const EdgeInsets.all(0),
                   padding: 0,
                   height: 400,
+                ),
+
+                ResponsiveLayout(
+                  breakpoint: 900,
+                  children: [
+                    TextContainerWidget(
+                      text: context.tr('texts.comunidad.artesanos.titulo'),
+                      margin: EdgeInsets.all(20),
+                      padding: 20,
+                      backgroundColor: const Color.fromARGB(255, 3, 53, 7),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: anchoPantalla * 0.050,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextContainerWidget(
+                      text: context.tr('texts.comunidad.artesanos.texto'),
+                      margin:
+                          (!isMobile) ? EdgeInsets.all(50) : EdgeInsets.all(10),
+                      padding: 20,
+                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 2, 56, 14),
+                        fontSize: (!isMobile) ? 30 : 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ],
                 ),
 
                 ResponsiveLayout(
@@ -137,7 +171,7 @@ class Comunidad extends StatelessWidget {
                   ],
                 ),
 
-                FutureBuilder<List<Map<String, String>>>(
+                FutureBuilder<List<Map<String, dynamic>>>(
                   future: _obtenerRecursosColaboradores(context),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
@@ -201,16 +235,11 @@ class Comunidad extends StatelessWidget {
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(
-                                            Icons.home,
-                                            size: 40,
-                                            color: Color.fromARGB(
-                                              255,
-                                              4,
-                                              46,
-                                              4,
+                                         PhosphorIcon(
+                                              item['icono'] as PhosphorIconData,
+                                              size: 40,
+                                              color: const Color.fromARGB(255, 4, 46, 4),
                                             ),
-                                          ),
 
                                           const SizedBox(height: 15),
 
@@ -254,14 +283,14 @@ class Comunidad extends StatelessWidget {
     );
   }
 
-  Future<List<Map<String, String>>> _obtenerRecursosColaboradores(
+  Future<List<Map<String, dynamic>>> _obtenerRecursosColaboradores(
     BuildContext context,
   ) async {
     return [
-      {"texto": context.tr('texts.comunidad.recursoColaborador.texto1')},
-      {"texto": context.tr('texts.comunidad.recursoColaborador.texto2')},
-      {"texto": context.tr('texts.comunidad.recursoColaborador.texto3')},
-      {"texto": context.tr('texts.comunidad.recursoColaborador.texto4')},
+      {"texto": context.tr('texts.comunidad.recursoColaborador.texto1'),"icono": PhosphorIcons.house(PhosphorIconsStyle.thin),},
+      {"texto": context.tr('texts.comunidad.recursoColaborador.texto2',),"icono": PhosphorIcons.fish(PhosphorIconsStyle.thin),},
+      {"texto": context.tr('texts.comunidad.recursoColaborador.texto3'),"icono": PhosphorIcons.tree(PhosphorIconsStyle.thin),},
+      {"texto": context.tr('texts.comunidad.recursoColaborador.texto4'),"icono": PhosphorIcons.butterfly(PhosphorIconsStyle.thin),},
     ];
   }
 }

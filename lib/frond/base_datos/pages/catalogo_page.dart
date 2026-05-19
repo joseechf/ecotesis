@@ -11,9 +11,9 @@ import '../../iureutilizables/widgetpersonalizados.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../iureutilizables/custom_appbar.dart';
 import '../../iureutilizables/reglas_rol.dart';
-import '../../iureutilizables/widget_edicion.dart';
-import '../widgets/especie_dialog.dart';
-import '../../../backend/llamadas_locales/llamadas_flora.dart';
+import '../widgets/flora_insert_dialog.dart';
+import '../widgets/siembra_dialog.dart';
+import '../widgets/terreno_dialog.dart';
 
 class CatalogoPage extends StatefulWidget {
   const CatalogoPage({super.key});
@@ -55,170 +55,275 @@ class _CatalogoPageState extends State<CatalogoPage> {
       drawer: isMobile ? const MobileMenu() : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Estilos.paddingMedio),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Título
-            TextContainerWidget(
-              text: context.tr('bdInterfaz.titulo'),
-              margin: const EdgeInsets.all(16),
-              padding: 12,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Estilos.verdeOscuro,
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Título
+              TextContainerWidget(
+                text: context.tr('bdInterfaz.titulo'),
+                margin: const EdgeInsets.all(16),
+                padding: 12,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Estilos.verdeOscuro,
+                ),
               ),
-            ),
+              const SizedBox(height: Estilos.paddingMedio),
 
-            const SizedBox(height: Estilos.paddingMedio),
-
-            // Botones
-            Wrap(
-              spacing: Estilos.paddingPequeno,
-              runSpacing: Estilos.paddingPequeno,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                BotonPersonalizado(
-                  texto: context.tr('buttons.filtrar'),
-                  icono: const Icon(Icons.search),
-                  onPressed: () async {
-                    final res = await mostrarFiltroDialog(
-                      context,
-                      provider.filtrosActivos,
-                    );
-
-                    if (res != null) {
-                      provider.setFiltros(res);
-                    }
-                  },
-                  ancho: 125,
-                ),
-
-                FutureBuilder<bool>(
-                  future: _tieneInternet,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
-                    }
-                    if (snapshot.data == true) {
-                      return const SizedBox.shrink();
-                    }
-                    return BotonPersonalizado(
-                      texto: context.tr('bd local'),
-                      icono: const Icon(Icons.cleaning_services),
+              // Botones
+              Wrap(
+                spacing: Estilos.paddingPequeno,
+                runSpacing: Estilos.paddingPequeno,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 125,
+                    child: ElevatedButton.icon(
                       onPressed: () async {
-                        provider.reinciarLocal();
-                      },
-                      ancho: 140,
-                    );
-                  },
-                ),
-
-                FutureBuilder<bool>(
-                  future: _tieneInternet,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
-                    }
-
-                    if (snapshot.data != true) {
-                      return const SizedBox.shrink();
-                    }
-
-                    return OutlinedButton.icon(
-                      onPressed:
-                          provider.sincronizando
-                              ? null
-                              : provider.sincronizarManual,
-                      icon: const Icon(Icons.sync_alt),
-                      label: Text(context.tr('buttons.sincronizar')),
-                    );
-                  },
-                ),
-
-                tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
-                    ? BotonPersonalizado(
-                      texto: context.tr('bdInterfaz.nuevoRegistro'),
-                      icono: const Icon(Icons.add),
-                      ancho: 210,
-                      onPressed: () async {
-                        final resultado = await showDialog<bool>(
-                          context: context,
-                          builder: (_) => const EspecieDialog(),
+                        final res = await mostrarFiltroDialog(
+                          context,
+                          provider.filtrosActivos,
                         );
-                        if (!context.mounted) return;
 
-                        if (resultado == true) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Especie guardada correctamente'),
-                            ),
-                          );
-                        } else if (resultado == false) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Error al guardar la especie'),
-                            ),
-                          );
+                        if (res != null) {
+                          provider.setFiltros(res);
                         }
                       },
-                    )
-                    : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.visibility,
-                          color: Estilos.grisMedio,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          context.tr('bdInterfaz.lectura'),
-                          style: const TextStyle(
-                            color: Estilos.grisMedio,
-                            fontSize: Estilos.textoPequeno,
-                          ),
-                        ),
-                      ],
-                    ),
-              ],
-            ),
-
-            const SizedBox(height: Estilos.paddingGrande),
-
-            // Contenido
-            provider.especiesFiltradas.isEmpty
-                ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: Estilos.paddingGrande),
-                    child: Text(
-                      context.tr('bdInterfaz.sinEspecies'),
-                      style: const TextStyle(
-                        color: Estilos.grisMedio,
-                        fontSize: Estilos.textoPequeno,
-                      ),
+                      icon: const Icon(Icons.search),
+                      label: Text(context.tr('buttons.filtrar')),
                     ),
                   ),
-                )
-                : Wrap(
-                  spacing: Estilos.margenMedio,
-                  runSpacing: Estilos.margenMedio,
-                  children: List.generate(provider.especiesFiltradas.length, (
-                    i,
-                  ) {
-                    final especie = provider.especiesFiltradas[i];
 
-                    return SizedBox(
-                      width: 300,
-                      height: 400,
-                      child: EspecieCard(
-                        especie: especie,
-                        onTap: () => _mostrarModal(context, especie),
+                  FutureBuilder<bool>(
+                    future: _tieneInternet,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox.shrink();
+                      }
+                      if (snapshot.data == true) {
+                        return const SizedBox.shrink();
+                      }
+                      return SizedBox(
+                        width: 140,
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            provider.reinciarLocal();
+                          },
+                          icon: const Icon(Icons.cleaning_services),
+                          label: Text(context.tr('bd local')),
+                        ),
+                      );
+                    },
+                  ),
+
+                  FutureBuilder<bool>(
+                    future: _tieneInternet,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox.shrink();
+                      }
+
+                      if (snapshot.data != true) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return OutlinedButton.icon(
+                        onPressed:
+                            provider.sincronizando
+                                ? null
+                                : provider.sincronizarManual,
+                        icon: const Icon(Icons.sync_alt),
+                        label: Text(context.tr('buttons.sincronizar')),
+                      );
+                    },
+                  ),
+
+                  tieneAlgunoDeLosRoles(context, [
+                        'administrador',
+                        'cientifico',
+                      ])
+                      ? SizedBox(
+                        width: 210,
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            final resultado = await showDialog<bool>(
+                              context: context,
+                              builder: (_) => const EspecieDialogInsertEdit(), 
+                            );
+
+                            if (!context.mounted) return;
+
+                            if (resultado == true) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Especie guardada correctamente',
+                                  ),
+                                ),
+                              );
+                            } else if (resultado == false) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Error al guardar la especie'),
+                                ),
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.add),
+                          label: Text(context.tr('bdInterfaz.nuevoRegistro')),
+                        ),
+                      )
+                      : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.visibility,
+                            color: Estilos.grisMedio,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            context.tr('bdInterfaz.lectura'),
+                            style: const TextStyle(
+                              color: Estilos.grisMedio,
+                              fontSize: Estilos.textoPequeno,
+                            ),
+                          ),
+                        ],
+                      ),
+                  if (tieneAlgunoDeLosRoles(context, [
+                    'administrador',
+                    'cientifico',
+                  ]))
+                  FutureBuilder<bool>(
+                    future: _tieneInternet,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox.shrink();
+                      }
+                      if (snapshot.data != true) {
+                        return const SizedBox.shrink();
+                      }
+                      return SizedBox(
+                      width: 215,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          final resultado = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => const SiembraDialog(),
+                          );
+
+                          if (!context.mounted) return;
+
+                          if (resultado == true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Siembra guardada correctamente'),
+                              ),
+                            );
+                          } else if (resultado == false) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Error al guardar la Siembra'),
+                              ),
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.add),
+                        label: Text(context.tr('bdInterfaz.nuevoSiembra')),
                       ),
                     );
-                  }),
-                ),
-          ],
+                    },
+                  ),
+                    
+                  if (tieneAlgunoDeLosRoles(context, ['administrador']))
+                  FutureBuilder<bool>(
+                    future: _tieneInternet,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox.shrink();
+                      }
+
+                      if (snapshot.data != true) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return SizedBox(
+                      width: 215,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          final resultado = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => const DialogoAgregarTerreno(),
+                          );
+
+                          if (!context.mounted) return;
+
+                          if (resultado == true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Terreno guardado correctamente'),
+                              ),
+                            );
+                          } else if (resultado == false) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Error al guardar el Terreno'),
+                              ),
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.add),
+                        label: Text(context.tr('bdInterfaz.nuevoTerreno')),
+                      ),
+                    );
+                    },
+                  ),
+                    
+                ],
+              ),
+
+              const SizedBox(height: Estilos.paddingGrande),
+
+              // Contenido
+              provider.especiesFiltradas.isEmpty
+                  ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: Estilos.paddingGrande,
+                      ),
+                      child: Text(
+                        context.tr('bdInterfaz.sinEspecies'),
+                        style: const TextStyle(
+                          color: Estilos.grisMedio,
+                          fontSize: Estilos.textoPequeno,
+                        ),
+                      ),
+                    ),
+                  )
+                  : Wrap(
+                    spacing: Estilos.margenMedio,
+                    runSpacing: Estilos.margenMedio,
+                    children: List.generate(provider.especiesFiltradas.length, (
+                      i,
+                    ) {
+                      final especie = provider.especiesFiltradas[i];
+
+                      return SizedBox(
+                        width: 300,
+                        height: 400,
+                        child: EspecieCard(
+                          especie: especie,
+                          onTap: () => _mostrarModal(context, especie),
+                        ),
+                      );
+                    }),
+                  ),
+            ],
+          ),
         ),
       ),
     );
@@ -236,31 +341,16 @@ class _CatalogoPageState extends State<CatalogoPage> {
             onEditar: () async {
               final especieEditada = await showDialog<bool>(
                 context: context,
-                builder: (_) => EspecieDialog(especieInicial: especie),
+                builder: (_) => EspecieDialogInsertEdit(especieInicial: especie),
               );
               if (!context.mounted) return;
-              if (especieEditada != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Especie actualizada correctamente'),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('No se pudo actualizar')),
-                );
+              if (especieEditada == true) {
+                Navigator.of(context, rootNavigator: true).pop();
               }
             },
             onEliminar: () async {
               Navigator.of(context, rootNavigator: true).pop();
               await provider.eliminar(especie.nombreCientifico);
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(context.tr('buttons.delete')),
-                  backgroundColor: Colors.red,
-                ),
-              );
             },
           ),
     );

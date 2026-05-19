@@ -20,6 +20,9 @@ Future<Set<String>?> mostrarFiltroDialog(
       'Ambiente seco',
       'Ambiente húmedo',
       'Ambiente mixto',
+      'establecido al Sol',
+      'establecido a Sombra',
+      'establecido a ambos',
     ],
     'Fauna asociada': [
       'Hospeda monos',

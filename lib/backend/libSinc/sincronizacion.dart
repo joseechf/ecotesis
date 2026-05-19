@@ -247,7 +247,12 @@ class SincronizadorLocal {
 
     if (filas.insertToLocal.isNotEmpty) {
       debugPrint('Solicitando al API inserts remotos...');
-      final response = await obtenerFloraRemotaById(filas.insertToLocal);
+      final response = await getFlora(
+        endpoint: 'getflora/porids',
+        method: 'POST',
+        requiereAuth: true,
+        body: {'ids': filas.insertToLocal},
+      );
       debugPrint('Respuesta API inserts: ${response.length} registros');
 
       final especies =
@@ -267,7 +272,13 @@ class SincronizadorLocal {
 
     if (filas.updateToLocal.isNotEmpty) {
       debugPrint('Solicitando al API updates remotos...');
-      final response = await obtenerFloraRemotaById(filas.updateToLocal);
+      final response = await getFlora(
+        endpoint: 'getflora/porids',
+        method: 'POST',
+        requiereAuth: true,
+        body: {'ids': filas.updateToLocal},
+      );
+
       debugPrint('Respuesta API updates: ${response.length} registros');
 
       final especies =
@@ -303,7 +314,7 @@ class SincronizadorRemoto {
     for (final id in filas.insertToRemote) {
       final especie = await obtenerFloraLocalById(db, id);
       if (especie != null) {
-        await insertFloraRemoto(especie);
+        await insertAPI(especie, 'insertflora');
       }
     }
 
@@ -340,10 +351,7 @@ class ControlSincronizacion {
   final TablaSyncLocal tablaSyncLocal = TablaSyncLocal();
 
   Future<void> sincronizar() async {
-    debugPrint(' ============= limpiar metadatos huerfanos ==============');
     await limpiarHuerfanos();
-
-    debugPrint('================ SINCRONIZACIÓN INICIADA ================');
 
     final db = await dbLocal.instancia;
     state.clear();
@@ -363,13 +371,6 @@ class ControlSincronizacion {
 
     localCompleto = await obtenerLocalCompleto();
     remoteCompleto = await obtenerRemotoCompleto();
-
-    debugPrint(
-      'localCambios IDs: ${localCambios.map((e) => e['id']).toList()}',
-    );
-    debugPrint(
-      'remoteCambios IDs: ${remoteCambios.map((e) => e['id']).toList()}',
-    );
 
     detector.detectar(
       localCambios: localCambios,
@@ -433,7 +434,12 @@ class ControlSincronizacion {
   Future<List<Map<String, dynamic>>> obtenerCambiosRemotos(
     String ultSinc,
   ) async {
-    final filasSync = await getFloraRemoteSincronizacion(ultSinc: ultSinc);
+    final filasSync = await getFlora(
+      endpoint: 'getsincronizacion',
+      method: 'POST',
+      requiereAuth: true,
+      body: {'ultSinc': ultSinc},
+    );
     return filasSync.map((fila) {
       return {
         'id': fila['id'],
@@ -448,8 +454,12 @@ class ControlSincronizacion {
   }
 
   Future<List<Map<String, dynamic>>> obtenerRemotoCompleto() async {
-    final filas = await getFloraRemoteSincronizacion();
-
+    final filas = await getFlora(
+      endpoint: 'getsincronizacion',
+      method: 'POST',
+      requiereAuth: true,
+      body: null,
+    );
     return filas.map((fila) {
       return {
         'id': fila['id'],

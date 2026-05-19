@@ -7,143 +7,109 @@ import 'package:http_parser/http_parser.dart';
 import 'package:flutter/foundation.dart';
 import '../../core/supabase_client.dart';
 
-Future<List<Map<String, dynamic>>> getFloraRemoto() async {
-  final url = Uri.parse('$baseUrl/getflora');
+import '../../frond/iureutilizables/errores.dart';
 
-  try {
-    final resp = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (resp.statusCode != 200) {
-      debugPrint('Error HTTP: ${resp.statusCode}');
-      return [];
-    }
-
-    final json = jsonDecode(resp.body);
-
-    return validarRespuesta(json);
-  } catch (e) {
-    debugPrint('getFloraRemoto excepción: $e');
-    return [];
-  }
-}
-
-Future<List<Map<String, dynamic>>> getFloraRemoteSincronizacion({
-  String? ultSinc,
-}) async {
+Future<Map<String, dynamic>> getReporte() async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
   if (session == null) {
     debugPrint('No autenticado');
-    return [];
+    return {'status': 500};
   }
 
-  final url = Uri.parse('$baseUrl/getsincronizacion');
+  final url = Uri.parse('$baseUrl/getReporte');
 
   try {
-    final body = <String, dynamic>{};
-
-    if (ultSinc != null && ultSinc.isNotEmpty) {
-      body['ultSinc'] = ultSinc;
-    }
-
     final resp = await http
-        .post(
+        .get(
           url,
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${session.accessToken}',
           },
-          body: jsonEncode(body),
         )
         .timeout(const Duration(seconds: 10));
 
-    if (resp.statusCode == 401) {
-      debugPrint('token expirado o no autorizado');
-      return [];
-    }
-
-    if (resp.statusCode == 403) {
-      debugPrint('rol no autorizado');
-      return [];
-    }
-
     if (resp.statusCode != 200) {
-      debugPrint('Error HTTP: ${resp.statusCode}');
-      return [];
+      debugPrint('Error HTTP: ${resp.statusCode}, Mensaje: $resp');
+      return {'status': 500};
     }
 
-    final json = jsonDecode(resp.body);
+    final reporte = jsonDecode(resp.body);
 
-    return validarRespuesta(json);
+    return (reporte['status'] != 200)
+        ? {'status': 200, 'reporte': reporte['reporte']}
+        : {'status': 500};
   } catch (e) {
     debugPrint('getFloraRemoteSincronizacion error: $e');
-    return [];
+    return {'status': 500};
   }
 }
 
-Future<List<Map<String, dynamic>>> obtenerFloraRemotaById(
-  List<String> ids,
-) async {
-  if (ids.isEmpty) return [];
+Future<List<Map<String, dynamic>>> getFlora({
+  required String endpoint,
+  String method = 'GET',
+  bool requiereAuth = false,
+  Map<String, dynamic>? body,
+}) async {
 
-  final session = SupabaseClientSingleton.client.auth.currentSession;
+    final headers = <String, String>{'Content-Type': 'application/json'};
 
-  if (session == null) {
-    debugPrint('No autenticado');
-    return [];
-  }
+    if (requiereAuth) {
+      final session = SupabaseClientSingleton.client.auth.currentSession;
 
-  final url = Uri.parse('$baseUrl/getflora/porids');
+      if (session == null) {
+        debugPrint('No autenticado');
+        throw OnError.fromJson({'status': 400,'error':{'message': 'no autenticado','type': 'autenticacion'}},'getFlora');
+      }
 
-  try {
-    final resp = await http
-        .post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${session.accessToken}',
-          },
-          body: jsonEncode({'ids': ids}),
-        )
-        .timeout(const Duration(seconds: 10));
-
-    if (resp.statusCode == 401) {
-      debugPrint('token expirado o no autorizado');
-      return [];
+      headers['Authorization'] = 'Bearer ${session.accessToken}';
     }
 
-    if (resp.statusCode == 403) {
-      debugPrint('rol no autorizado');
-      return [];
+    final url = Uri.parse('$baseUrl/$endpoint');
+
+    http.Response resp;
+
+    if (method == 'POST') {
+      resp = await http
+          .post(url, headers: headers, body: jsonEncode(body ?? {}))
+          .timeout(const Duration(seconds: 10));
+    } else {
+      resp = await http
+          .get(url, headers: headers)
+          .timeout(const Duration(seconds: 10));
     }
 
     if (resp.statusCode != 200) {
-      debugPrint('Error HTTP: ${resp.statusCode}');
-      return [];
+      final respuesta = jsonDecode(resp.body);
+
+      throw OnError.fromJson(
+        respuesta,
+        'getFlora',
+      );
     }
 
     final json = jsonDecode(resp.body);
 
-    return validarRespuesta(json);
-  } catch (e) {
-    debugPrint('getFloraRemotoPorIds error: $e');
-    return [];
-  }
+    return (json['data'] as List).cast<Map<String, dynamic>>();
 }
 
-Future<ApiResponse<void>> insertFloraRemoto(
-  Map<String, dynamic> especieJson,
+Future<void> insertAPI(
+  Map<String, dynamic> data,
+  String metodo,
 ) async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
   if (session == null) {
-    return ApiResponse(ok: false, message: "Usuario no autenticado");
+    throw OnError(
+      type: 'auth',
+      message: 'Usuario no autenticado',
+      source: 'insertAPI',
+      status: 401,
+    );
   }
 
-  final url = Uri.parse('$baseUrl/insertflora');
+  final url = Uri.parse('$baseUrl/$metodo');
 
   try {
     final response = await http
@@ -153,54 +119,55 @@ Future<ApiResponse<void>> insertFloraRemoto(
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${session.accessToken}',
           },
-          body: jsonEncode({
-            'filas': [especieJson],
-          }),
+          body: jsonEncode({'fila': data}),
         )
         .timeout(const Duration(seconds: 10));
 
     final Map<String, dynamic> body = jsonDecode(response.body);
 
-    if (response.statusCode == 401) {
-      return ApiResponse(ok: false, message: "Sesión expirada");
+    if (response.statusCode != 200 || body['ok'] != true) {
+      throw OnError.fromJson(body, 'insertAPI');
     }
 
-    if (response.statusCode == 403) {
-      return ApiResponse(ok: false, message: "No tienes permisos");
-    }
-
-    if (body['ok'] != true) {
-      return ApiResponse(
-        ok: false,
-        message: body['message'] ?? "Error del servidor",
-      );
-    }
-
-    return ApiResponse(ok: true, message: "Insertado correctamente");
+    return;
+  } on OnError {
+    rethrow;
   } catch (e) {
-    return ApiResponse(ok: false, message: "Error de conexión: $e");
+    throw OnError(
+      type: 'network',
+      message: e.toString(),
+      source: 'insertAPI',
+    );
   }
 }
 
-Future<ApiResponse<void>> updateFloraRemoto(
+Future<void> updateFloraRemoto(
   Map<String, dynamic> especie,
 ) async {
-  debugPrint(jsonEncode({'fila': especie}));
-
   final session = SupabaseClientSingleton.client.auth.currentSession;
-  debugPrint('=================session token: $session');
 
   if (session == null) {
-    return ApiResponse(ok: false, message: "Usuario no autenticado");
+    throw OnError(
+      type: 'auth',
+      message: 'Usuario no autenticado',
+      source: 'updateFloraRemoto',
+      status: 401,
+    );
   }
 
   final nombre = especie['nombre_cientifico'];
 
   if (nombre == null) {
-    return ApiResponse(ok: false, message: "Nombre científico inválido");
+    throw OnError(
+      type: 'validation',
+      message: 'Nombre científico inválido',
+      source: 'updateFloraRemoto',
+      status: 400,
+    );
   }
 
   final url = Uri.parse('$baseUrl/update/${Uri.encodeComponent(nombre)}');
+
 
   try {
     final response = await http
@@ -214,41 +181,41 @@ Future<ApiResponse<void>> updateFloraRemoto(
         )
         .timeout(const Duration(seconds: 10));
 
-    if (response.statusCode == 401) {
-      return ApiResponse(ok: false, message: "Sesión expirada");
-    }
-
-    if (response.statusCode == 403) {
-      return ApiResponse(ok: false, message: "No tienes permisos");
-    }
-
     final Map<String, dynamic> body = jsonDecode(response.body);
 
-    if (body['ok'] != true) {
-      return ApiResponse(
-        ok: false,
-        message:
-            body['message'] ?? body['error'] ?? "Error actualizando especie",
-      );
+    if (response.statusCode != 200 || body['ok'] != true) {
+      throw OnError.fromJson(body, 'updateFloraRemoto');
     }
 
-    return ApiResponse(
-      ok: true,
-      message: body['message'] ?? "Actualización completada",
-    );
+    return;
+  } on OnError {
+    rethrow;
   } catch (e) {
-    return ApiResponse(ok: false, message: "Error de conexión: $e");
+    throw OnError(
+      type: 'network',
+      message: e.toString(),
+      source: 'updateFloraRemoto',
+    );
   }
 }
 
-Future<ApiResponse<void>> softDeleteFloraRemoto(String nombreCientifico) async {
+Future<void> softDeleteFloraRemoto(
+  String nombreCientifico,
+) async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
   if (session == null) {
-    return ApiResponse(ok: false, message: "Usuario no autenticado");
+    throw OnError(
+      type: 'auth',
+      message: 'Usuario no autenticado',
+      source: 'softDeleteFloraRemoto',
+      status: 401,
+    );
   }
 
-  final url = Uri.parse('$baseUrl/softdelete/$nombreCientifico');
+  final url = Uri.parse(
+    '$baseUrl/softdelete/$nombreCientifico',
+  );
 
   try {
     final response = await http
@@ -256,60 +223,76 @@ Future<ApiResponse<void>> softDeleteFloraRemoto(String nombreCientifico) async {
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${session.accessToken}',
+            'Authorization':
+                'Bearer ${session.accessToken}',
           },
         )
         .timeout(const Duration(seconds: 10));
 
-    if (response.statusCode == 401) {
-      return ApiResponse(ok: false, message: "Sesión expirada");
-    }
+    final Map<String, dynamic> body =
+        jsonDecode(response.body);
 
-    if (response.statusCode == 403) {
-      return ApiResponse(ok: false, message: "No tienes permisos");
-    }
-
-    final Map<String, dynamic> body = jsonDecode(response.body);
-
-    if (body['ok'] != true) {
-      return ApiResponse(
-        ok: false,
-        message: body['message'] ?? "Error eliminando registro",
+    if (response.statusCode != 200 || body['ok'] != true) {
+      throw OnError.fromJson(
+        body,
+        'softDeleteFloraRemoto',
       );
     }
 
-    return ApiResponse(
-      ok: true,
-      message: body['message'] ?? "Soft delete correcto",
-    );
+    return;
+  } on OnError {
+    rethrow;
   } catch (e) {
-    return ApiResponse(ok: false, message: "Error de conexión: $e");
+    throw OnError(
+      type: 'network',
+      message: e.toString(),
+      source: 'softDeleteFloraRemoto',
+    );
   }
 }
 
-Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
+Future<String> insertImagen(
+  Uint8List bytes,
+  String nombreCientifico,
+) async {
   final decoded = img.decodeImage(bytes);
-  if (decoded == null) throw Exception('Imagen no válida');
+
+  if (decoded == null) {
+    throw OnError(
+      type: 'image',
+      message: 'Imagen no válida',
+      source: 'insertImagen',
+    );
+  }
 
   final jpgBytes = img.encodeJpg(decoded, quality: 90);
 
   if (nombreCientifico.trim().isEmpty) {
-    throw Exception('Nombre científico vacío');
+    throw OnError(
+      type: 'validation',
+      message: 'Nombre científico vacío',
+      source: 'insertImagen',
+    );
   }
 
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
   if (session == null) {
-    throw Exception('Usuario no autenticado');
+    throw OnError(
+      type: 'auth',
+      message: 'Usuario no autenticado',
+      source: 'insertImagen',
+      status: 401,
+    );
   }
 
   final url = Uri.parse('$baseUrl/insertImagen');
-  debugPrint('la url : $url');
 
   try {
     final request = http.MultipartRequest('POST', url);
 
-    request.headers['Authorization'] = 'Bearer ${session.accessToken}';
+    request.headers['Authorization'] =
+        'Bearer ${session.accessToken}';
 
     request.fields['nombreCientifico'] = nombreCientifico;
 
@@ -323,28 +306,24 @@ Future<String> insertImagen(Uint8List bytes, String nombreCientifico) async {
     );
 
     final response = await request.send();
+
     final body = await response.stream.bytesToString();
-
-    if (response.statusCode == 401) {
-      debugPrint('token expirado o no autorizado');
-      throw Exception('No autenticado');
-    }
-
-    if (response.statusCode == 403) {
-      debugPrint('rol no autorizado');
-      throw Exception('Sin permisos');
-    }
 
     final json = jsonDecode(body);
 
-    if (json['ok'] != true) {
-      throw Exception(json['message'] ?? 'Error al subir imagen');
+    if (response.statusCode != 200 || json['ok'] != true) {
+      throw OnError.fromJson(json, 'insertImagen');
     }
 
-    return json['data'] ?? '';
+    return json['data'];
+  } on OnError {
+    rethrow;
   } catch (e) {
-    debugPrint('insertImagen: $e');
-    return '';
+    throw OnError(
+      type: 'network',
+      message: e.toString(),
+      source: 'insertImagen',
+    );
   }
 }
 
@@ -354,8 +333,12 @@ Future<void> deleteImagen(String urlImagen) async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
   if (session == null) {
-    debugPrint('Usuario no autenticado');
-    return;
+    throw OnError(
+      type: 'auth',
+      message: 'Usuario no autenticado',
+      source: 'deleteImagen',
+      status: 401,
+    );
   }
 
   try {
@@ -363,9 +346,13 @@ Future<void> deleteImagen(String urlImagen) async {
     final fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '';
 
     if (fileName.isEmpty) {
-      debugPrint('Nombre de archivo inválido: $urlImagen');
-      return;
+      throw OnError(
+        type: 'validation',
+        message: 'Nombre de archivo inválido',
+        source: 'deleteImagen',
+      );
     }
+
     final response = await http
         .delete(
           Uri.parse('$baseUrl/deleteImagen'),
@@ -377,37 +364,19 @@ Future<void> deleteImagen(String urlImagen) async {
         )
         .timeout(const Duration(seconds: 10));
 
-    if (response.statusCode == 401) {
-      debugPrint('token expirado o no autorizado');
-      return;
-    }
+    final Map<String, dynamic> body = jsonDecode(response.body);
 
-    if (response.statusCode == 403) {
-      debugPrint('rol no autorizado');
-      return;
+    if (response.statusCode != 200 || body['ok'] != true) {
+      throw OnError.fromJson(body, 'deleteImagen');
     }
-
-    final Map<String, dynamic> json = jsonDecode(response.body);
-
-    if (json['ok'] != true) {
-      debugPrint(
-        'No se pudo borrar la imagen $urlImagen: ${json['message'] ?? 'error desconocido'}',
-      );
-    }
+  } on OnError {
+    rethrow;
   } catch (e) {
-    debugPrint('deleteImagen: $e');
+    throw OnError(
+      type: 'network',
+      message: e.toString(),
+      source: 'deleteImagen',
+    );
   }
 }
 
-class ApiResponse<T> {
-  final bool ok;
-  final String message;
-  final T? data;
-
-  ApiResponse({required this.ok, required this.message, this.data});
-}
-
-List<Map<String, dynamic>> validarRespuesta(Map<String, dynamic> json) {
-  if (json['ok'] != true) return [];
-  return (json['data'] as List).cast<Map<String, dynamic>>();
-}

@@ -51,7 +51,8 @@ class FormularioAuthBase extends StatelessWidget {
                   ),
                 ),
               const SizedBox(height: Estilos.paddingGrande),
-              ...acciones,
+              if (!cargando) ...acciones,
+              if (cargando) const CircularProgressIndicator(),
               const SizedBox(height: Estilos.paddingGrande),
 
               const SizedBox(height: Estilos.paddingMedio),

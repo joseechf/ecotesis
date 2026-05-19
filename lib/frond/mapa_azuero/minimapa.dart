@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'geo_helper.dart';
 import 'capas.dart';
+import 'package:ecoazuero/config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MiniMap extends StatefulWidget {
   const MiniMap({super.key});
@@ -13,27 +15,31 @@ class MiniMap extends StatefulWidget {
 
 class _MiniMapState extends State<MiniMap> {
   late List<MapCapas> capas;
-  final MapController _mapController = MapController();
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final urlS = '$baseUrl/getsiembra';
+    final urlT = '$baseUrl/getterreno';
     capas = [
       MapCapas(
-        id: "sembrados",
-        assetPath: "assets/geo/sembrados.geojson",
-        color: const Color.fromARGB(255, 1, 70, 4),
-        icon: Icons.local_florist,
+        id: context.tr('admin.capas.siembra'),
+        url: urlS,
+        esApi: true,
+        color: Colors.blue,
+        icon: Icons.eco,
       ),
       MapCapas(
-        id: "terrenos",
-        assetPath: "assets/geo/terrenos_alquilados.geojson",
+        id: context.tr('admin.capas.terrenos'),
+        url: urlT,
+        esApi: true,
         color: Colors.orange,
         icon: Icons.square_foot,
       ),
       MapCapas(
-        id: "centros",
-        assetPath: "assets/geo/centro_educativo.geojson",
+        id: context.tr('admin.capas.centros'),
+        url: "assets/geo/centro_educativo.geojson",
+        esApi: false,
         color: Colors.blue,
         icon: Icons.school,
       ),
@@ -44,24 +50,34 @@ class _MiniMapState extends State<MiniMap> {
 
   Future<void> _cargarCapas() async {
     for (final capa in capas) {
-      capa.data = await loadGeoJson(
-        capa.assetPath,
-        color: capa.color,
-        icon: capa.icon,
-        onPolygonTap: (punto, props) {
-          mostrarInfoGeometrica(context, capa.id, punto, props);
-        },
-        onMarkerTap: (punto, props) {
-          mostrarInfoGeometrica(context, capa.id, punto, props);
-        },
-      );
+      try {
+        if (capa.esApi) {
+          // Desde API
+          capa.data = await loadGeoJsonFromApi(
+            capa.url,
+            color: capa.color,
+            icon: capa.icon,
+            onMarkerTap: (punto, props) {
+              mostrarInfoGeometrica(context, capa.id, punto, props);
+            },
+          );
+        } else {
+          // Desde assets
+          capa.data = await loadGeoJson(
+            capa.url,
+            color: capa.color,
+            icon: capa.icon,
+            onMarkerTap: (punto, props) {
+              mostrarInfoGeometrica(context, capa.id, punto, props);
+            },
+          );
+        }
+      } catch (e) {
+        print('Error cargando capa ${capa.id}: $e');
+      }
     }
-    setState(() {});
-  }
 
-  @override
-  void dispose() {
-    super.dispose();
+    setState(() {});
   }
 
   @override
@@ -72,7 +88,7 @@ class _MiniMapState extends State<MiniMap> {
         const SizedBox(height: 8),
         Expanded(
           child: FlutterMap(
-            mapController: _mapController,
+            //mapController: _mapController,
             options: MapOptions(
               initialCenter: LatLng(7.7, -80.4),
               initialZoom: 10,
@@ -82,7 +98,7 @@ class _MiniMapState extends State<MiniMap> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.mapakimi',
               ),
-              // con un bucle cada capa pinta su geometria
+              // con un bucle cada capa dibuja su geometria
               ...capas
                   .where((capa) => capa.visible && capa.data != null)
                   .expand((capa) {

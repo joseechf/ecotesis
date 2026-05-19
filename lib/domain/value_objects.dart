@@ -48,9 +48,9 @@ class Origen {
 
 //  ImagenTemp
 class ImagenTemp {
-  String urlFoto; // url ya existente (opcional)
-  String estado; // etiqueta local
-  Uint8List? bytes; // bytes seleccionados (opcional)
+  String urlFoto;
+  String estado;
+  Uint8List? bytes;
 
   ImagenTemp({this.urlFoto = '', this.estado = 'tentativo', this.bytes});
 }

@@ -38,10 +38,12 @@ class DatabaseHelper {
       pionero INTEGER CHECK (pionero IN (1, 0)),
       polinizador TEXT CHECK (polinizador IN ('Mariposa', 'Abeja', 'Mixto')),
       ambiente TEXT CHECK (ambiente IN ('Seco', 'Humedo', 'Mixto')),
+      establecido_sol_sombra TEXT CHECK (establecido_sol_sombra IN ('Sol','Sombra','Mixto')),
       nativo_america INTEGER CHECK (nativo_america IN (1, 0)),
       nativo_panama INTEGER CHECK (nativo_panama IN (1, 0)),
       nativo_azuero INTEGER CHECK (nativo_azuero IN (1, 0)),
-      estrato TEXT CHECK (length(estrato) <= 50)
+      estrato TEXT CHECK (length(estrato) <= 50),
+      cobertura float default 0 CHECK (cobertura >= 0) not null
     )
   ''');
 

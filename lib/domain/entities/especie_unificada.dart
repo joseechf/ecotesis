@@ -2,7 +2,6 @@ import '../value_objects.dart';
 
 class Especie {
   final String nombreCientifico;
-
   final int? daSombra;
   final String? florDistintiva;
   final String? frutaDistintiva;
@@ -12,10 +11,12 @@ class Especie {
   final int? pionero;
   final String? polinizador;
   final String? ambiente;
+  final String? establecidoSolSombra;
   final int? nativoAmerica;
   final int? nativoPanama;
   final int? nativoAzuero;
   final String? estrato;
+  final double? cobertura;
 
   final List<NombreComun> nombresComunes;
   final List<Utilidad> utilidades;
@@ -33,10 +34,12 @@ class Especie {
     this.pionero,
     this.polinizador,
     this.ambiente,
+    this.establecidoSolSombra,
     this.nativoAmerica,
     this.nativoPanama,
     this.nativoAzuero,
     this.estrato,
+    this.cobertura,
     List<NombreComun> nombresComunes = const [],
     List<Utilidad> utilidades = const [],
     List<Origen> origenes = const [],
@@ -60,10 +63,12 @@ class Especie {
     int? pionero,
     String? polinizador,
     String? ambiente,
+    String? establecidoSolSombra,
     int? nativoAmerica,
     int? nativoPanama,
     int? nativoAzuero,
     String? estrato,
+    double? cobertura,
     List<NombreComun>? nombresComunes,
     List<Utilidad>? utilidades,
     List<Origen>? origenes,
@@ -80,10 +85,12 @@ class Especie {
       pionero: pionero ?? this.pionero,
       polinizador: polinizador ?? this.polinizador,
       ambiente: ambiente ?? this.ambiente,
+      establecidoSolSombra: establecidoSolSombra ?? this.establecidoSolSombra,
       nativoAmerica: nativoAmerica ?? this.nativoAmerica,
       nativoPanama: nativoPanama ?? this.nativoPanama,
       nativoAzuero: nativoAzuero ?? this.nativoAzuero,
       estrato: estrato ?? this.estrato,
+      cobertura: cobertura ?? this.cobertura,
       nombresComunes: nombresComunes ?? this.nombresComunes,
       utilidades: utilidades ?? this.utilidades,
       origenes: origenes ?? this.origenes,
@@ -105,10 +112,13 @@ class Especie {
       pionero: json['pionero'] as int?,
       polinizador: json['polinizador'] as String?,
       ambiente: json['ambiente'] as String?,
+      establecidoSolSombra: json['establecido_sol_sombra'] as String?,
       nativoAmerica: json['nativo_america'] as int?,
       nativoPanama: json['nativo_panama'] as int?,
       nativoAzuero: json['nativo_azuero'] as int?,
       estrato: json['estrato'] as String?,
+      //cobertura: (json['cobertura'] as num?)?.toDouble(),
+      cobertura: double.tryParse(json['cobertura']?.toString() ?? '') ?? 0,
 
       nombresComunes:
           (json['NombreComun'] as List<dynamic>?)
@@ -155,10 +165,12 @@ class Especie {
       'pionero': pionero,
       'polinizador': polinizador,
       'ambiente': ambiente,
+      'establecido_sol_sombra': establecidoSolSombra,
       'nativo_america': nativoAmerica,
       'nativo_panama': nativoPanama,
       'nativo_azuero': nativoAzuero,
       'estrato': estrato,
+      'cobertura': cobertura,
 
       'NombreComun':
           nombresComunes.map((e) => {'nombre_comun': e.nombreComun}).toList(),
@@ -177,7 +189,7 @@ class Especie {
   //  SQLITE
 
   // Construye la especie base desde la tabla principal.
-  // Las listas se inyectan ya reconstruidas desde el repositorio.
+  // Las listas se inyectan ya reconstruidas desde llamadas_flora
   factory Especie.fromDbMap({
     required Map<String, dynamic> row,
     List<NombreComun> nombresComunes = const [],
@@ -196,10 +208,12 @@ class Especie {
       pionero: row['pionero'] as int?,
       polinizador: row['polinizador'] as String?,
       ambiente: row['ambiente'] as String?,
+      establecidoSolSombra: row['establecidoSolSombra'] as String?,
       nativoAmerica: row['nativo_america'] as int?,
       nativoPanama: row['nativo_panama'] as int?,
       nativoAzuero: row['nativo_azuero'] as int?,
       estrato: row['estrato'] as String?,
+      cobertura: row['cobertura'] as double?,
       nombresComunes: nombresComunes,
       utilidades: utilidades,
       origenes: origenes,
@@ -220,10 +234,12 @@ class Especie {
       'pionero': pionero,
       'polinizador': polinizador,
       'ambiente': ambiente,
+      'establecido_sol_sombra': establecidoSolSombra,
       'nativo_america': nativoAmerica,
       'nativo_panama': nativoPanama,
       'nativo_azuero': nativoAzuero,
       'estrato': estrato,
+      'cobertura': cobertura,
     };
   }
 }

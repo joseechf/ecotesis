@@ -3,31 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import '../base_datos/widgets/crecimiento_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../iureutilizables/reglas_rol.dart';
 
 class GeoData {
   final List<Polygon> polygons;
-  final List<Polyline> polylines;
   final List<Marker> markers;
-  final List<PolygonTapData> polygonTaps;
 
-  GeoData({
-    required this.polygons,
-    required this.polylines,
-    required this.markers,
-    required this.polygonTaps,
-  });
-}
-
-class PolygonTapData {
-  final Polygon polygon;
-  final LatLng center;
-  final Map<String, dynamic> properties;
-
-  PolygonTapData({
-    required this.polygon,
-    required this.center,
-    required this.properties,
-  });
+  GeoData({required this.polygons, required this.markers});
 }
 
 Future<GeoData> loadGeoJson(
@@ -35,17 +21,49 @@ Future<GeoData> loadGeoJson(
   Color color = Colors.blue,
   IconData icon = Icons.location_on,
   void Function(LatLng, Map<String, dynamic>)? onMarkerTap,
-  void Function(LatLng, Map<String, dynamic>)? onPolygonTap,
 }) async {
   final raw = await rootBundle.loadString(path);
   final data = json.decode(raw) as Map<String, dynamic>;
 
-  final polygons = <Polygon>[];
-  final polylines = <Polyline>[];
-  final markers = <Marker>[];
-  final polygonTaps = <PolygonTapData>[];
+  return _procesarGeoJson(
+    data,
+    color: color,
+    icon: icon,
+    onMarkerTap: onMarkerTap,
+  );
+}
 
-  // GeoJSON [lon, lat] -> flutter_map [lat, lon]
+Future<GeoData> loadGeoJsonFromApi(
+  String url, {
+  Color color = Colors.blue,
+  IconData icon = Icons.location_on,
+  void Function(LatLng, Map<String, dynamic>)? onMarkerTap,
+}) async {
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode != 200) {
+    throw Exception('Error al cargar GeoJSON: ${response.statusCode}');
+  }
+
+  final data = json.decode(response.body) as Map<String, dynamic>;
+
+  return _procesarGeoJson(
+    data,
+    color: color,
+    icon: icon,
+    onMarkerTap: onMarkerTap,
+  );
+}
+
+GeoData _procesarGeoJson(
+  Map<String, dynamic> data, {
+  Color color = Colors.blue,
+  IconData icon = Icons.location_on,
+  void Function(LatLng, Map<String, dynamic>)? onMarkerTap,
+}) {
+  final polygons = <Polygon>[];
+  final markers = <Marker>[];
+
   LatLng toLatLng(List<dynamic> coord) {
     return LatLng((coord[1] as num).toDouble(), (coord[0] as num).toDouble());
   }
@@ -63,12 +81,7 @@ Future<GeoData> loadGeoJson(
 
   final features = data['features'];
   if (features is! List) {
-    return GeoData(
-      polygons: polygons,
-      polylines: polylines,
-      markers: markers,
-      polygonTaps: polygonTaps,
-    );
+    return GeoData(polygons: polygons, markers: markers);
   }
 
   for (final feature in features) {
@@ -77,16 +90,16 @@ Future<GeoData> loadGeoJson(
     final geom = feature['geometry'] as Map<String, dynamic>?;
     final props = feature['properties'] as Map<String, dynamic>? ?? {};
 
-    if (geom == null) continue;
+    if (geom == null || geom['type'] == null) continue;
 
     switch (geom['type']) {
       case 'Polygon':
         final rings = geom['coordinates'];
         if (rings is List && rings.isNotEmpty) {
-          final exteriorRing = rings[0];
-          if (exteriorRing is List) {
+          final bordeExterior = rings[0];
+          if (bordeExterior is List) {
             final puntos =
-                exteriorRing.map<LatLng>((c) => toLatLng(c as List)).toList();
+                bordeExterior.map<LatLng>((c) => toLatLng(c as List)).toList();
             final centro = calcularCentro(puntos);
 
             final polygon = Polygon(
@@ -98,21 +111,13 @@ Future<GeoData> loadGeoJson(
 
             polygons.add(polygon);
 
-            polygonTaps.add(
-              PolygonTapData(
-                polygon: polygon,
-                center: centro,
-                properties: props,
-              ),
-            );
-
             markers.add(
               Marker(
                 point: centro,
                 width: 120,
                 height: 40,
                 child: GestureDetector(
-                  onTap: () => onPolygonTap?.call(centro, props),
+                  onTap: () => onMarkerTap?.call(centro, props),
                   child: Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.symmetric(
@@ -146,19 +151,6 @@ Future<GeoData> loadGeoJson(
         }
         break;
 
-      case 'LineString':
-        final coords = geom['coordinates'];
-        if (coords is List) {
-          polylines.add(
-            Polyline(
-              points: coords.map<LatLng>((c) => toLatLng(c as List)).toList(),
-              strokeWidth: 3,
-              color: color,
-            ),
-          );
-        }
-        break;
-
       case 'Point':
         final coords = geom['coordinates'];
         if (coords is List && coords.length >= 2) {
@@ -168,7 +160,7 @@ Future<GeoData> loadGeoJson(
               point: point,
               width: 40,
               height: 40,
-              key: ValueKey(props),
+              //key: ValueKey(props),
               child: GestureDetector(
                 onTap:
                     onMarkerTap == null
@@ -183,12 +175,7 @@ Future<GeoData> loadGeoJson(
     }
   }
 
-  return GeoData(
-    polygons: polygons,
-    polylines: polylines,
-    markers: markers,
-    polygonTaps: polygonTaps,
-  );
+  return GeoData(polygons: polygons, markers: markers);
 }
 
 Future<void> mostrarInfoGeometrica(
@@ -222,6 +209,21 @@ Future<void> mostrarInfoGeometrica(
           ),
         ),
         actions: [
+          if ((propiedades['nombre_cientifico'] != null) && _isAdmin(context))
+            SizedBox(
+              width: 170,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder:
+                        (_) => CrecimientoDialog(idSiembra: propiedades['id']),
+                  );
+                },
+                icon: const Icon(Icons.add),
+                label: Text(context.tr('buttons.crecimiento')),
+              ),
+            ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cerrar'),
@@ -276,3 +278,6 @@ Widget _fila(IconData icono, String titulo, dynamic valor) {
     ),
   );
 }
+
+bool _isAdmin(BuildContext c) =>
+    tieneAlgunoDeLosRoles(c, ['administrador', 'cientifico']);

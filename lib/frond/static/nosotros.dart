@@ -195,7 +195,7 @@ class Nosotros extends StatelessWidget {
                       spacing: 10,
                       runSpacing: 10,
                       children: List.generate(lista.length, (index) {
-                        return Container(
+                        return SizedBox(
                           width: 350,
                           child: ListaWidgetOrdenada(
                             datos: lista[index],
@@ -294,7 +294,7 @@ class Nosotros extends StatelessWidget {
                       spacing: 10,
                       runSpacing: 10,
                       children: List.generate(lista.length, (index) {
-                        return Container(
+                        return SizedBox(
                           width: 350,
                           child: ListaWidgetOrdenada(
                             datos: lista[index],

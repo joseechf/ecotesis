@@ -268,3 +268,24 @@ class ListaWidgetOrdenada extends StatelessWidget {
     );
   }
 }
+
+// funcion para obtener la fecha
+Future<dynamic> selectDate(context, {bool alquiler = false}) async {
+  if (!alquiler) {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    return (pickedDate != null) ? pickedDate : null;
+  } else {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2050),
+    );
+    return (pickedDate != null) ? pickedDate : null;
+  }
+}

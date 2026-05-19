@@ -23,6 +23,7 @@
   "mensajes": {
     "usuarioActualizado": "Updated User",
     "delete": "Deleted",
+    "nice":"Action completed",
     "error": "Action Not Completed",
     "apoyo": "Support Our Work"
   },
@@ -53,7 +54,9 @@
     "sincronizar": "Synchronize",
     "limpiar": "Clear",
     "rol":"Role Requests",
-    "cerrar": "close"
+    "cerrar": "close",
+    "crecimiento": "Growth",
+    "fecha":"Select Date"
   },
     "texts": {
     "textsHome": {
@@ -153,11 +156,19 @@
         "texto2": "The nearby Achotines Laboratory is the only place in the world where Yellow Fin Tuna have been spawning in captivity since 1996. It is adjacent to one of the Azuero’s largest intact dry coastal forests. The Achotines lab constantly receives groups of visiting students and scientists and has researcher accommodations available.",
         "texto3": "In 2003 PRORENA (Native Species Reforestation Project), an affiliate of The Smithsonian Tropical Research Institute STRI, started native tree species test plots. These plots are providing valuable information on reforestation possibilities for targeted purposes in the difficult Azuero environment and demonstration plots for those stakeholders interested in reforestation. Researchers from Yale and PRORENA have used these as a resource for research on secondary succession and carbon sequestration",
         "texto4": "As we continue to work with private landowners to reforest strategic areas of Azuero, these new reforestation sites serve as wonderful study sites for research on the impacts of reforestation on wildlife and farmland productivity."
+      },
+      "artesanos": {
+        "titulo": "ECO ARTISANS",
+        "texto": "The Azuero Eco Artisans group brings together women and girls from rural communities in the Azuero peninsula to create hand-crafted products from locally sourced, sustainable materials that they can sell to support their families and communities. The communities where the Eco Artisans live are associated with our ecological corridor, which has been mapped to strategically reforest and unify patches of tropical dry forest to fortify the area's resilience against the effects of climate change."
       }
     },
     "ecoguias": {
       "titulo": "ECO-GUIDES",
-      "texto": "On this page you will find guides to jumpstart your eco-journey in Azuero. These guides serve as the jumping off point for the specifics of sustainable living on the peninsula. Looking to put in a live fence? Check out our guide on live fences for where to start. Want to know how to reduce waste? Check out the Reduce, Reuse, Recycle Eco-guide. These eco-guides are living documents and we rely on community feedback to keep them in top shape!"
+      "texto": "On this page you will find guides to jumpstart your eco-journey in Azuero. These guides serve as the jumping off point for the specifics of sustainable living on the peninsula. Looking to put in a live fence? Check out our guide on live fences for where to start. Want to know how to reduce waste? Check out the Reduce, Reuse, Recycle Eco-guide. These eco-guides are living documents and we rely on community feedback to keep them in top shape!",
+      "pdfs": {
+        "firecontrol": "https://c127f5b3-6ab9-4e4a-ae3e-345e3b233d42.filesusr.com/ugd/e6eb07_a0be277e85d94ab4bc744fe2886cc828.pdf",
+        "riparianzone": "https://c127f5b3-6ab9-4e4a-ae3e-345e3b233d42.filesusr.com/ugd/e6eb07_709beb89d203482085c0846f87518739.pdf"
+      }
     },
   "doc_sinc": {
     "titulo": "How does synchronization work?",
@@ -228,6 +239,8 @@
     "nuevoRegistro": "Add species",
     "sinEspecies": "No species found",
     "nuevaEspecie": "Add new species",
+    "nuevoSiembra": "Add new planting",
+    "nuevoTerreno": "Add new land",
     "editarEspecie": "Edit species",
     "insert": {
       "Nlatin": "Scientific name",
@@ -251,10 +264,15 @@
       "Abeja": "Bee",
       "Mixto": "Mixed",
       "ambiente": "Environment",
+      "cobertura": "Coverage",
+      "cob": "coverage area in M2",
+      "establecidoSolSombra": "established to",
+      "Sol": "Sun",
+      "Sombra": "Shadow",
       "Seco": "Dry",
       "Humedo": "Humid",
       "estrato": "Stratum",
-      "Ubicacion": "Location",
+      "Ubicacion": "Origin",
       "Imagenes": "Image",
       "Utilidad": {
         "titulo": "Utility",
@@ -277,6 +295,32 @@
       "regventas": "Sales record",
       "regsiembra": "Planting record",
       "terrenos": "Rented lands"
+    },
+    "capas": {
+      "siembra": "sowing",
+      "terrenos": "Rented land",
+      "centros": "educational centers"
+    },
+    "alquiler": {
+      "titulo":"Rental Land",
+      "dueño": "owner",
+      "tamaño":"Size M2",
+      "fechaInicio":"Start Date of Rental",
+      "fechaFinal": "End Date of Rental",
+      "coordenadas": "Enter Coordinates"
+    },
+    "siembra": {
+      "titulo": "New planting",
+      "usuario":"User",
+      "distrito": "district",
+      "cantidad": "Quantity",
+      "ubicacion": "location"
+    },
+    "crecimiento": {
+      "seguimiento": "Growth Tracking",
+      "altura": "Average height",
+      "salud": "Health % range 0 to 100",
+      "afeccion": "Type of condition: pest, fungus, etc"
     }
   },
   "mapa": {
@@ -293,4 +337,4 @@
       "descripcion": "Responsible for the management and execution of community environmental projects."
     }
   }
-}
+} 

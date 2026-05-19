@@ -4,7 +4,6 @@ import '../estilos.dart';
 import 'formulario_base.dart';
 import 'validar_entrada_campos.dart';
 import '../../backend/auth/llamadas_api.dart';
-import '../iureutilizables/widget_edicion.dart';
 import 'package:provider/provider.dart';
 import '../../data/auth/session_provider.dart';
 
@@ -53,8 +52,8 @@ class _EditarUsuarioState extends State<EditarUsuario> {
     super.dispose();
   }
 
-  Future<void> _guardarCambios() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<bool> _guardarCambios() async {
+    if (!_formKey.currentState!.validate()) return false;
     setState(() {
       _cargando = true;
       _errorMensaje = null;
@@ -67,11 +66,13 @@ class _EditarUsuarioState extends State<EditarUsuario> {
         debugPrint('$_rolController solicitando rol ...');
         await solicitarNuevoRol(_rolController);
       }
+      return true;
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) return false;
       setState(() {
         _errorMensaje = e.toString();
       });
+      return false;
     } finally {
       if (mounted) {
         setState(() => _cargando = false);
@@ -95,12 +96,14 @@ class _EditarUsuarioState extends State<EditarUsuario> {
       ),
       campos: [
         const SizedBox(height: Estilos.paddingGrande),
-        // Email (solo lectura)
-        CampoTextoPersonalizado(
-          controlador: _emailController,
-          etiqueta: context.tr('gestionUsuario.campos.correo'),
-          icono: Icons.email_outlined,
-          habilitado: false,
+        TextFormField(
+          controller: _emailController,
+          enabled: false,
+          readOnly: true,
+          decoration: InputDecoration(
+            labelText: context.tr('gestionUsuario.campos.correo'),
+            prefixIcon: const Icon(Icons.email_outlined),
+          ),
         ),
         const SizedBox(height: Estilos.paddingMedio),
         // Rol actual
@@ -122,11 +125,14 @@ class _EditarUsuarioState extends State<EditarUsuario> {
 
         const SizedBox(height: Estilos.paddingMedio),
         // Estado del rol (solo lectura)
-        CampoTextoPersonalizado(
-          controlador: _estadoRolController,
-          etiqueta: context.tr('gestionUsuario.campos.estadoRol'),
-          icono: Icons.info_outline,
-          habilitado: false,
+        TextFormField(
+          controller: _estadoRolController,
+          enabled: false,
+          readOnly: true,
+          decoration: InputDecoration(
+            labelText: context.tr('gestionUsuario.campos.estadoRol'),
+            prefixIcon: const Icon(Icons.info_outline),
+          ),
         ),
         const SizedBox(height: Estilos.paddingGrande),
         // Nueva contraseña
@@ -143,43 +149,74 @@ class _EditarUsuarioState extends State<EditarUsuario> {
       ],
 
       acciones: [
-        BotonPersonalizado(
-          texto: context.tr('buttons.editar'),
-          icono: const Icon(Icons.save_outlined),
-          onPressed: _guardarCambios,
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              final ok = await _guardarCambios();
+
+              if (ok && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(context.tr('mensajes.nice')),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.save_outlined),
+            label: Text(context.tr('buttons.editar')),
+          ),
         ),
+
         const SizedBox(height: Estilos.paddingGrande),
-        BotonPersonalizado(
-          texto: context.tr('buttons.delete'),
-          color: 'rojo',
-          icono: const Icon(Icons.delete_outline),
-          onPressed: () async {
-            final ok = await eliminarUsuario();
-            if (ok && context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(context.tr('mensajes.delete')),
-                  backgroundColor: Estilos.red,
-                ),
-              );
-              Navigator.pop(context, "usuario_eliminado");
-            }
-          },
+
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(backgroundColor: Estilos.red),
+            onPressed: () async {
+              final ok = await eliminarUsuario();
+
+              if (ok && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(context.tr('mensajes.delete')),
+                    backgroundColor: Estilos.red,
+                  ),
+                );
+
+                Navigator.pop(context, "usuario_eliminado");
+              }
+            },
+            icon: const Icon(Icons.delete_outline),
+            label: Text(context.tr('buttons.delete')),
+          ),
         ),
+
         const SizedBox(height: Estilos.paddingGrande),
-        BotonPersonalizado(
-          texto: context.tr('buttons.logout'),
-          icono: const Icon(Icons.logout_outlined),
-          onPressed: () {
-            context.read<SessionProvider>().logout();
-            Navigator.pop(context, "logout");
-          },
+
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () {
+              context.read<SessionProvider>().logout();
+              Navigator.pop(context, "logout");
+            },
+            icon: const Icon(Icons.logout_outlined),
+            label: Text(context.tr('buttons.logout')),
+          ),
         ),
+
         const SizedBox(height: Estilos.paddingGrande),
-        BotonPersonalizado(
-          texto: context.tr('buttons.cerrar'),
-          icono: const Icon(Icons.arrow_back_outlined),
-          onPressed: () => Navigator.pop(context),
+
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_outlined),
+            label: Text(context.tr('buttons.cerrar')),
+          ),
         ),
       ],
       errorMensaje: (_errorMensaje != null) ? _errorMensaje : null,

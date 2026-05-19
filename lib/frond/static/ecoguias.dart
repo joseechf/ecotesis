@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'visorpdf.dart';
+import 'listas_dinamicas/listas_dinamicas.dart';
 
 class Ecoguias extends StatelessWidget {
   const Ecoguias({super.key});
@@ -14,7 +15,6 @@ class Ecoguias extends StatelessWidget {
     double anchoPantalla = MediaQuery.of(context).size.width;
     double alturaPantalla = MediaQuery.of(context).size.height;
 
-    final listaGuias = _obtenerListaGuias(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 800;
     return Scaffold(
@@ -73,7 +73,7 @@ class Ecoguias extends StatelessWidget {
               ],
             ),
 
-            Column(
+            /*Column(
               children: List.generate(listaGuias.length, (index) {
                 return ResponsiveLayout(
                   breakpoint: 400,
@@ -118,6 +118,60 @@ class Ecoguias extends StatelessWidget {
                   ],
                 );
               }),
+            ),*/
+
+
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: cargarGuias(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Error al cargar los datos');
+                }
+
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
+                final lista = snapshot.data!;
+                
+
+                return Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: List.generate(lista.length, (index) {
+                    final datos = lista[index];
+                    datos["boton"] = context.tr(datos["pdfKey"].toString());
+
+                    return SizedBox(
+                      width: 350,
+                      child: ListaWidgetOrdenada(
+                        datos: datos,
+                        radioImg: 10,
+                        onNavegar: (ctx, ruta) async {
+                          final url = Uri.parse(ruta.trim());
+
+                          if (kIsWeb) {
+                            await launchUrl(url, mode: LaunchMode.externalApplication);
+                          } else {
+                            Navigator.push(
+                              ctx,
+                              MaterialPageRoute(
+                                builder: (_) => VisorPDF(url: url.toString()),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  }),
+                );
+              },
             ),
             SizedBox(height: 20),
             const Footer(),
@@ -127,56 +181,5 @@ class Ecoguias extends StatelessWidget {
     );
   }
 
-  List<Map<String, dynamic>> _obtenerListaGuias(BuildContext context) {
-    return [
-      {
-        "imagen": "assets/images/mirando.jpg",
-        "titulo": "Fire Control: Rights & Regulations",
-        "boton": ElevatedButton(
-          onPressed: () async {
-            final url = Uri.parse(
-              'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
-            );
 
-            if (kIsWeb) {
-              await launchUrl(url, mode: LaunchMode.platformDefault);
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => VisorPDF(url: url.toString()),
-                ),
-              );
-            }
-          },
-          child: Text('Abrir PDF'),
-        ),
-        "texto": context.tr('texts.comunidad.recursoColaborador.texto1'),
-      },
-      {
-        "imagen": "assets/images/mirando.jpg",
-        "titulo": "Fire Control: Rights & Regulations",
-        "boton": ElevatedButton(
-          onPressed: () async {
-            final url = Uri.parse(
-              'https://www.proecoazuero.org/_files/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf',
-            );
-
-            if (kIsWeb) {
-              await launchUrl(url, mode: LaunchMode.platformDefault);
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => VisorPDF(url: url.toString()),
-                ),
-              );
-            }
-          },
-          child: Text('Abrir PDF'),
-        ),
-        "texto": context.tr('texts.comunidad.recursoColaborador.texto1'),
-      },
-    ];
-  }
 }

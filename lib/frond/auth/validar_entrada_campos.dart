@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../estilos.dart';
-import '../iureutilizables/widget_edicion.dart';
 
 class CampoCorreo extends StatelessWidget {
   final TextEditingController controlador;
@@ -10,17 +9,20 @@ class CampoCorreo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CampoTextoPersonalizado(
-      controlador: controlador,
-      etiqueta: context.tr('gestionUsuario.campos.correo'),
-      icono: Icons.email_outlined,
-      tipoTeclado: TextInputType.emailAddress,
-      validador: (value) {
+    return TextFormField(
+      controller: controlador,
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        labelText: context.tr('gestionUsuario.campos.correo'),
+        prefixIcon: const Icon(Icons.email_outlined),
+      ),
+      validator: (value) {
         if (value == null || value.isEmpty) {
           return context.tr('gestionUsuario.validaciones.correoVacio');
         }
 
         final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
         if (!regex.hasMatch(value)) {
           return context.tr('gestionUsuario.validaciones.correoInvalido');
         }
@@ -47,23 +49,32 @@ class CampoContrasena extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CampoTextoPersonalizado(
-      controlador: controladorC,
-      etiqueta: context.tr('gestionUsuario.campos.contrasena'),
-      icono: Icons.lock_outlined,
-      esContrasena: true,
-      ocultarTexto: ocultar,
-      onPressedIcono: onCambiarVisibilidad,
-      validador: (value) {
+    return TextFormField(
+      controller: controladorC,
+      obscureText: ocultar,
+      decoration: InputDecoration(
+        labelText: context.tr('gestionUsuario.campos.contrasena'),
+        prefixIcon: const Icon(Icons.lock_outlined),
+        suffixIcon: IconButton(
+          icon: Icon(
+            ocultar ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+          ),
+          onPressed: onCambiarVisibilidad,
+        ),
+      ),
+      validator: (value) {
         if ((value == null || value.isEmpty) && obligatorio) {
           return context.tr('gestionUsuario.validaciones.contrasenaVacia');
         }
+
         if ((value == null || value.isEmpty)) {
           return null;
         }
+
         if (value.length < 6) {
           return context.tr('gestionUsuario.validaciones.contrasenaInvalida');
         }
+
         return null;
       },
     );

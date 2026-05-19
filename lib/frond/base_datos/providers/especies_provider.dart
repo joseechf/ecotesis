@@ -9,11 +9,13 @@ import '../../../backend/llamadas_locales/sqlite_helper.dart';
 import '../../../validar_red.dart';
 import '../../../domain/value_objects.dart';
 import '../../../backend/libSinc/sincronizacion.dart';
-
+import '../../iureutilizables/errores.dart';
 class EspeciesProvider with ChangeNotifier {
   final List<Especie> _especies = [];
   bool _cargandoData = false;
   bool _insertando = false;
+  OnError? _error;
+  OnError? get error => _error;
   bool sincronizando = false;
   bool get cargandoData => _cargandoData;
   List<Especie> get especies => _especies;
@@ -29,131 +31,150 @@ class EspeciesProvider with ChangeNotifier {
     return 'remoto';
   }
 
-  //  manejo de mensajes -------
+Future<void> cargarFlora() async {
+  final destino = await _elegirBD();
 
-  String? _ultimoMensaje;
-  bool _ultimoError = false;
+  _cargandoData = true;
+  _error = null;
+  notifyListeners();
 
-  String? get ultimoMensaje => _ultimoMensaje;
-  bool get ultimoError => _ultimoError;
+  try {
+    _especies.clear();
 
-  void _setMensaje(String mensaje, {bool esError = false}) {
-    _ultimoMensaje = mensaje;
-    _ultimoError = esError;
+    if (destino == 'remoto') {
+      final response = await getFlora(
+        endpoint: 'getflora',
+      ).timeout(const Duration(seconds: 20));
+
+      _especies.addAll(
+        response.map<Especie>((json) => Especie.fromJson(json)).toList(),
+      );
+    } else {
+      final db = await dbLocal.instancia;
+      final especies = await cargarFloraLocal(db);
+      _especies.addAll(especies);
+    }
+  } on OnError catch (e) {
+    _error = e;
+    debugPrint('ERROR PROVIDER cargarFlora: ${e.type} | ${e.message}');
+  } catch (e) {
+    _error = OnError(
+      type: 'provider',
+      message: e.toString(),
+      source: 'cargarFlora',
+    );
+    debugPrint('ERROR PROVIDER cargarFlora: $e');
+  } finally {
+    _cargandoData = false;
     notifyListeners();
   }
+}
 
-  void limpiarMensaje() {
-    _ultimoMensaje = null;
-    _ultimoError = false;
-  }
+Future<bool> insertar(Especie nueva, {List<Uint8List>? imgsBytes}) async {
+  if (_insertando) return false;
 
-  // fin manejo de mensajes -------------
+  _insertando = true;
+  _error = null;
 
-  Future<void> cargarFlora() async {
-    final destino = await _elegirBD();
-    _cargandoData = true;
-    notifyListeners();
-
-    try {
-      _especies.clear();
-
-      if (destino == 'remoto') {
-        final response = await getFloraRemoto().timeout(
-          const Duration(seconds: 20),
-        );
-
-        _especies.addAll(
-          response.map<Especie>((json) => Especie.fromJson(json)).toList(),
-        );
-      } else {
-        final db = await dbLocal.instancia;
-        final especies = await cargarFloraLocal(db);
-        _especies.addAll(especies);
-      }
-    } catch (e) {
-      debugPrint('error al cargar: $e');
-    } finally {
-      _cargandoData = false;
-      notifyListeners();
-    }
-  }
-
-  Future<bool> insertar(Especie nueva, {List<Uint8List>? imgsBytes}) async {
-    if (_insertando) return false;
-
-    _insertando = true;
-
-    try {
-      final destino = await _elegirBD();
-      // si el registro ya existe pero está soft delete se revive
-      if (destino == 'remoto') {
-        final resp =
-            (imgsBytes != null)
-                ? await _insertarRemoto(nueva, imgsBytes)
-                : await insertFloraRemoto(nueva.toJson());
-        if (!resp.ok) {
-          final updateResp =
-              (imgsBytes != null)
-                  ? await _updateRemoto(nueva, imgsBytes)
-                  : await updateFloraRemoto(nueva.toJson());
-          if (!updateResp.ok) {
-            _setMensaje(updateResp.message, esError: true);
-            return false;
-          }
-          _setMensaje(updateResp.message);
-          return true;
-        }
-        _setMensaje(resp.message);
-        return true;
-      } else {
-        final db = await dbLocal.instancia;
-        final duplicado = await obtenerFloraLocalById(
-          db,
-          nueva.nombreCientifico,
-        );
-        if (duplicado != null) {
-          await updateFloraLocal(db, nueva);
-        } else {
-          await _insertarLocal(nueva);
-        }
-        _setMensaje("Insertado localmente");
-      }
-
-      await cargarFlora();
-      return true;
-    } catch (e) {
-      _setMensaje("Error inesperado: $e", esError: true);
-      return false;
-    } finally {
-      _insertando = false;
-    }
-  }
-
-  Future<bool> update(Especie nueva, {List<Uint8List>? imgsBytes}) async {
+  try {
     final destino = await _elegirBD();
 
     if (destino == 'remoto') {
-      final resp = await _updateRemoto(nueva, imgsBytes ?? []);
+      try {
+        if (imgsBytes != null) {
+          await _insertarRemoto(nueva, imgsBytes);
+        } else {
+          await insertAPI(nueva.toJson(), 'insertflora');
+        }
 
-      if (!resp.ok) {
-        _setMensaje(resp.message, esError: true);
-        return false;
+      } on OnError catch (e) {
+        debugPrint('ERROR INSERTAR REMOTO: ${e.source} | ${e.type} | ${e.message}');
+        //si el insert falla puede ser por softdelete, se actualiza el registro, si no existe tambien va a fallar,si existe se revive
+        debugPrint('intentando revivir el registro ${nueva.nombreCientifico}');
+        if (imgsBytes != null) {
+          await _updateRemoto(nueva, imgsBytes);
+        } else {
+          await updateFloraRemoto(nueva.toJson());
+        }
       }
+    } else {
+      final db = await dbLocal.instancia;
+      final duplicado = await obtenerFloraLocalById(
+        db,
+        nueva.nombreCientifico,
+      );
 
-      _setMensaje(resp.message);
-      return true;
+      if (duplicado != null) {
+        await updateFloraLocal(db, nueva);
+      } else {
+        await _insertarLocal(nueva);
+      }
+    }
+
+    await cargarFlora();
+    return true;
+  } on OnError catch (e) {
+    _error = e;
+    debugPrint('ERROR PROVIDER insertar: ${e.source} | ${e.type} | ${e.message}');
+    return false;
+  } catch (e) {
+    _error = OnError(
+      type: 'provider',
+      message: e.toString(),
+      source: 'insertar',
+    );
+
+    debugPrint('ERROR PROVIDER insertar: $e');
+    return false;
+  } finally {
+    _insertando = false;
+    notifyListeners();
+  }
+}
+
+Future<bool> update(Especie nueva, {List<Uint8List>? imgsBytes}) async {
+  _cargandoData = true;
+  _error = null;
+  notifyListeners();
+
+  try {
+    final destino = await _elegirBD();
+
+    if (destino == 'remoto') {
+      await _updateRemoto(nueva, imgsBytes ?? []);
     } else {
       final ok = await _updateLocal(nueva);
-      _setMensaje(
-        ok ? "Actualizado localmente" : "Error actualizando local",
-        esError: !ok,
-      );
-      return ok;
-    }
-  }
 
-  Future<bool> reinciarLocal() async {
+      if (!ok) {
+        throw OnError(
+          type: 'local',
+          message: 'Error actualizando local',
+          source: 'update',
+        );
+      }
+    }
+
+    return true;
+  } on OnError catch (e) {
+    _error = e;
+    debugPrint('ERROR PROVIDER update: ${e.source} | ${e.type} | ${e.message}');
+    return false;
+  } catch (e) {
+    _error = OnError(
+      type: 'provider',
+      message: e.toString(),
+      source: 'update',
+    );
+
+    debugPrint('ERROR PROVIDER update: $e');
+    return false;
+  } finally {
+    _cargandoData = false;
+    notifyListeners();
+  }
+}
+
+Future<bool> reinciarLocal() async {
     final db = await dbLocal.instancia;
     try {
       final ok = await deleteFloraLocal(db, null);
@@ -161,78 +182,101 @@ class EspeciesProvider with ChangeNotifier {
     } catch (e) {
       return false;
     }
-  }
+}
 
-  Future<void> eliminar(String nombreCientifico) async {
+Future<bool> eliminar(String nombreCientifico) async {
+  _error = null;
+  notifyListeners();
+
+  try {
     final destino = await _elegirBD();
 
     if (destino == 'remoto') {
-      final resp = await softDeleteFloraRemoto(nombreCientifico);
-
-      if (!resp.ok) {
-        _setMensaje(resp.message, esError: true);
-        return;
-      }
-
-      _especies.removeWhere((e) => e.nombreCientifico == nombreCientifico);
-
-      _setMensaje(resp.message);
+      await softDeleteFloraRemoto(nombreCientifico);
     } else {
       final db = await dbLocal.instancia;
-      //final ok = await deleteFloraLocal(db, nombreCientifico);
       final ok = await softDeleteLocal(db, nombreCientifico);
 
       if (!ok) {
-        _setMensaje("Error eliminando local", esError: true);
-        return;
+        throw OnError(
+          type: 'local',
+          message: 'Error eliminando local',
+          source: 'eliminar',
+        );
       }
-
-      _especies.removeWhere((e) => e.nombreCientifico == nombreCientifico);
-
-      _setMensaje("Eliminado localmente");
     }
 
+    _especies.removeWhere(
+      (e) => e.nombreCientifico == nombreCientifico,
+    );
+    _error = null;
+    return true;
+  } on OnError catch (e) {
+    _error = e;
+    debugPrint('ERROR PROVIDER eliminar: ${e.source} | ${e.type} | ${e.message}');
+    return false;
+  } catch (e) {
+    _error = OnError(
+      type: 'provider',
+      message: e.toString(),
+      source: 'eliminar',
+    );
+
+    debugPrint('ERROR PROVIDER eliminar: $e');
+    return false;
+  } finally {
     notifyListeners();
   }
+}
 
-  Future<ApiResponse<void>> _insertarRemoto(
-    Especie nueva,
-    List<Uint8List> bytesList,
-  ) async {
-    final List<ImagenTemp> editado = [];
+Future<void> _insertarRemoto(
+  Especie nueva,
+  List<Uint8List> bytesList,
+) async {
+  final List<ImagenTemp> editado = [];
 
-    try {
-      for (final bytes in bytesList) {
-        final url = await insertImagen(bytes, nueva.nombreCientifico);
+  try {
+    for (final bytes in bytesList) {
+      final url = await insertImagen(bytes, nueva.nombreCientifico);
 
-        if (url.isEmpty) {
-          throw Exception('Upload fallido: URL vacía');
-        }
-
-        editado.add(ImagenTemp(urlFoto: url, estado: 'comprobado'));
-      }
-
-      final especieConImagenes = nueva.copyWith(imagenes: editado);
-
-      final resp = await insertFloraRemoto(especieConImagenes.toJson());
-
-      if (!resp.ok) {
-        throw Exception(resp.message);
-      }
-
-      _especies.add(especieConImagenes);
-
-      return resp;
-    } catch (e) {
-      for (final img in editado) {
-        if (img.urlFoto.isNotEmpty) {
-          await deleteImagen(img.urlFoto);
-        }
-      }
-
-      return ApiResponse(ok: false, message: e.toString());
+      editado.add(
+        ImagenTemp(
+          urlFoto: url,
+          estado: 'comprobado',
+        ),
+      );
     }
+
+    final especieConImagenes = nueva.copyWith(imagenes: editado);
+
+    await insertAPI(
+      especieConImagenes.toJson(),
+      'insertflora',
+    );
+
+    _especies.add(especieConImagenes);
+  } on OnError {
+    for (final img in editado) {
+      if (img.urlFoto.isNotEmpty) {
+        await deleteImagen(img.urlFoto);
+      }
+    }
+
+    rethrow;
+  } catch (e) {
+    for (final img in editado) {
+      if (img.urlFoto.isNotEmpty) {
+        await deleteImagen(img.urlFoto);
+      }
+    }
+
+    throw OnError(
+      type: 'provider',
+      message: e.toString(),
+      source: '_insertarRemoto',
+    );
   }
+}
 
   Future<void> _insertarLocal(Especie nueva) async {
     final db = await dbLocal.instancia;
@@ -240,20 +284,21 @@ class EspeciesProvider with ChangeNotifier {
     if (ok) await cargarFlora();
   }
 
-  Future<ApiResponse<void>> _updateRemoto(
+  Future<void> _updateRemoto(
     Especie nueva,
     List<Uint8List> bytesList,
   ) async {
     final editado = <ImagenTemp>[];
-
-    try {
       for (final bytes in bytesList) {
         final url = await insertImagen(bytes, nueva.nombreCientifico);
 
         if (url.isEmpty) {
-          throw Exception('Upload fallido');
+          throw OnError(
+            type: 'image',
+            message: 'Error subiendo la imagen',
+            source: '_updateRemoto',
+          );
         }
-
         editado.add(ImagenTemp(urlFoto: url, estado: 'comprobado'));
       }
 
@@ -266,11 +311,7 @@ class EspeciesProvider with ChangeNotifier {
         imagenes: [...imagenesValidas, ...editado],
       );
 
-      final resp = await updateFloraRemoto(especieConUrls.toJson());
-
-      if (!resp.ok) {
-        throw Exception(resp.message);
-      }
+      await updateFloraRemoto(especieConUrls.toJson());
 
       final index = _especies.indexWhere(
         (e) => e.nombreCientifico == nueva.nombreCientifico,
@@ -279,17 +320,7 @@ class EspeciesProvider with ChangeNotifier {
       if (index != -1) {
         _especies[index] = especieConUrls;
       }
-
-      return resp;
-    } catch (e) {
-      for (final img in editado) {
-        if (img.urlFoto.isNotEmpty) {
-          await deleteImagen(img.urlFoto);
-        }
-      }
-
-      return ApiResponse(ok: false, message: e.toString());
-    }
+      notifyListeners();
   }
 
   Future<bool> _updateLocal(Especie nueva) async {
@@ -312,7 +343,7 @@ class EspeciesProvider with ChangeNotifier {
   static bool esUno(int? v) => v == 1;
 
   final Map<String, bool Function(Especie)> _mapaFiltros = {
-    'Da sombra': (e) => esUno(e.daSombra),
+    'daSombra': (e) => esUno(e.daSombra),
     'Flor distintiva': (e) => tieneValor(e.florDistintiva),
     'Fruta distintiva': (e) => tieneValor(e.frutaDistintiva),
     'Pionero': (e) => esUno(e.pionero),
@@ -322,6 +353,9 @@ class EspeciesProvider with ChangeNotifier {
     'Ambiente seco': (e) => tieneValor(e.ambiente),
     'Ambiente húmedo': (e) => tieneValor(e.ambiente),
     'Ambiente mixto': (e) => tieneValor(e.ambiente),
+    'establecido al Sol': (e) => tieneValor(e.establecidoSolSombra),
+    'establecido a Sombra': (e) => tieneValor(e.establecidoSolSombra),
+    'establecido a ambos': (e) => tieneValor(e.establecidoSolSombra),
     'Hospeda monos':
         (e) => e.huespedes?.toLowerCase().contains('mono') ?? false,
     'Hospeda aves': (e) => e.huespedes?.toLowerCase().contains('ave') ?? false,

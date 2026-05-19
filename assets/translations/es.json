@@ -23,6 +23,7 @@
   "mensajes": {
     "usuarioActualizado": "Usuario Actualizado",
     "delete": "Eliminado",
+    "nice":"Accion completada",
     "error": "Accion No Completada",
     "apoyo": "Apoya Nuestro Trabajo"
   },
@@ -53,7 +54,9 @@
     "sincronizar": "Sincronizar",
     "limpiar": "Limpiar",
     "rol":"Solicitudes de Rol",
-    "cerrar": "cerrar"
+    "cerrar": "cerrar",
+    "crecimiento": "Crecimiento",
+    "fecha":"Seleccionar Fecha"
   },
   "texts": {
     "textsHome": {
@@ -153,11 +156,19 @@
         "texto2": "El cercano Laboratorio de Achotines es el único lugar en el mundo donde el atún de aleta amarilla ha estado desovando en cautiverio desde 1996. Se encuentra junto a uno de los bosques costeros secos intactos más grandes de Azuero. El laboratorio de Achotines recibe constantemente grupos de estudiantes y científicos visitantes y tiene alojamiento para investigadores disponible.",
         "texto3": "En 2003, PRORENA (Proyecto de Reforestación de Especies Nativas), una filial del Instituto Smithsonian de Investigaciones Tropicales STRI, inició parcelas de prueba de especies de árboles nativos. Estas parcelas brindan información valiosa sobre las posibilidades de reforestación para fines específicos en el difícil entorno de Azuero y parcelas de demostración para las partes interesadas en la reforestación. Investigadores de Yale y PRORENA los han utilizado como recurso para investigaciones sobre sucesión secundaria y secuestro de carbono.",
         "texto4": "A medida que continuamos trabajando con propietarios privados para reforestar áreas estratégicas de Azuero, estos nuevos sitios de reforestación sirven como maravillosos sitios de estudio para investigar los impactos de la reforestación en la vida silvestre y la productividad de las tierras de cultivo."
+      },
+      "artesanos": {
+        "titulo": "Eco Artesanas",
+        "texto": "El grupo de Eco Artisanas reúne a mujeres y niñas de comunidades rurales de la península de Azuero para crear productos artesanales con materiales sostenibles de origen local, que luego venden para mantener a sus familias y comunidades. Las comunidades donde viven las Eco Artisanas están vinculadas a nuestro corredor ecológico, el cual ha sido cartografiado para reforestar estratégicamente y unificar zonas de bosque seco tropical, fortaleciendo así la resiliencia de la zona frente a los efectos del cambio climático."
       }
     },
     "ecoguias": {
       "titulo": "ECO-GUIAS",
-      "texto": "En esta página encontrará guías para impulsar su viaje ecológico en Azuero. Estas guías sirven como punto de partida para los detalles de la vida sostenible en la península. ¿Buscas poner una cerca viva? Consulte nuestra guía sobre cercas vivas para saber por dónde empezar. ¿Quieres saber cómo reducir los residuos? Consulta la Ecoguía Reducir, Reutilizar, Reciclar. ¡Estas guías ecológicas son documentos vivos y dependemos de los comentarios de la comunidad para mantenerlas en la mejor forma!"
+      "texto": "En esta página encontrará guías para impulsar su viaje ecológico en Azuero. Estas guías sirven como punto de partida para los detalles de la vida sostenible en la península. ¿Buscas poner una cerca viva? Consulte nuestra guía sobre cercas vivas para saber por dónde empezar. ¿Quieres saber cómo reducir los residuos? Consulta la Ecoguía Reducir, Reutilizar, Reciclar. ¡Estas guías ecológicas son documentos vivos y dependemos de los comentarios de la comunidad para mantenerlas en la mejor forma!",
+      "pdfs": {
+        "firecontrol": "https://c127f5b3-6ab9-4e4a-ae3e-345e3b233d42.filesusr.com/ugd/e6eb07_1fd529ccb36744f7a1f475f2fa11796d.pdf",
+        "riparianzone": "https://c127f5b3-6ab9-4e4a-ae3e-345e3b233d42.filesusr.com/ugd/e6eb07_1545df607f09436b9a20e032a2332c8f.pdf"
+      }
     },
     "doc_sinc": {
   "titulo": "¿Cómo funciona la sincronización?",
@@ -226,6 +237,8 @@
     "titulo": "ESPECIES CATEGORIZADAS",
     "lectura": "Modo lectura",
     "nuevoRegistro": "Agregar especie",
+    "nuevoSiembra": "Agregar siembra",
+    "nuevoTerreno": "Agregar Terreno",
     "sinEspecies": "No se encontraron especies",
     "nuevaEspecie": "Agregar nueva especie",
     "editarEspecie": "Editar especie",
@@ -251,10 +264,15 @@
       "Abeja": "Abeja",
       "Mixto": "Mixto",
       "ambiente": "Ambiente",
+      "cobertura": "Cobertura",
+      "cob": "area de cobertura en M2",
+      "establecidoSolSombra": "establecido a",
+      "Sol": "Sol",
+      "Sombra": "Sombra",
       "Seco": "Seco",
       "Humedo": "Humedo",
       "estrato": "Estrato",
-      "Ubicacion": "Ubicación",
+      "Ubicacion": "Origen",
       "Imagenes": "Imagen",
       "Utilidad": {
         "titulo": "Utilidad",
@@ -277,6 +295,32 @@
       "regventas": "Registro ventas",
       "regsiembra": "Registro siembra",
       "terrenos": "Terrenos alquilados"
+    },
+    "capas": {
+      "siembra": "siembra",
+      "terrenos": "Terrenos alquilados",
+      "centros": "centros educativos"
+    },
+    "alquiler": {
+      "titulo":"Terrenos de Alquiler",
+      "dueño": "dueño",
+      "tamaño":"Tamaño M2",
+      "fechaInicio":"Fecha de inicio de alquiler",
+      "fechaFinal": "Fecha de fin del alquiler",
+      "coordenadas": "Ingrese las coordenadas"
+    },
+    "siembra": {
+      "titulo": "Nueva siembra",
+      "usuario":"Usuario",
+      "distrito": "distrito",
+      "cantidad": "Cantidad",
+      "ubicacion": "ubicacion"
+    },
+    "crecimiento": {
+      "seguimiento": "Seguimiento Crecimiento",
+      "altura": "promedio de altura",
+      "salud": "% Salud rango 0 a 100",
+      "afeccion": "tipo de afeccion plaga, hongo, etc"
     }
   },
   "mapa": {
@@ -293,4 +337,4 @@
       "descripcion": "Responsable de la gestión y ejecución de proyectos ambientales comunitarios."
     }
   }
-}
+} 

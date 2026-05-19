@@ -98,7 +98,7 @@ Widget campoUtilidades({
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: item.utilidad.isEmpty ? null : item.utilidad,
+                  initialValue: item.utilidad.isEmpty ? null : item.utilidad,
                   decoration: InputDecoration(labelText: label),
                   items:
                       opciones.entries
