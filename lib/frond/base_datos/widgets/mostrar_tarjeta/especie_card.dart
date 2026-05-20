@@ -40,11 +40,7 @@ class EspecieCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
+                   Text(
                           especie.nombreCientifico,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -53,50 +49,41 @@ class EspecieCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
+                  SizedBox(height: 5,),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: Estilos.paddingPequeno,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Estilos.verdeClaro,
-                          borderRadius: BorderRadius.circular(
-                            Estilos.radioBorde,
+                            color: Estilos.verdeClaro,
+                            borderRadius: BorderRadius.circular(Estilos.radioBorde),
+                        ),
+                        child:Text(context.tr('bdInterfaz.insert.Ncomun'), style: TextStyle(
+                            fontSize: Estilos.textoMedio,
                           ),
-                        ),
-                        child:
-                            (especie.ambiente != null)
-                                ? Text(
-                                  especie.ambiente!,
-                                  style: const TextStyle(
-                                    fontSize: Estilos.textoPequeno,
-                                    color: Estilos.verdeOscuro,
-                                  ),
-                                )
-                                : const SizedBox.shrink(),
+                        )
                       ),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(context.tr('bdInterfaz.insert.Ncomun')),
+                      SizedBox(width: 10,),
                       Expanded(
-                        // ocupa el ancho restante
-                        child: ListView.builder(
-                          shrinkWrap:
-                              true, // solo ocupa el espacio que necesita
-                          physics:
-                              const ClampingScrollPhysics(), // scroll dentro del Row
-                          itemCount: especie.nombresComunes.length,
-                          itemBuilder:
-                              (_, i) =>
-                                  Text(especie.nombresComunes[i].nombreComun),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: especie.nombresComunes
+                              .take(2)
+                              .map((n) => Text(
+                                    n.nombreComun,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ))
+                              .toList(),
                         ),
                       ),
                     ],
                   ),
+                  SizedBox(height: 5,),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: Estilos.paddingPequeno,
@@ -117,6 +104,39 @@ class EspecieCard extends StatelessWidget {
                             )
                             : const SizedBox.shrink(),
                   ),
+                  SizedBox(height: 5,),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Estilos.paddingPequeno,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                            color: Estilos.verdeClaro,
+                            borderRadius: BorderRadius.circular(Estilos.radioBorde),
+                        ),
+                        child: Text(context.tr('bdInterfaz.insert.Utilidad.titulo'), style: TextStyle(
+                            fontSize: Estilos.textoMedio,
+                          )
+                        ),
+                      ),
+                      SizedBox(width: 5,),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: especie.utilidades
+                              .take(2)
+                              .map((u) => Text(
+                                    u.utilidad,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                      ]),
                 ],
               ),
             ),
@@ -126,36 +146,46 @@ class EspecieCard extends StatelessWidget {
     );
   }
 
-  Widget _imagenWidget(ImagenTemp? img) {
-    if (img == null) {
-      return const Center(child: Icon(Icons.broken_image, size: 50));
-    }
-    //si la imagen aun la tengo en local muestro los bytes
-    if (img.bytes != null) {
-      return Image.memory(
-        img.bytes!,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      );
-    }
-    //si la imagen esta en el servidor uso la direccion
-    if (img.urlFoto.isNotEmpty) {
-      debugPrint('Intentando cargar imagen: ${img.urlFoto}');
-      return CachedNetworkImage(
-        imageUrl: img.urlFoto,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        progressIndicatorBuilder:
-            (_, _, _) => const Center(child: CircularProgressIndicator()),
-        errorWidget:
-            (_, _, _) => Image.asset(
-              'assets/placeholder.png',
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-      );
-    }
-
-    return const Center(child: Icon(Icons.broken_image, size: 50));
+Widget _imagenWidget(ImagenTemp? img) {
+  if (img == null) {
+    return const Center(
+      child: Icon(Icons.broken_image, size: 50),
+    );
   }
+
+  // Imagen local temporal
+  if (img.bytes != null) {
+    return Image.memory(
+      img.bytes!,
+      width: double.infinity,
+      fit: BoxFit.cover,
+    );
+  }
+
+  // Imagen desde servidor
+  if (img.urlFoto.isNotEmpty) {
+    debugPrint('Intentando cargar imagen: ${img.urlFoto}');
+
+    return CachedNetworkImage(
+      imageUrl: img.urlFoto,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      progressIndicatorBuilder:
+          (_, _, _) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+      errorWidget:
+          (_, _, _) => const Center(
+            child: Icon(Icons.broken_image, size: 50),
+          ),
+    );
+  }
+
+  // Cuando no hay imagen
+  return Image.asset(
+    'assets/images/logo.png',
+    width: double.infinity,
+    fit: BoxFit.cover,
+  );
+}
 }

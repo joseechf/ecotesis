@@ -3,6 +3,7 @@ import '../../../../domain/entities/especie_unificada.dart';
 import '../../../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../iureutilizables/reglas_rol.dart';
+import 'package:flutter/gestures.dart';
 
 class EspecieModal extends StatelessWidget {
   final Especie especie;
@@ -18,8 +19,6 @@ class EspecieModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imagenPrincipal =
-        especie.imagenes.isNotEmpty ? especie.imagenes.first : null;
 
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -34,26 +33,48 @@ class EspecieModal extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 height: 220,
-                margin: const EdgeInsets.only(bottom: Estilos.paddingMedio),
-                decoration: BoxDecoration(
+                width: double.maxFinite,
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(Estilos.radioBorde),
-                  color: Colors.grey[200],
-                  image:
-                      imagenPrincipal?.urlFoto.isNotEmpty == true
-                          ? DecorationImage(
-                            image: NetworkImage(imagenPrincipal!.urlFoto),
-                            fit: BoxFit.cover,
-                          )
-                          : null,
+                  child: especie.imagenes.isNotEmpty
+                      ? ScrollConfiguration(
+                          behavior: const MaterialScrollBehavior().copyWith(
+                          dragDevices: {
+                            PointerDeviceKind.touch,
+                            PointerDeviceKind.mouse,
+                            PointerDeviceKind.trackpad,
+                          },
+                        ),
+                        child: PageView.builder(
+                        controller: PageController(),
+                        scrollDirection: Axis.horizontal,
+                          itemCount: especie.imagenes.length,
+                          itemBuilder: (_, index) {
+                            final img = especie.imagenes[index];
+
+                            return Image.network(
+                              img.urlFoto,
+                               width: double.infinity,
+                               height: 220,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) => Container(
+                                color: Colors.grey[200],
+                                child: const Center(
+                                  child: Icon(Icons.broken_image, size: 50),
+                                ),
+                              ),
+                            );
+                          },
+                        ))
+                      : Container(
+                          color: Colors.grey[200],
+                          child: const Center(
+                            child: Icon(Icons.broken_image, size: 50),
+                          ),
+                        ),
                 ),
-                child:
-                    imagenPrincipal == null
-                        ? const Center(
-                          child: Icon(Icons.broken_image, size: 50),
-                        )
-                        : null,
               ),
 
               const SizedBox(height: Estilos.paddingMedio),
