@@ -44,41 +44,42 @@ class Especie {
     List<Utilidad> utilidades = const [],
     List<Origen> origenes = const [],
     List<ImagenTemp> imagenes = const [],
-  }) : assert(nombresComunes.length <= 50, 'Máximo 50 nombres comunes'),
-       assert(utilidades.length <= 20, 'Máximo 20 utilidades'),
-       assert(origenes.length <= 10, 'Máximo 10 orígenes'),
-       assert(imagenes.length <= 5, 'Máximo 5 imágenes'),
+  }) : assert(nombresComunes.length <= 50, 'Maximo de 50 nombres comunes'),
+       assert(utilidades.length <= 20, 'Maximo de 20 utilidades'),
+       assert(origenes.length <= 10, 'Maximo de 10 origenes'),
+       assert(imagenes.length <= 5, 'Maximo de 5 imagenes'),
        nombresComunes = List.unmodifiable(nombresComunes),
        utilidades = List.unmodifiable(utilidades),
        origenes = List.unmodifiable(origenes),
        imagenes = List.unmodifiable(imagenes);
 
   Especie copyWith({
-    int? daSombra,
-    String? florDistintiva,
-    String? frutaDistintiva,
-    int? saludSuelo,
-    String? huespedes,
-    String? formaCrecimiento,
-    int? pionero,
-    String? polinizador,
-    String? ambiente,
-    String? establecidoSolSombra,
-    int? nativoAmerica,
-    int? nativoPanama,
-    int? nativoAzuero,
-    String? estrato,
-    double? cobertura,
-    List<NombreComun>? nombresComunes,
-    List<Utilidad>? utilidades,
-    List<Origen>? origenes,
-    List<ImagenTemp>? imagenes,
-  }) {
+   int? daSombra,
+   String? florDistintiva,
+   String? frutaDistintiva,
+   int? saludSuelo,
+   String? huespedes,
+   String? formaCrecimiento,
+   int? pionero,
+   String? polinizador,
+   String? ambiente,
+   String? establecidoSolSombra,
+   int? nativoAmerica,
+   int? nativoPanama,
+   int? nativoAzuero,
+   String? estrato,
+   double? cobertura,
+
+   List<NombreComun>? nombresComunes,
+   List<Utilidad>? utilidades,
+   List<Origen>? origenes,
+   List<ImagenTemp>? imagenes,
+  }){
     return Especie(
       nombreCientifico: nombreCientifico,
       daSombra: daSombra ?? this.daSombra,
       florDistintiva: florDistintiva ?? this.florDistintiva,
-      frutaDistintiva: frutaDistintiva ?? this.frutaDistintiva,
+      frutaDistintiva: florDistintiva ?? this.frutaDistintiva,
       saludSuelo: saludSuelo ?? this.saludSuelo,
       huespedes: huespedes ?? this.huespedes,
       formaCrecimiento: formaCrecimiento ?? this.formaCrecimiento,
@@ -87,7 +88,7 @@ class Especie {
       ambiente: ambiente ?? this.ambiente,
       establecidoSolSombra: establecidoSolSombra ?? this.establecidoSolSombra,
       nativoAmerica: nativoAmerica ?? this.nativoAmerica,
-      nativoPanama: nativoPanama ?? this.nativoPanama,
+      nativoPanama: nativoAmerica ?? this.nativoAmerica,
       nativoAzuero: nativoAzuero ?? this.nativoAzuero,
       estrato: estrato ?? this.estrato,
       cobertura: cobertura ?? this.cobertura,
@@ -98,7 +99,7 @@ class Especie {
     );
   }
 
-  //  API (JSON)
+  // API (JSON)
 
   factory Especie.fromJson(Map<String, dynamic> json) {
     return Especie(
@@ -117,44 +118,35 @@ class Especie {
       nativoPanama: json['nativo_panama'] as int?,
       nativoAzuero: json['nativo_azuero'] as int?,
       estrato: json['estrato'] as String?,
-      //cobertura: (json['cobertura'] as num?)?.toDouble(),
-      cobertura: double.tryParse(json['cobertura']?.toString() ?? '') ?? 0,
+      cobertura: double.tryParse(json['cobertura']?.toString()?? '') ?? 0,
 
       nombresComunes:
-          (json['NombreComun'] as List<dynamic>?)
-              ?.map(
-                (e) => NombreComun(nombreComun: e['nombre_comun'] as String),
-              )
-              .toList() ??
-          const [],
-
-      utilidades:
+        (json['NombreComun'] as List<dynamic>?)
+          ?.map(
+            (e) => NombreComun(nombreComun: e['nombre_comun'] as String),
+          ).toList() ?? const [],
+      utilidades: 
           (json['Utilidad'] as List<dynamic>?)
-              ?.map((e) => Utilidad(utilidad: e['utilidad'] as String))
-              .toList() ??
-          const [],
-
-      origenes:
+            ?.map((e) => Utilidad(utilidad: e['utilidad'] as String),)
+            .toList() ?? const [],
+      origenes: 
           (json['Origen'] as List<dynamic>?)
-              ?.map((e) => Origen(origen: e['origen'] as String))
-              .toList() ??
-          const [],
-
-      imagenes:
+            ?.map((e) => Origen(origen: e['origen'] as String),)
+            .toList() ?? const [],
+      imagenes: 
           (json['Imagen'] as List<dynamic>?)
-              ?.map(
-                (e) => ImagenTemp(
-                  urlFoto: e['url_foto'] as String,
-                  estado: e['estado'] as String,
-                ),
+              ?.map((e)=> ImagenTemp(
+                urlFoto: e['url_foto'] as String,
+                estado: e['estado'] as String,
+              ),
               )
               .toList() ??
-          const [],
+              const [],
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
+  Map<String,dynamic>toJson(){
+    return{
       'nombre_cientifico': nombreCientifico,
       'da_sombra': daSombra,
       'flor_distintiva': florDistintiva,
@@ -172,58 +164,50 @@ class Especie {
       'estrato': estrato,
       'cobertura': cobertura,
 
-      'NombreComun':
-          nombresComunes.map((e) => {'nombre_comun': e.nombreComun}).toList(),
-
+      'NombreComun': nombresComunes.map((e) => {'nombre_comun': e.nombreComun}).toList(),
       'Utilidad': utilidades.map((e) => {'utilidad': e.utilidad}).toList(),
-
       'Origen': origenes.map((e) => {'origen': e.origen}).toList(),
-
-      'Imagen':
-          imagenes
-              .map((e) => {'url_foto': e.urlFoto, 'estado': e.estado})
-              .toList(),
+      'Imagen': imagenes.map((e) => {'url_foto': e.urlFoto, 'estado': e.estado}).toList(),
     };
   }
 
-  //  SQLITE
+  // SQLITE
+// contruye la especie base desde la tabla principal
+// las listas se inyectan ya reconstruidas desde llamadas_flora
+factory Especie.fromDbMap({
+  required Map<String,dynamic> row,
+  List<NombreComun> nombresComunes = const [],
+  List<Utilidad> utilidades = const [],
+  List<Origen> origenes = const [],
+  List<ImagenTemp> imagenes = const [],
+}){
+  return Especie(
+    nombreCientifico: row['nombre_cientifico'] as String,
+    daSombra: row['da_sombra'] as int?,
+    florDistintiva: row['flor_distintiva'] as String?,
+    frutaDistintiva: row['fruta_distintiva'] as String?,
+    saludSuelo: row['salud_suelo'] as int?,
+    huespedes: row['huespedes'] as String?,
+    formaCrecimiento: row['forma_crecimiento'] as String?,
+    pionero: row['pionero'] as int?,
+    polinizador: row['polinizador'] as String?,
+    ambiente: row['ambiente'] as String?,
+    establecidoSolSombra: row['establecido_sol_sombra'] as String?,
+    nativoAmerica: row['nativo_america'] as int?,
+    nativoPanama: row['nativo_panama'] as int?,
+    nativoAzuero: row['nativo_azuero'] as int?,
+    estrato: row['estrato'] as String?,
+    cobertura: row['cobertura'] as double?,
+    nombresComunes: nombresComunes,
+    utilidades: utilidades,
+    origenes: origenes,
+    imagenes: imagenes,
+  );
+}
 
-  // Construye la especie base desde la tabla principal.
-  // Las listas se inyectan ya reconstruidas desde llamadas_flora
-  factory Especie.fromDbMap({
-    required Map<String, dynamic> row,
-    List<NombreComun> nombresComunes = const [],
-    List<Utilidad> utilidades = const [],
-    List<Origen> origenes = const [],
-    List<ImagenTemp> imagenes = const [],
-  }) {
-    return Especie(
-      nombreCientifico: row['nombre_cientifico'] as String,
-      daSombra: row['da_sombra'] as int?,
-      florDistintiva: row['flor_distintiva'] as String?,
-      frutaDistintiva: row['fruta_distintiva'] as String?,
-      saludSuelo: row['salud_suelo'] as int?,
-      huespedes: row['huespedes'] as String?,
-      formaCrecimiento: row['forma_crecimiento'] as String?,
-      pionero: row['pionero'] as int?,
-      polinizador: row['polinizador'] as String?,
-      ambiente: row['ambiente'] as String?,
-      establecidoSolSombra: row['establecidoSolSombra'] as String?,
-      nativoAmerica: row['nativo_america'] as int?,
-      nativoPanama: row['nativo_panama'] as int?,
-      nativoAzuero: row['nativo_azuero'] as int?,
-      estrato: row['estrato'] as String?,
-      cobertura: row['cobertura'] as double?,
-      nombresComunes: nombresComunes,
-      utilidades: utilidades,
-      origenes: origenes,
-      imagenes: imagenes,
-    );
-  }
-
-  // Solo guarda la parte raíz (tabla Flora)
-  Map<String, dynamic> toDbRow() {
-    return {
+  // solo guarda la parte raiz (tabla flora)
+  Map<String, dynamic> toDbRow(){
+    return{
       'nombre_cientifico': nombreCientifico,
       'da_sombra': daSombra,
       'flor_distintiva': florDistintiva,
@@ -242,4 +226,5 @@ class Especie {
       'cobertura': cobertura,
     };
   }
+
 }

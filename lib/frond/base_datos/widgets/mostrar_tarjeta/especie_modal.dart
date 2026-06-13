@@ -9,23 +9,22 @@ class EspecieModal extends StatelessWidget {
   final Especie especie;
   final VoidCallback onEditar;
   final VoidCallback onEliminar;
-
+  final bool tieneInternet;
   const EspecieModal({
     super.key,
     required this.especie,
     required this.onEditar,
     required this.onEliminar,
+    required this.tieneInternet,
   });
 
-  @override
+  @override  
   Widget build(BuildContext context) {
-
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
       ),
       title: Text(especie.nombreCientifico),
-
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
         child: SingleChildScrollView(
@@ -33,240 +32,216 @@ class EspecieModal extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 220,
+              if(tieneInternet) SizedBox(
+                height: 300,
                 width: double.maxFinite,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(Estilos.radioBorde),
                   child: especie.imagenes.isNotEmpty
-                      ? ScrollConfiguration(
-                          behavior: const MaterialScrollBehavior().copyWith(
-                          dragDevices: {
-                            PointerDeviceKind.touch,
-                            PointerDeviceKind.mouse,
-                            PointerDeviceKind.trackpad,
-                          },
-                        ),
-                        child: PageView.builder(
+                  ? ScrollConfiguration(
+                      behavior: const MaterialScrollBehavior().copyWith(
+                        dragDevices: {
+                          PointerDeviceKind.touch,
+                          PointerDeviceKind.mouse,
+                          PointerDeviceKind.trackpad,
+                        },
+                      ), 
+                      child: PageView.builder(
                         controller: PageController(),
                         scrollDirection: Axis.horizontal,
                           itemCount: especie.imagenes.length,
-                          itemBuilder: (_, index) {
+                          itemBuilder: (_, index){
                             final img = especie.imagenes[index];
-
                             return Image.network(
                               img.urlFoto,
-                               width: double.infinity,
-                               height: 220,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) => Container(
+                              width: double.infinity,
+                              height: 300,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_,_,_) => Container(
                                 color: Colors.grey[200],
                                 child: const Center(
-                                  child: Icon(Icons.broken_image, size: 50),
+                                  child: Icon(Icons.broken_image, size: 50,),
                                 ),
                               ),
                             );
                           },
-                        ))
-                      : Container(
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: Icon(Icons.broken_image, size: 50),
-                          ),
-                        ),
+                      )
+                    ) : Container(
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: Icon(Icons.broken_image, size: 50,),
+                      ),
+                    ),
                 ),
               ),
-
-              const SizedBox(height: Estilos.paddingMedio),
-
+              const SizedBox(height: Estilos.paddingMedio,),
               // Nombres comunes
-              if (especie.nombresComunes.isNotEmpty)
+              if(especie.nombresComunes.isNotEmpty)
                 _fila(
                   Icons.label,
                   context.tr('bdInterfaz.insert.Ncomun'),
                   especie.nombresComunes.map((n) => n.nombreComun).join(', '),
                 ),
-
               // da sombra
-              if (especie.daSombra != null)
+              if(especie.daSombra != null)
                 _fila(
                   Icons.grass,
                   context.tr('bdInterfaz.insert.daSombra'),
                   especie.daSombra == 1 ? 'Sí' : 'No',
                 ),
-
               // Flor distintiva
-              if (especie.florDistintiva != null &&
-                  especie.florDistintiva != '')
+              if(especie.florDistintiva != null && especie.florDistintiva != '')
                 _fila(
                   Icons.local_florist,
                   context.tr('bdInterfaz.insert.florDistintiva'),
                   especie.florDistintiva!,
                 ),
-
               // Fruta distintiva
-              if (especie.frutaDistintiva != null &&
-                  especie.frutaDistintiva != '')
+              if(especie.frutaDistintiva != null && especie.frutaDistintiva != '')
                 _fila(
                   Icons.eco,
                   context.tr('bdInterfaz.insert.frutaDistintiva'),
                   especie.frutaDistintiva!,
                 ),
-
               // Salud del suelo
-              if (especie.saludSuelo != null)
+              if(especie.saludSuelo != null)
                 _fila(
                   Icons.grass,
                   context.tr('bdInterfaz.insert.saludSuelo'),
                   especie.saludSuelo == 1 ? 'Sí' : 'No',
                 ),
-
               // Huéspedes
-              if (especie.huespedes != null && especie.huespedes != '')
+              if(especie.huespedes != null && especie.huespedes != '')
                 _fila(
                   Icons.bug_report,
                   context.tr('bdInterfaz.insert.huespedes'),
                   especie.huespedes!,
-                ),
-
+                ), 
               // Forma de crecimiento
-              if (especie.formaCrecimiento != null &&
-                  especie.formaCrecimiento != '')
+              if(especie.formaCrecimiento != null && especie.formaCrecimiento != '')
                 _fila(
                   Icons.trending_up,
                   context.tr('bdInterfaz.insert.formaCrecimiento'),
                   especie.formaCrecimiento!,
-                ),
-
-              // ¿Es pionera?
-              if (especie.pionero != null)
+                ), 
+              // Pionero
+              if(especie.formaCrecimiento != null && especie.formaCrecimiento != '')
                 _fila(
                   Icons.star,
                   context.tr('bdInterfaz.insert.pionero'),
                   especie.pionero == 1 ? 'Sí' : 'No',
-                ),
-
+                ), 
               // Polinizador
-              if (especie.polinizador != null && especie.polinizador != '')
+              if(especie.polinizador != null && especie.polinizador != '')
                 _fila(
                   Icons.emoji_nature,
                   context.tr('bdInterfaz.insert.polinizador'),
                   especie.polinizador!,
                 ),
-
               // Ambiente
-              if (especie.ambiente != null && especie.ambiente != '')
+              if(especie.ambiente != null && especie.ambiente != '')
                 _fila(
                   Icons.terrain,
                   context.tr('bdInterfaz.insert.ambiente'),
                   especie.ambiente!,
                 ),
-              //establecidoSolSombra
-              if (especie.establecidoSolSombra != null &&
-                  especie.establecidoSolSombra != '')
+              // establecidoSolSombra
+              if(especie.establecidoSolSombra != null && especie.establecidoSolSombra != '')
                 _fila(
                   Icons.terrain,
                   context.tr('bdInterfaz.insert.establecidoSolSombra'),
                   especie.establecidoSolSombra!,
                 ),
               // Nativo de América
-              if (especie.nativoAmerica != null)
+              if(especie.nativoAmerica != null)
                 _fila(
                   Icons.location_on,
                   context.tr('bdInterfaz.insert.nativoAmericano'),
                   especie.nativoAmerica == 1 ? 'Sí' : 'No',
                 ),
-
               // Nativo de Panamá
-              if (especie.nativoPanama != null)
+              if(especie.nativoPanama != null)
                 _fila(
                   Icons.location_on,
                   context.tr('bdInterfaz.insert.nativoPanama'),
                   especie.nativoPanama == 1 ? 'Sí' : 'No',
                 ),
-
               // Nativo de Azuero
-              if (especie.nativoAzuero != null)
+              if(especie.nativoAzuero != null)
                 _fila(
                   Icons.location_on,
                   context.tr('bdInterfaz.insert.nativoAzuero'),
                   especie.nativoAzuero == 1 ? 'Sí' : 'No',
                 ),
-
               // Estrato
-              if (especie.estrato != null && especie.estrato != '')
+              if(especie.estrato != null && especie.estrato != '')
                 _fila(
                   Icons.layers,
                   context.tr('bdInterfaz.insert.estrato'),
                   especie.estrato!,
                 ),
-
               // Cobertura
-              if (especie.cobertura != 0 && especie.cobertura != null)
+              if(especie.cobertura != null && especie.cobertura != 0)
                 _fila(
                   Icons.layers,
                   context.tr('bdInterfaz.insert.cobertura'),
                   especie.cobertura.toString(),
                 ),
-
               // Utilidades
-              if (especie.utilidades.isNotEmpty)
+              if(especie.utilidades.isNotEmpty)
                 _fila(
                   Icons.build,
                   context.tr('bdInterfaz.insert.Utilidad.titulo'),
                   especie.utilidades.map((u) => u.utilidad).join(', '),
                 ),
-
               // Orígenes
-              if (especie.origenes.isNotEmpty)
+              if(especie.origenes.isNotEmpty)
                 _fila(
-                  Icons.location_on,
+                  Icons.build,
                   context.tr('bdInterfaz.insert.Ubicacion'),
-                  especie.origenes.map((o) => o.origen).join(', '),
+                  especie.origenes.map((u) => u.origen).join(', '),
                 ),
             ],
           ),
         ),
       ),
 
-      actions:
-          tieneAlgunoDeLosRoles(context, ['administrador', 'cientifico'])
-              ? [
-                ElevatedButton.icon(
-                  onPressed: onEditar,
-                  icon: const Icon(Icons.edit),
-                  label: Text(context.tr('buttons.editar')),
+      actions: tieneAlgunoDeLosRoles(context, ['administrador','cientifico'])
+        ? [
+          ElevatedButton.icon(
+            onPressed: onEditar, 
+            icon: const Icon(Icons.edit),
+            label: Text(context.tr('buttons.editar')),
+          ),
+          ElevatedButton.icon(
+            onPressed: onEliminar, 
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.delete),
+            label: Text(context.tr('buttons.delete')),
+          ),
+        ]: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.visibility,
+                color: Estilos.grisMedio,
+                size: 16,
+              ),
+              const SizedBox(width: 3,),
+              Text(
+                context.tr('bdInterfaz.lectura'),
+                style: const TextStyle(
+                  color: Estilos.grisMedio,
+                  fontSize: Estilos.textoPequeno,
                 ),
-                ElevatedButton.icon(
-                  onPressed: onEliminar,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                  ),
-                  icon: const Icon(Icons.delete),
-                  label: Text(context.tr('buttons.delete')),
-                ),
-              ]
-              : [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.visibility,
-                      color: Estilos.grisMedio,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      context.tr('bdInterfaz.lectura'),
-                      style: const TextStyle(
-                        color: Estilos.grisMedio,
-                        fontSize: Estilos.textoPequeno,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              )
+            ],
+          )
+        ], 
     );
   }
 
@@ -276,29 +251,27 @@ class EspecieModal extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icono, size: 20, color: Estilos.verdeOscuro),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  titulo,
-                  style: const TextStyle(
-                    fontSize: Estilos.textoPequeno,
-                    color: Color.fromARGB(255, 158, 158, 158),
-                  ),
+          Icon(icono, size: 20, color: Estilos.verdeOscuro,),
+          const SizedBox(width: 8,),
+          Expanded(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                titulo,
+                style: const TextStyle(
+                  fontSize: Estilos.textoPequeno,
+                  color: Color.fromARGB(255, 158, 158, 158),
                 ),
-                Text(
-                  valor,
-                  style: const TextStyle(
-                    fontSize: Estilos.textoGrande,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
+              ),
+              Text(
+                valor,
+                style: const TextStyle(
+                  fontSize: Estilos.textoGrande,
+                  color: Color.fromARGB(255, 0, 0, 0),
                 ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          ))
         ],
       ),
     );

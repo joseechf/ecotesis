@@ -13,11 +13,11 @@ class UsuarioSolicitudModel {
     required this.createdAt,
   });
 
-  factory UsuarioSolicitudModel.fromMap(Map<String, dynamic> data) {
+  factory UsuarioSolicitudModel.fromMap(Map<String, dynamic> data){
     return UsuarioSolicitudModel(
-      id: data['id'] as String,
-      email: data['email'] as String,
-      rolSolicitado: data['rol_solicitado'] as String,
+      id: data['id'] as String, 
+      email: data['email'] as String, 
+      rolSolicitado: data['rol_solicitado'] as String, 
       estadoRol: data['estado_rol'] as String,
       createdAt: DateTime.parse(data['created_at'] as String),
     );

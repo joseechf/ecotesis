@@ -3,9 +3,8 @@ import '../../../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 Future<Set<String>?> mostrarFiltroDialog(
-  BuildContext context,
-  Set<String> filtrosActuales,
-) async {
+  BuildContext context, Set<String> filtrosActuales,
+)async {
   final Map<String, List<String>> categorias = {
     'Características': [
       'Da sombra',
@@ -28,96 +27,81 @@ Future<Set<String>?> mostrarFiltroDialog(
       'Hospeda monos',
       'Hospeda aves',
       'Polinizador abeja',
-      'Polinizador mariposa',
-      'Polinizador mixto',
+      'Polinizar mariposa',
+      'Polinizar mixto',
     ],
-    'Origen': ['Nativa América', 'Nativa Panamá', 'Nativa Azuero'],
-    'Utilidad': ['Frutal', 'Maderal', 'Ganado', 'Medicinal'],
+    'Origen': ['Nativa América','Nativa Panamá','Nativa Azuero'],
+    'Utilidad': ['Frutal','Maderal','Ganado','Medicinal'],
   };
-
   final Set<String> seleccionados = {...filtrosActuales};
 
   return await showDialog<Set<String>>(
     context: context,
-    builder:
-        (_) => StatefulBuilder(
-          builder: (context, setState) {
-            return Dialog(
-              backgroundColor: Estilos.blanco,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(Estilos.paddingGrande),
-                constraints: const BoxConstraints(maxHeight: 600),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.tr('buttons.filtrar'),
-                      style: const TextStyle(
-                        fontSize: Estilos.textoMuyGrande,
-                        fontFamily: Estilos.tipografia,
-                        fontWeight: FontWeight.bold,
-                        color: Estilos.verdeOscuro,
-                      ),
-                    ),
-
-                    const SizedBox(height: Estilos.paddingMedio),
-
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children:
-                              categorias.entries.map((entry) {
-                                return _SeccionFiltro(
-                                  titulo: entry.key,
-                                  opciones: entry.value,
-                                  seleccionados: seleccionados,
-                                  onChanged: (valor, activo) {
-                                    setState(() {
-                                      if (activo) {
-                                        seleccionados.add(valor);
-                                      } else {
-                                        seleccionados.remove(valor);
-                                      }
-                                    });
-                                  },
-                                );
-                              }).toList(),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: Estilos.paddingMedio),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            seleccionados.clear();
-                            setState(() {});
-                          },
-                          child: Text(
-                            context.tr('buttons.limpiar'),
-                            style: TextStyle(color: Estilos.grisMedio),
-                          ),
-                        ),
-
-                        ElevatedButton(
-                          onPressed:
-                              () => Navigator.pop(context, seleccionados),
-                          child: Text(context.tr('buttons.filtrar')),
-                        ),
-                      ],
-                    ),
-                  ],
+    builder: (_)=> StatefulBuilder(builder: (context,setState){
+      return Dialog(
+        backgroundColor: Estilos.blanco,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(Estilos.paddingGrande),
+          constraints: const BoxConstraints(maxHeight: 600),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.tr('buttons.filtrar'),
+                style: const TextStyle(
+                  fontSize: Estilos.textoMuyGrande,
+                  fontFamily: Estilos.tipografia,
+                  fontWeight: FontWeight.bold,
+                  color: Estilos.verdeOscuro,
                 ),
               ),
-            );
-          },
+              const SizedBox(height: Estilos.paddingMedio,),
+              Expanded(child: SingleChildScrollView(
+                child: Column(
+                  children: categorias.entries.map((entry){
+                    return _SeccionFiltro(
+                      titulo: entry.key,
+                      opciones: entry.value,
+                      seleccionados: seleccionados,
+                      onChanged: (valor, activo){
+                        setState(() {
+                          if(activo){
+                            seleccionados.add(valor);
+                          }else {
+                            seleccionados.remove(valor);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              )),
+              const SizedBox(height: Estilos.paddingMedio,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(onPressed: (){
+                    seleccionados.clear();
+                    setState(() {
+                      
+                    },);
+                  }, child: Text(
+                    context.tr('buttons.limpiar'),
+                    style: TextStyle(color: Estilos.grisMedio),
+                  )),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context,seleccionados), 
+                    child: Text(context.tr('buttons.filtrar')),),
+                ],
+              ),
+            ],
+          ),
         ),
+      );
+    }),
   );
 }
 
@@ -138,7 +122,7 @@ class _SeccionFiltro extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: Estilos.margenMedio),
-      padding: const EdgeInsets.all(Estilos.paddingMedio),
+      padding: const EdgeInsets.all(Estilos.margenMedio),
       decoration: BoxDecoration(
         color: Estilos.grisClaro,
         borderRadius: BorderRadius.circular(Estilos.radioBorde),
@@ -156,10 +140,9 @@ class _SeccionFiltro extends StatelessWidget {
               color: Estilos.verdeOscuro,
             ),
           ),
+          const SizedBox(height: Estilos.paddingPequeno,),
 
-          const SizedBox(height: Estilos.paddingPequeno),
-
-          ...opciones.map((op) {
+          ...opciones.map((op){
             return CheckboxListTile(
               dense: true,
               activeColor: Estilos.verdePrincipal,
@@ -174,7 +157,7 @@ class _SeccionFiltro extends StatelessWidget {
               value: seleccionados.contains(op),
               onChanged: (val) => onChanged(op, val ?? false),
             );
-          }),
+          })
         ],
       ),
     );

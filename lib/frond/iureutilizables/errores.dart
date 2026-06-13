@@ -1,6 +1,5 @@
-
 class OnError {
-  final int?  status;
+  final int? status;
   final String message;
   final String type;
   final String? source;
@@ -12,6 +11,6 @@ class OnError {
   });
 
   factory OnError.fromJson(Map<String,dynamic> json, String? recurso){
-    return OnError(status: json['status'],type: json['error']['type'],message: json['error']['message'],source: recurso);
+    return OnError(status: int.tryParse(json['status'].toString()), type: json['error']['type'].toString(), message: json['error']['message'],source: recurso);
   }
 }

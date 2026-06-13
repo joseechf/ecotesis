@@ -5,10 +5,8 @@ class MapCapas {
   final String id;
   final String url;
   final bool esApi;
-
   final Color color;
   final IconData icon;
-
   bool visible;
   GeoData? data;
 

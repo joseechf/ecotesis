@@ -13,9 +13,9 @@ class UsuarioModel {
 
   factory UsuarioModel.fromProfile(Map<String, dynamic> data) {
     return UsuarioModel(
-      id: data['id'] as String,
-      email: data['email'] as String,
-      rolActual: data['rol_actual'] as String,
+      id: data['id'] as String, 
+      email: data['email'] as String, 
+      rolActual: data['rol_actual'] as String, 
       estadoRol: data['estado_rol'] as String,
     );
   }

@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  responsive_framework: ^0.2.0
+  responsive_framework: ^1.5.1
   flutter_localizations:
     sdk: flutter
   easy_localization: ^3.0.0 #para el idioma
@@ -41,7 +41,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   synchronized: ^3.0.0
-  connectivity_plus: ^6.0.3
+  connectivity_plus: ^7.1.1
   # dependencias bd
   sqflite: ^2.3.0
   path_provider: ^2.1.1
@@ -49,7 +49,7 @@ dependencies:
   image_picker: # obtener imagenes
   cached_network_image: # cachear imagenes para la UI
   path: ^1.9.0
-  syncfusion_flutter_pdfviewer: ^31.1.21
+  syncfusion_flutter_pdfviewer: ^33.2.7
   url_launcher: ^6.2.5
   # dependencias mapa
   flutter_map: # mapa base
@@ -66,12 +66,11 @@ dependencies:
   crypto: ^3.0.3
   # para especie_dto
   json_annotation: ^4.8.1 
-  # para el logo de Twitter
-  font_awesome_flutter: ^10.7.0 
+
   #pruebas sqlite
   sqflite_common_ffi:
-  #iconos
-  phosphor_flutter:
+  #iconos de comunidad
+  phosphoricons_flutter: ^1.0.0 
 
 
 dev_dependencies:
@@ -83,7 +82,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   # para especie_dto
   build_runner: ^2.4.6        # generador
   json_serializable: ^6.7.1   # genera el .g.dart

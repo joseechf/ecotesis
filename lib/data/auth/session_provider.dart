@@ -1,11 +1,9 @@
 /*
-Escucha cambios de sesión de Supabase
-Decide si hay usuario autenticado
-Carga profiles
-Fuerza logout si el profile:
-no existe
-está incompleto
-Mantiene el estado global de sesión
+escucha cambios de sesión de supabase
+decide si hay usuario autenticado
+carga profiles
+fuerza logout si el profile no existe o está incompleto
+mantiene el estado global de sesión
  */
 
 import 'package:flutter/material.dart';
@@ -27,7 +25,7 @@ class SessionProvider extends ChangeNotifier {
 
   SessionProvider();
 
-  void init() {
+  void init(){
     final supabase = SupabaseClientSingleton.client;
     _authSub?.cancel();
     _authSub = supabase.auth.onAuthStateChange.listen((data) {
@@ -35,14 +33,14 @@ class SessionProvider extends ChangeNotifier {
     });
   }
 
-  @override
-  void dispose() {
+  @override  
+  void dispose(){
     _authSub?.cancel();
     super.dispose();
   }
 
   Future<void> _handleSession(Session? session) async {
-    if (session == null) {
+    if(session == null) {
       _usuario = null;
       _isAuthenticated = false;
       _isLoading = false;
@@ -53,15 +51,8 @@ class SessionProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final user = session.user;
-
-      final response =
-          await SupabaseClientSingleton.client
-              .from('users_view')
-              .select('id, email, rol_actual, estado_rol, activo')
-              .eq('id', user.id)
-              .maybeSingle();
-
-      if (response != null && response['activo'] == false) {
+      final response = await SupabaseClientSingleton.client.from('users_view').select('id,email,rol_actual,estado_rol,activo').eq('id', user.id).maybeSingle();
+      if(response != null && response['activo'] == false){
         await logout();
         _usuario = null;
         _isAuthenticated = false;
@@ -69,20 +60,17 @@ class SessionProvider extends ChangeNotifier {
         notifyListeners();
         return;
       }
-
-      if (response == null) {
+      if(response == null){
         _usuario = UsuarioModel(
-          id: user.id,
-          email: user.email ?? '',
-          rolActual: 'sin_rol',
-          estadoRol: 'aprobado',
-        );
-      } else {
+          id: user.id, 
+          email: user.email ?? '', 
+          rolActual: 'sin_rol', 
+          estadoRol: 'aprobado');
+      }else {
         _usuario = UsuarioModel.fromProfile(response);
       }
-
       _isAuthenticated = true;
-    } catch (_) {
+    } catch (e) {
       await logout();
       _usuario = null;
       _isAuthenticated = false;

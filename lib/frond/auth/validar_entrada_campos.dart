@@ -4,11 +4,10 @@ import '../estilos.dart';
 
 class CampoCorreo extends StatelessWidget {
   final TextEditingController controlador;
-
   const CampoCorreo({super.key, required this.controlador});
 
-  @override
-  Widget build(BuildContext context) {
+  @override   
+  Widget build(BuildContext context){
     return TextFormField(
       controller: controlador,
       keyboardType: TextInputType.emailAddress,
@@ -17,16 +16,13 @@ class CampoCorreo extends StatelessWidget {
         prefixIcon: const Icon(Icons.email_outlined),
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
+        if(value == null || value.isEmpty){
           return context.tr('gestionUsuario.validaciones.correoVacio');
         }
-
         final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-
-        if (!regex.hasMatch(value)) {
+        if(!regex.hasMatch(value)){
           return context.tr('gestionUsuario.validaciones.correoInvalido');
         }
-
         return null;
       },
     );
@@ -38,7 +34,6 @@ class CampoContrasena extends StatelessWidget {
   final bool ocultar;
   final VoidCallback onCambiarVisibilidad;
   final bool obligatorio;
-
   const CampoContrasena({
     super.key,
     required this.controladorC,
@@ -56,27 +51,22 @@ class CampoContrasena extends StatelessWidget {
         labelText: context.tr('gestionUsuario.campos.contrasena'),
         prefixIcon: const Icon(Icons.lock_outlined),
         suffixIcon: IconButton(
-          icon: Icon(
-            ocultar ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-          ),
-          onPressed: onCambiarVisibilidad,
+          onPressed: onCambiarVisibilidad, 
+          icon: Icon(ocultar ? Icons.visibility_outlined : Icons.visibility_off_outlined,),
         ),
       ),
-      validator: (value) {
-        if ((value == null || value.isEmpty) && obligatorio) {
-          return context.tr('gestionUsuario.validaciones.contrasenaVacia');
-        }
-
-        if ((value == null || value.isEmpty)) {
+        validator: (value){
+          if((value == null || value.isEmpty) && obligatorio){
+            return context.tr('gestionUsuario.validaciones.contrasenaVacia');
+          }
+          if((value == null || value.isEmpty)){
+            return null;
+          }
+          if(value.length < 6){
+            return context.tr('gestionUsuario.validaciones.contrasenaInvalida');
+          }
           return null;
-        }
-
-        if (value.length < 6) {
-          return context.tr('gestionUsuario.validaciones.contrasenaInvalida');
-        }
-
-        return null;
-      },
+        },
     );
   }
 }
@@ -91,8 +81,9 @@ class CampoRol extends StatelessWidget {
     required this.onChanged,
   });
 
-  // value = lo que se guarda en BD
-  // label = lo que ve el usuario
+  // value se guarda en bd
+  // label es lo que ve el usuario
+
   static const roles = [
     {'value': 'cientifico', 'label': 'Científico'},
     {'value': 'administrador', 'label': 'Administrador'},
@@ -112,7 +103,7 @@ class CampoRol extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: Estilos.paddingPequeno),
+        const SizedBox(height: Estilos.paddingPequeno,),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -125,9 +116,9 @@ class CampoRol extends StatelessWidget {
             child: DropdownButton<String>(
               value: rolSeleccionado,
               isExpanded: true,
-              icon: Icon(Icons.arrow_drop_down, color: Estilos.verdeOscuro),
-              items:
-                  roles.map((rol) {
+              icon: Icon(Icons.arrow_drop_down, color: Estilos.verdeOscuro,), 
+              items: 
+                  roles.map((rol){
                     return DropdownMenuItem<String>(
                       value: rol['value'],
                       child: Text(
@@ -138,11 +129,12 @@ class CampoRol extends StatelessWidget {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }
+                  ).toList(),
               onChanged: onChanged,
-            ),
+            )
           ),
-        ),
+        )
       ],
     );
   }

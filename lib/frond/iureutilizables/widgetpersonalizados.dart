@@ -1,9 +1,10 @@
+
 import 'package:flutter/material.dart';
 import '../estilos.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-// Widget para contenedores de texto, estandariza los textos de toda la aplicación
-class TextContainerWidget extends StatelessWidget {
+//Widget para conetenedores de texto, estandariza los textos de toda la aplicacion
+class TextContainerWidget extends StatelessWidget{
   final String text;
   final EdgeInsets margin;
   final double padding;
@@ -33,7 +34,7 @@ class TextContainerWidget extends StatelessWidget {
       margin: margin,
       padding: EdgeInsets.all(padding),
       color: backgroundColor,
-      alignment: alignment,
+      alignment:  alignment,
       child: Text(
         text,
         textAlign: textAlign,
@@ -42,11 +43,11 @@ class TextContainerWidget extends StatelessWidget {
         softWrap: true,
         style: style,
       ),
-    );
+    );    
   }
 }
 
-// Widget para contenedores de imágenes con estilo específico en toda la aplicación
+// Widget para contenedores de imagenes con estilo especifico en toda la aplicacion
 class ImageContainerWidget extends StatelessWidget {
   final String imagePath;
   final EdgeInsets margin;
@@ -91,7 +92,7 @@ class ImageContainerWidget extends StatelessWidget {
   }
 }
 
-// Detecta hover, aplica sombra y escalado
+// detecta hover, aplica sombra y escalado
 class HoverImageWidget extends StatefulWidget {
   final String imagePath;
   final double width;
@@ -103,8 +104,7 @@ class HoverImageWidget extends StatefulWidget {
     required this.width,
     required this.height,
   });
-
-  @override
+  @override  
   HoverImageWidgetState createState() => HoverImageWidgetState();
 }
 
@@ -114,8 +114,8 @@ class HoverImageWidgetState extends State<HoverImageWidget> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_)=> setState(() => _isHovered = true),
+      onExit: (_)=> setState(() => _isHovered = false),
       child: AnimatedScale(
         scale: _isHovered ? 1.02 : 1.0,
         duration: Estilos.animacionMedia,
@@ -128,19 +128,18 @@ class HoverImageWidgetState extends State<HoverImageWidget> {
             width: widget.width,
             height: widget.height,
             fit: BoxFit.cover,
-            cacheWidth: 500,
+            cacheHeight: 500,
           ),
         ),
       ),
-    );
+    );    
   }
 }
 
-// Layout responsivo que elige fila o columna
+// layout responsivo que elige fila o columna
 class ResponsiveLayout extends StatelessWidget {
   final List<Widget> children;
   final double breakpoint;
-
   const ResponsiveLayout({
     super.key,
     required this.children,
@@ -150,18 +149,17 @@ class ResponsiveLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
-    if (width > breakpoint) {
+    if(width > breakpoint) {
       return Row(
         children: children.map((child) => Expanded(child: child)).toList(),
       );
     } else {
-      return Column(children: children);
+      return Column(children: children,);
     }
   }
 }
 
-// Widget que construye una lista ordenada de elementos
+//widget que construye una lista ordenada de elementos
 class ListaWidgetOrdenada extends StatelessWidget {
   final Map<String, dynamic> datos;
   final double radioImg;
@@ -177,10 +175,10 @@ class ListaWidgetOrdenada extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgets = [];
-    final orden = ['imagen', 'titulo', 'boton'];
+    final orden = ['imagen','titulo','boton','pdfkey'];
 
-    for (final clave in orden) {
-      if (!datos.containsKey(clave)) continue;
+    for(final clave in orden){
+      if(!datos.containsKey(clave)) continue;
       final valor = datos[clave];
 
       switch (clave) {
@@ -193,16 +191,13 @@ class ListaWidgetOrdenada extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(radioImg),
                 child: HoverImageWidget(
-                  imagePath: valor.toString(),
-                  width: 340,
-                  height: 340,
+                  imagePath: valor.toString(), width: 340, height: 340
                 ),
               ),
             ),
           );
           break;
-
-        case 'titulo':
+          case 'titulo':
           widgets.add(
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -221,18 +216,15 @@ class ListaWidgetOrdenada extends StatelessWidget {
             ),
           );
           break;
-
-        case 'boton':
+          case 'boton':
           widgets.add(
             Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: Estilos.paddingPequeno,
               ),
               child: ElevatedButton(
-                onPressed:
-                    onNavegar != null
-                        ? () => onNavegar!(context, valor.toString())
-                        : null,
+                onPressed: onNavegar != null ?
+                  () => onNavegar!(context, valor.toString()) : null,
                 child: Text(context.tr('buttons.aprender')),
               ),
             ),
@@ -241,26 +233,24 @@ class ListaWidgetOrdenada extends StatelessWidget {
       }
     }
 
-    datos.forEach((clave, valor) {
-      if (orden.contains(clave)) return;
-
+    datos.forEach((clave, valor){
+      if(orden.contains(clave)) return;
       widgets.add(
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: Estilos.paddingMedio),
+          padding: const EdgeInsets.symmetric(vertical: Estilos.paddingGrande),
           child: SelectableText(
             valor.toString(),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Estilos.verdeOscuro,
-              fontSize: Estilos.textoGrande,
+              fontSize:  Estilos.textoGrande,
               fontFamily: Estilos.tipografia,
               fontWeight: FontWeight.w300,
             ),
-          ),
-        ),
+          ),  
+      )
       );
     });
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -270,22 +260,22 @@ class ListaWidgetOrdenada extends StatelessWidget {
 }
 
 // funcion para obtener la fecha
-Future<dynamic> selectDate(context, {bool alquiler = false}) async {
-  if (!alquiler) {
-    final DateTime? pickedDate = await showDatePicker(
+Future<dynamic> selectDate(BuildContext context, {bool alquiler = false}) async {
+  if(!alquiler) {
+    final DateTime? seleccionada = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    return (pickedDate != null) ? pickedDate : null;
+    return (seleccionada != null) ? seleccionada : null;
   } else {
-    final DateTime? pickedDate = await showDatePicker(
+    final DateTime? seleccionada = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2050),
+      lastDate: DateTime(2050), 
     );
-    return (pickedDate != null) ? pickedDate : null;
+    return (seleccionada != null) ? seleccionada : null;
   }
 }

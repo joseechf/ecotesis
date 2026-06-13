@@ -1,8 +1,6 @@
 import 'package:sqflite/sqflite.dart';
-import '../utilidades/calcular_hash.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
 import '../../core/supabase_client.dart';
 
 const String ide = 'id';
@@ -16,9 +14,8 @@ class TablaSyncLocal {
   Future<bool> registrarSync({
     required Transaction tx,
     required String id,
-    required Map<String, Object?> fila,
+    int? versionRemota,
   }) async {
-    final hash = calcularHash(fila);
 
     final existente = await tx.query(
       'sincronizacion',
@@ -27,82 +24,74 @@ class TablaSyncLocal {
       limit: 1,
     );
 
-    if (existente.isEmpty) {
+    if(existente.isEmpty) {
       try {
-        // INSERT nuevo
+        //  nueva fila
         await tx.insert('sincronizacion', {
           'id': id,
           'is_new': 1,
           'is_update': 0,
           'is_delete': 0,
-          'hash': hash,
-          'version': 1,
+          'version': versionRemota ?? 1,
           'usuario': correo,
           'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
-        debugPrint('metadatos sinc local insert ok');
         return true;
       } catch (e) {
-        debugPrint(' insert sinc error: $e');
+        debugPrint('error insert fila en sincronizacion: $e');
         return false;
       }
     } else {
-      // UPDATE existente
       final versionActual = existente.first['version'] as int? ?? 1;
       try {
-        await tx.update(
-          'sincronizacion',
-          {
+        //  update fila existente
+        await tx.update('sincronizacion', {
+            'id': id,
             'is_new': 0,
             'is_update': 1,
             'is_delete': 0,
-            'hash': hash,
-            'version': versionActual + 1,
+            'version': versionRemota ?? versionActual + 1, //si version existe es porque viene de la sincronizacion desde el API, sino se llamo a metadatos desde local
+            'usuario': correo,
             'last_upd': DateTime.now().toUtc().toIso8601String(),
           },
           where: '$ide = ?',
           whereArgs: [id],
         );
-        debugPrint('metadatos sinc local update ok');
         return true;
       } catch (e) {
-        debugPrint(' update sinc error: $e');
+        debugPrint('error insert fila en sincronizacion: $e');
         return false;
       }
     }
   }
 
-  Future<bool> registrarBorrado(Transaction tx, String id) async {
-    try {
-      final existente = await tx.query(
-        'sincronizacion',
-        where: '$ide = ?',
-        whereArgs: [id],
-        limit: 1,
-      );
-
-      if (existente.isEmpty) {
-        await tx.insert('sincronizacion', {
+  Future<bool> registrarBorrado(Transaction tx, String id,int? versionRemota) async {
+  try {
+    final existente = await tx.query(
+      'sincronizacion',
+      where: '$ide = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if(existente.isEmpty){
+      await tx.insert('sincronizacion', {
           'id': id,
           'is_new': 0,
           'is_update': 0,
           'is_delete': 1,
-          'hash': '',
-          'version': 1,
+          'version': versionRemota ?? 1,
           'usuario': correo,
           'last_upd': DateTime.now().toUtc().toIso8601String(),
         });
-      } else {
-        final versionActual = existente.first['version'] as int? ?? 1;
+    } else {
+      final versionActual = existente.first['version'] as int? ?? 1;
 
-        await tx.update(
-          'sincronizacion',
-          {
+      await tx.update('sincronizacion', {
+            'id': id,
             'is_new': 0,
             'is_update': 0,
             'is_delete': 1,
-            'hash': '',
-            'version': versionActual + 1,
+            'version': versionRemota ?? versionActual + 1,
             'usuario': correo,
             'last_upd': DateTime.now().toUtc().toIso8601String(),
           },
@@ -110,8 +99,6 @@ class TablaSyncLocal {
           whereArgs: [id],
         );
       }
-
-      debugPrint('metadatos sinc local delete ok');
       return true;
     } catch (e) {
       debugPrint('error registrarBorrado: $e');
@@ -143,3 +130,4 @@ class TablaSyncLocal {
     );
   }
 }
+

@@ -7,14 +7,14 @@ import '../../domain/value_objects.dart';
 final _sync = TablaSyncLocal();
 const String campoNombreCientifico = 'nombre_cientifico';
 
-Future<List<Map<String, dynamic>>> selectLocal({
+Future<List<Map<String,dynamic>>> selectLocal({
   required Database db,
   required String tabla,
   String? where,
   List<Object?>? whereArgs,
 }) async {
-  const tablasPermitidas = {'sincronizacion', 'Flora'};
-  if (!tablasPermitidas.contains(tabla)) {
+  const tablasPermitidas = {'sincronizacion','Flora'};
+  if(!tablasPermitidas.contains(tabla)){
     throw Exception('Tabla no permitida');
   }
   return await db.query(
@@ -26,16 +26,17 @@ Future<List<Map<String, dynamic>>> selectLocal({
 }
 
 Future<List<Especie>> cargarFloraLocal(DatabaseExecutor db) async {
-  final floraMaps = await db.query('Flora');
-  if (floraMaps.isEmpty) return [];
-
+  //final floraMaps = await db.query('Flora');
+  final floraActiva = await db.rawQuery('''
+    SELECT f.* FROM Flora f LEFT JOIN sincronizacion s ON s.id = f.nombre_cientifico where COALESCE(s.is_delete,0) = 0
+  ''');
+  if(floraActiva.isEmpty) return [];
   final resultado = <Especie>[];
 
-  for (final flora in floraMaps) {
+  for(final flora in floraActiva){
     final especie = await _mapearEspecieCompleta(db, flora);
     resultado.add(especie);
   }
-
   return resultado;
 }
 
@@ -44,12 +45,10 @@ Future<Map<String, dynamic>?> obtenerFloraLocalById(
   String nombreCientifico,
 ) async {
   final floraMaps = await db.query(
-    'Flora',
-    where: '$campoNombreCientifico = ?',
+    'Flora', where: '$campoNombreCientifico = ?',
     whereArgs: [nombreCientifico],
   );
-
-  if (floraMaps.isEmpty) return null;
+  if(floraMaps.isEmpty) return null;
   final especie = await _mapearEspecieCompleta(db, floraMaps.first);
   final json = especie.toJson();
   return json;
@@ -60,7 +59,6 @@ Future<Especie> _mapearEspecieCompleta(
   Map<String, dynamic> flora,
 ) async {
   final nombreC = flora[campoNombreCientifico] as String;
-
   final nombresRows = await db.query(
     'NombreComun',
     where: '$campoNombreCientifico = ?',
@@ -87,136 +85,89 @@ Future<Especie> _mapearEspecieCompleta(
   );
 }
 
-Map<String, dynamic> estructurarHash(
-  Map<String, dynamic> floraRow,
-  Especie esp,
-) {
-  return {
-    ...floraRow,
-    'NombreComun':
-        esp.nombresComunes.map((n) => {'nombre_comun': n.nombreComun}).toList()
-          ..sort(
-            (a, b) => (a['nombre_comun'] as String).compareTo(
-              b['nombre_comun'] as String,
-            ),
-          ),
-    'Utilidad':
-        esp.utilidades.map((u) => {'utilidad': u.utilidad}).toList()..sort(
-          (a, b) =>
-              (a['utilidad'] as String).compareTo(b['utilidad'] as String),
-        ),
-    'Origen':
-        esp.origenes.map((o) => {'origen': o.origen}).toList()..sort(
-          (a, b) => (a['origen'] as String).compareTo(b['origen'] as String),
-        ),
-  };
-}
 
 Future<void> _guardarRelacionesYSync(
   Transaction txn,
   Especie esp,
   Map<String, dynamic> floraRow,
+  int? version
 ) async {
-  for (final n in esp.nombresComunes) {
+  for( final n in esp.nombresComunes){
     await txn.insert('NombreComun', n.toRow(esp.nombreCientifico));
   }
-
-  for (final u in esp.utilidades) {
-    await txn.insert('Utilidad', u.toRow(esp.nombreCientifico));
+  for( final n in esp.utilidades){
+    await txn.insert('Utilidad', n.toRow(esp.nombreCientifico));
+  }
+  for( final n in esp.origenes){
+    await txn.insert('Origen', n.toRow(esp.nombreCientifico));
   }
 
-  for (final o in esp.origenes) {
-    await txn.insert('Origen', o.toRow(esp.nombreCientifico));
-  }
-
-  final snapshotEspecie = estructurarHash(floraRow, esp);
-
-  debugPrint('voy a hashear: $snapshotEspecie');
   final ok = await _sync.registrarSync(
-    tx: txn,
-    id: esp.nombreCientifico,
-    fila: snapshotEspecie,
+    tx: txn, id: esp.nombreCientifico,versionRemota: version
   );
-
-  if (!ok) {
-    throw 'problemas al registrar sincronización de especie';
+  if(!ok) {
+    throw 'problemas al registrar sincronizacion de especie';
   }
 }
 
-Future<bool> insertFloraLocal(Database db, List<Especie> especies) async {
+Future<bool> insertFloraLocal(Database db, List<Especie> especies, Map<String, Map<String, dynamic>>? remoteMetaDataCompletaMap) async {
   try {
     await db.transaction((txn) async {
-      for (final esp in especies) {
+      for(final esp in especies) {
+        late dynamic meta;
+        int? version;
+        if(remoteMetaDataCompletaMap != null){
+           meta = remoteMetaDataCompletaMap[esp.nombreCientifico];
+           version = meta?['version'] as int?;
+        }
+        
         final floraRow = esp.toDbRow();
-
-        await txn.insert(
-          'Flora',
-          floraRow,
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-
-        await _guardarRelacionesYSync(txn, esp, floraRow);
+        await txn.insert('Flora',floraRow,conflictAlgorithm: ConflictAlgorithm.replace);
+        await _guardarRelacionesYSync(txn, esp, floraRow,version);
       }
     });
-
     return true;
   } catch (e) {
-    debugPrint('insertFloraLocal error: $e');
+    debugPrint('Error insertFloraLocal $e');
     return false;
   }
 }
 
-Future<bool> updateFloraLocal(Database db, Especie esp) async {
+Future<bool> updateFloraLocal(Database db, Especie esp, int? version) async {
   try {
     await db.transaction((txn) async {
       final floraRow = esp.toDbRow();
-
       final filas = await txn.update(
         'Flora',
         floraRow,
         where: '$campoNombreCientifico = ?',
         whereArgs: [esp.nombreCientifico],
       );
-
-      if (filas == 0) {
+      if(filas == 0) {
         throw Exception('Especie no existe');
       }
 
-      await _borrarVO(txn, esp.nombreCientifico);
-
-      await _guardarRelacionesYSync(txn, esp, floraRow);
+      await _borrarVO(txn,esp.nombreCientifico);
+      await _guardarRelacionesYSync(txn, esp, floraRow, version);
     });
-
     return true;
   } catch (e) {
-    debugPrint('updateFloraLocal error: $e');
+    debugPrint('Error updateFloraLocal $e');
     return false;
   }
 }
 
-Future<bool> deleteFloraLocal(Database db, String? nombreCientifico) async {
+Future<bool>deleteFloraLocal(Database db, String? nombreCientifico) async {
   try {
     await db.transaction((txn) async {
-      final filas =
-          (nombreCientifico != null)
-              ? await txn.delete(
-                'Flora',
-                where: '$campoNombreCientifico = ?',
-                whereArgs: [nombreCientifico],
-              )
-              : await txn.delete('Flora');
-      if (filas == 0) {
+      final filas = (nombreCientifico != null)
+        ? await txn.delete('Flora', where: '$campoNombreCientifico = ?', whereArgs: [nombreCientifico]) : await txn.delete('Flora');
+      if(nombreCientifico != null && filas == 0) {
         throw 'no existe la especie a eliminar';
       }
 
       const String identificador = 'id';
-      (nombreCientifico != null)
-          ? await txn.delete(
-            'sincronizacion',
-            where: '$identificador = ?',
-            whereArgs: [nombreCientifico],
-          )
-          : await txn.delete('sincronizacion');
+      (nombreCientifico != null) ? await txn.delete('sincronizacion', where: '$identificador = ?', whereArgs: [nombreCientifico],) : await txn.delete('sincronizacion');
     });
     return true;
   } catch (e) {
@@ -228,31 +179,25 @@ Future<bool> deleteFloraLocal(Database db, String? nombreCientifico) async {
 Future<void> _borrarVO(Transaction txn, String nombreCientifico) async {
   try {
     await txn.delete(
-      'NombreComun',
-      where: '$campoNombreCientifico = ?',
-      whereArgs: [nombreCientifico],
+      'NombreComun', where: '$campoNombreCientifico = ?', whereArgs: [nombreCientifico],
     );
     await txn.delete(
-      'Utilidad',
-      where: '$campoNombreCientifico = ?',
-      whereArgs: [nombreCientifico],
+      'Utilidad', where: '$campoNombreCientifico = ?', whereArgs: [nombreCientifico],
     );
     await txn.delete(
-      'Origen',
-      where: '$campoNombreCientifico = ?',
-      whereArgs: [nombreCientifico],
+      'Origen', where: '$campoNombreCientifico = ?', whereArgs: [nombreCientifico],
     );
   } catch (e) {
     debugPrint('delete VO error: $e');
   }
 }
-
-Future<bool> softDeleteLocal(Database db, String id) async {
+ 
+Future<bool> softDeleteLocal(Database db, String id, int? version) async {
   try {
     await db.transaction((txn) async {
-      final ok = await _sync.registrarBorrado(txn, id);
-      if (!ok) {
-        throw 'problemas al registrar softdelete en sincronización';
+      final ok = await _sync.registrarBorrado(txn, id, version);
+      if(!ok) {
+        throw 'problemas al registrar softdelete en sincronizacion';
       }
     });
     return true;

@@ -171,26 +171,26 @@
       }
     },
     "doc_sinc": {
-  "titulo": "¿Cómo funciona la sincronización?",
+      "titulo": "¿Cómo funciona la sincronización?",
 
-  "proposito": "La sincronización permite mantener iguales la base de datos local y la base de datos remota.",
+      "proposito": "La sincronización permite mantener iguales la base de datos local y la base de datos remota.",
 
-  "uso": "Al hacer clic en el botón sincronizar, las dos bases de datos (local y remota) se comparan y se actualizan para quedar iguales.",
+      "uso": "Al hacer clic en el botón sincronizar, las dos bases de datos (local y remota) se comparan y se actualizan para quedar iguales.",
 
-  "requisitos": "La base de datos local se usa cuando no hay internet. Cuando el internet vuelve y recargas la pantalla, se vuelve a utilizar la base de datos remota. Sin embargo, la sincronización no se ejecuta automáticamente.",
+      "requisitos": "La base de datos local se usa cuando no hay internet. Cuando el internet vuelve y recargas la pantalla, se vuelve a utilizar la base de datos remota. Sin embargo, la sincronización no se ejecuta automáticamente.",
 
-  "conflictos": "Reglas para resolver conflictos:",
+      "conflictos": "Reglas para resolver conflictos:",
 
-  "regla1": "La base de datos remota tiene la verdad final en caso de conflicto.",
-  "regla2": "Las especies de la base de datos remota no se eliminan, solo se bloquean.",
-  "regla3": "Las especies de la base de datos locales una vez eliminadas son irrecuperables.",
+      "regla1": "La base de datos remota tiene la verdad final en caso de conflicto.",
+      "regla2": "Las especies de la base de datos remota no se eliminan, solo se bloquean.",
+      "regla3": "Las especies de la base de datos locales una vez eliminadas son irrecuperables.",
 
-  "limpieza": "la base de datos local se puede limpiar y luego sincronizar para obtener los registros remotos"
-},
-"donacion": {
-    "p1": "Tus donaciones nos ayudan a trabajar con las comunidades de Azuero para reforestar el vulnerable ecosistema del bosque seco tropical. Nuestra visión es la de una península de Azuero renovada, con un bosque seco protegido, apoyada por una población amorosa. Sus donaciones marcan una gran diferencia para lograr nuestros objetivos.",
-    "p2": "Tus aportes son deducibles de impuestos según la Resolución DGI N° 201-4940 del 2 de septiembre de 2019."
-  }
+      "limpieza": "la base de datos local se puede limpiar y luego sincronizar para obtener los registros remotos"
+    },
+    "donacion": {
+      "p1": "Tus donaciones nos ayudan a trabajar con las comunidades de Azuero para reforestar el vulnerable ecosistema del bosque seco tropical. Nuestra visión es la de una península de Azuero renovada, con un bosque seco protegido, apoyada por una población amorosa. Sus donaciones marcan una gran diferencia para lograr nuestros objetivos.",
+      "p2": "Tus aportes son deducibles de impuestos según la Resolución DGI N° 201-4940 del 2 de septiembre de 2019."
+    }
   },
   "nonumero": "No introduzca numeros",
   "gestionUsuario": {

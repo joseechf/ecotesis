@@ -3,7 +3,7 @@ import '../../../domain/value_objects.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-// widgets genéricos
+//widgets genericos
 Widget campoVectorGenerico<T>({
   required List<T> items,
   required void Function(VoidCallback fn) setState,
@@ -13,63 +13,48 @@ Widget campoVectorGenerico<T>({
   required T Function() crearVacio,
   List<String>? opcionesDropdown,
   String? Function(String?)? validator,
-}) {
-  if (items.isEmpty) {
+}){
+  if(items.isEmpty){
     items.add(crearVacio());
   }
   return Column(
-    children:
-        items.asMap().entries.map((entry) {
-          final idx = entry.key;
-          final item = entry.value;
+    children: items.asMap().entries.map((entry) {
+      final idx = entry.key;
+      final item = entry.value;
 
-          return Row(
-            children: [
-              Expanded(
-                child:
-                    opcionesDropdown == null
-                        ? TextFormField(
-                          key: ValueKey('$label-$idx'),
-                          initialValue: getValor(item),
-                          decoration: InputDecoration(labelText: label),
-                          onChanged: (v) => setValor(item, v),
-                          validator: validator,
-                        )
-                        : DropdownButtonFormField<String>(
-                          initialValue:
-                              getValor(item).isEmpty ? null : getValor(item),
-                          decoration: InputDecoration(labelText: label),
-                          items:
-                              opcionesDropdown
-                                  .map(
-                                    (opcion) => DropdownMenuItem(
-                                      value: opcion,
-                                      child: Text(opcion),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged: (v) {
-                            if (v != null) {
-                              setValor(item, v);
-                            }
-                          },
-                        ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.remove_circle),
-                onPressed:
-                    items.length == 1
-                        ? null
-                        : () => setState(() => items.removeAt(idx)),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                tooltip: 'Agregar',
-                onPressed: () => setState(() => items.add(crearVacio())),
-              ),
-            ],
-          );
-        }).toList(),
+      return Row(
+        children: [
+          Expanded(
+            child:  opcionesDropdown == null
+            ? TextFormField(
+              key: ValueKey('$label-$idx'),
+              initialValue: getValor(item),
+              decoration: InputDecoration(labelText: label),
+              onChanged: (v) => setValor(item, v),
+              validator: validator,
+            ) : 
+            DropdownButtonFormField<String>(
+              initialValue: getValor(item).isEmpty ? null : getValor(item),
+              decoration: InputDecoration(labelText: label),
+              items: opcionesDropdown.map((opcion) => DropdownMenuItem(
+                value: opcion,
+                child: Text(opcion),
+              ),).toList(),
+              onChanged: (v){
+                if(v != null){
+                  setValor(item, v);
+                }
+              },
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Agregar',
+            onPressed: () => setState(()=> items.add(crearVacio())),
+          ),
+        ],
+      );
+    }).toList(),
   );
 }
 
@@ -78,108 +63,92 @@ Widget campoUtilidades({
   required void Function(VoidCallback fn) setState,
   required String label,
   required BuildContext context,
-}) {
+}){
   final opciones = {
     'Frutal': context.tr('bdInterfaz.insert.Utilidad.frutal'),
     'Maderal': context.tr('bdInterfaz.insert.Utilidad.maderal'),
     'Ganado': context.tr('bdInterfaz.insert.Utilidad.ganado'),
     'Medicinal': context.tr('bdInterfaz.insert.Utilidad.medicinal'),
   };
+  if(items.isEmpty) items.add(Utilidad(utilidad: ''));
+   return Column(
+    children: items.asMap().entries.map((entry) {
+      final idx = entry.key;
+      final item = entry.value;
 
-  if (items.isEmpty) items.add(Utilidad(utilidad: ''));
-
-  return Column(
-    children:
-        items.asMap().entries.map((entry) {
-          final idx = entry.key;
-          final item = entry.value;
-
-          return Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  initialValue: item.utilidad.isEmpty ? null : item.utilidad,
-                  decoration: InputDecoration(labelText: label),
-                  items:
-                      opciones.entries
-                          .map(
-                            (e) => DropdownMenuItem(
-                              value: e.key,
-                              child: Text(e.value),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (v) => setState(() => item.utilidad = v ?? ''),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.remove_circle),
-                onPressed:
-                    items.length == 1
-                        ? null
-                        : () => setState(() => items.removeAt(idx)),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed:
-                    () => setState(() => items.add(Utilidad(utilidad: ''))),
-              ),
-            ],
-          );
-        }).toList(),
+      return Row(
+        children: [
+          Expanded(
+            child:  
+            DropdownButtonFormField<String>(
+              initialValue: item.utilidad.isEmpty ? null : item.utilidad,
+              decoration: InputDecoration(labelText: label),
+              items: opciones.entries
+                .map(
+                  (e) => DropdownMenuItem(value: e.key, child: Text(e.value),)
+                ).toList(),
+              onChanged: (v) => setState(() => item.utilidad = v ?? ''),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.remove_circle),
+            onPressed: items.length == 1 ? null : () => setState(()=> items.removeAt(idx)),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => setState(() => items.add(Utilidad(utilidad: ''))),
+          ),
+        ],
+      );
+    }).toList(),
   );
 }
 
 Widget campoImagenTemp({
   required List<ImagenTemp> items,
   required void Function(VoidCallback fn) setState,
-}) {
+}){
   final picker = ImagePicker();
   Future<void> pick(int idx) async {
     final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked == null) return;
+    if(picked == null) return;
     final bytes = await picked.readAsBytes();
     setState(() => items[idx].bytes = bytes);
   }
 
   return Column(
-    children:
-        items.asMap().entries.map((e) {
-          final idx = e.key;
-          final img = e.value;
-          return Row(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                margin: const EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                ),
-                child:
-                    img.bytes != null
-                        ? Image.memory(img.bytes!, fit: BoxFit.cover)
-                        : img.urlFoto.isEmpty
-                        ? const Icon(Icons.image)
-                        : Image.network(img.urlFoto, fit: BoxFit.cover),
-              ),
-              IconButton(
-                icon: const Icon(Icons.upload),
-                onPressed: () => pick(idx),
-              ),
-              IconButton(
-                icon: const Icon(Icons.remove_circle),
-                onPressed:
-                    items.length == 1
-                        ? null
-                        : () => setState(() => items.removeAt(idx)),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => setState(() => items.add(ImagenTemp())),
-              ),
-            ],
-          );
-        }).toList(),
+    children: items.asMap().entries.map((entry) {
+      final idx = entry.key;
+      final img = entry.value;
+
+      return Row(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+            ),
+            child:  
+            img.bytes != null 
+               ? Image.memory(img.bytes!,  fit: BoxFit.cover) : img.urlFoto.isEmpty
+               ? const Icon(Icons.image) : Image.network(img.urlFoto, fit: BoxFit.cover,),
+          ),
+          IconButton(
+            icon: const Icon(Icons.upload),
+            onPressed: () => pick(idx),
+          ),
+          IconButton(
+            icon: const Icon(Icons.remove_circle),
+            onPressed: items.length == 1 ? null : ()=> setState(() => items.removeAt(idx)),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => setState(()=> items.add(ImagenTemp())),
+          ),
+        ],
+      );
+    }).toList(),
   );
 }

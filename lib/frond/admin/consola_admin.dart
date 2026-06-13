@@ -8,8 +8,7 @@ import '../../backend/llamadas_remotas/llamadas_flora.dart';
 
 class ConsolaAdmin extends StatefulWidget {
   const ConsolaAdmin({super.key});
-
-  @override
+  @override  
   State<ConsolaAdmin> createState() => _ConsolaAdminState();
 }
 
@@ -18,21 +17,21 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
 
   Future<void> verReporte() async {
     final data = await getReporte();
-    if (data['status'] == 200) {
+    if(data['status'] == 200){
       setState(() {
         reporte = data['reporte'];
       });
     }
   }
 
-  @override
+  @override  
   void initState() {
     super.initState();
     verReporte();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 800;
     final esAdmin = tieneAlgunoDeLosRoles(context, ['administrador']);
@@ -41,40 +40,36 @@ class _ConsolaAdminState extends State<ConsolaAdmin> {
       appBar: CustomAppBar(context: context),
       drawer: isMobile ? const MobileMenu() : null,
       body: SingleChildScrollView(
-        child:
-            esAdmin
-                ? Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const SolicitudesRolScreen(),
-                              ),
-                            );
-                          },
-                          child: Text(context.tr('buttons.rol')),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(reporte),
-                    ],
-                  ),
-                )
-                : Text(
-                  context.tr('bdInterfaz.lectura'),
-                  style: const TextStyle(
-                    color: Estilos.grisMedio,
-                    fontSize: Estilos.textoPequeno,
-                  ),
+        child: esAdmin
+           ? Padding(padding: const EdgeInsets.all(16.0),
+           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 16,),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: (){
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (_) => const SolicitudesRolScreen(),),
+                    );
+                  }, 
+                  child: Text(context.tr('buttons.rol')),
                 ),
+              ),
+              const SizedBox(height: 16,),
+              Text(reporte),
+            ],
+           ),
+           ) : 
+           Text(
+            context.tr('bdInterfaz.lectura'),
+            style: const TextStyle(
+              color: Estilos.grisMedio,
+              fontSize: Estilos.textoPequeno,
+            ),
+           )
       ),
     );
   }

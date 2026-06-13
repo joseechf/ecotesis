@@ -2,17 +2,15 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:image/image.dart' as img;
 import 'package:ecoazuero/config/config.dart';
-
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/foundation.dart';
 import '../../core/supabase_client.dart';
-
 import '../../frond/iureutilizables/errores.dart';
 
-Future<Map<String, dynamic>> getReporte() async {
+Future<Map<String,dynamic>> getReporte() async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
-  if (session == null) {
+  if(session == null){
     debugPrint('No autenticado');
     return {'status': 500};
   }
@@ -20,133 +18,107 @@ Future<Map<String, dynamic>> getReporte() async {
   final url = Uri.parse('$baseUrl/getReporte');
 
   try {
-    final resp = await http
-        .get(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${session.accessToken}',
-          },
-        )
-        .timeout(const Duration(seconds: 10));
+    final resp = await http.get(url, headers: {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer ${session.accessToken}',
+    },).timeout(const Duration(seconds: 10));
 
-    if (resp.statusCode != 200) {
-      debugPrint('Error HTTP: ${resp.statusCode}, Mensaje: $resp');
+    if(resp.statusCode != 200) {
       return {'status': 500};
     }
-
     final reporte = jsonDecode(resp.body);
 
-    return (reporte['status'] != 200)
-        ? {'status': 200, 'reporte': reporte['reporte']}
-        : {'status': 500};
+    return (reporte['status'] != 200) ? {'status': 200, 'reporte': reporte['reporte']} : {'status': 500};
   } catch (e) {
-    debugPrint('getFloraRemoteSincronizacion error: $e');
-    return {'status': 500};
+    return {'status': 500};    
   }
 }
 
 Future<List<Map<String, dynamic>>> getFlora({
   required String endpoint,
-  String method = 'GET',
+  String method = 'Get',
   bool requiereAuth = false,
   Map<String, dynamic>? body,
 }) async {
+  final headers = <String, String>{'Content-Type': 'application/json'};
+  
+  if( requiereAuth){
+    final session = SupabaseClientSingleton.client.auth.currentSession;
 
-    final headers = <String, String>{'Content-Type': 'application/json'};
-
-    if (requiereAuth) {
-      final session = SupabaseClientSingleton.client.auth.currentSession;
-
-      if (session == null) {
-        debugPrint('No autenticado');
-        throw OnError.fromJson({'status': 400,'error':{'message': 'no autenticado','type': 'autenticacion'}},'getFlora');
-      }
-
-      headers['Authorization'] = 'Bearer ${session.accessToken}';
+    if(session == null) {
+      throw OnError.fromJson({'status': 400, 'error': {'message': 'no autenticado','type': 'autenticacion'}},'getFlora');
     }
+    headers['Authorization'] = 'Bearer ${session.accessToken}';
+  }
 
-    final url = Uri.parse('$baseUrl/$endpoint');
+  final url = Uri.parse('$baseUrl/$endpoint');
 
-    http.Response resp;
+  http.Response resp;
 
-    if (method == 'POST') {
-      resp = await http
-          .post(url, headers: headers, body: jsonEncode(body ?? {}))
-          .timeout(const Duration(seconds: 10));
-    } else {
-      resp = await http
-          .get(url, headers: headers)
-          .timeout(const Duration(seconds: 10));
-    }
+  if(method == 'POST') {
+    resp = await http.post(url, headers: headers, body: jsonEncode(body ?? {}))
+              .timeout(const Duration(seconds: 10));
+  } else {
+    resp = await http.get(url, headers: headers).timeout(const Duration(seconds: 10));
+  }
 
-    if (resp.statusCode != 200) {
-      final respuesta = jsonDecode(resp.body);
+  if(resp.statusCode != 200) {
+    final respuesta = jsonDecode(resp.body);
 
-      throw OnError.fromJson(
-        respuesta,
-        'getFlora',
-      );
-    }
+    throw OnError.fromJson(respuesta, 'getFlora');
+  }
 
-    final json = jsonDecode(resp.body);
-
-    return (json['data'] as List).cast<Map<String, dynamic>>();
+  final json = jsonDecode(resp.body);
+  return (json['data'] as List).cast<Map<String,dynamic>>();
 }
 
-Future<void> insertAPI(
-  Map<String, dynamic> data,
+Future<void> insertAPI (
+  Map<String,dynamic> data,
   String metodo,
+  int? version
 ) async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
-  if (session == null) {
+  if(session == null){
     throw OnError(
       type: 'auth',
       message: 'Usuario no autenticado',
       source: 'insertAPI',
-      status: 401,
+      status: 401,  
     );
   }
 
   final url = Uri.parse('$baseUrl/$metodo');
 
   try {
-    final response = await http
-        .post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${session.accessToken}',
-          },
-          body: jsonEncode({'fila': data}),
-        )
-        .timeout(const Duration(seconds: 10));
+    final response = await http.post(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${session.accessToken}',
+    },
+    body: jsonEncode({'fila': data,'version': version}),
+    ).timeout(const Duration(seconds: 10));
 
     final Map<String, dynamic> body = jsonDecode(response.body);
 
-    if (response.statusCode != 200 || body['ok'] != true) {
+    if(response.statusCode != 200 || body['ok'] != true){
       throw OnError.fromJson(body, 'insertAPI');
     }
 
     return;
-  } on OnError {
+  } on OnError{
     rethrow;
   } catch (e) {
-    throw OnError(
-      type: 'network',
-      message: e.toString(),
-      source: 'insertAPI',
-    );
+    throw OnError(type: 'network',message: e.toString(),source: 'insertAPI');
   }
 }
 
 Future<void> updateFloraRemoto(
-  Map<String, dynamic> especie,
+  Map<String,dynamic> especie,
+  int? version
 ) async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
-  if (session == null) {
+  if(session == null) {
     throw OnError(
       type: 'auth',
       message: 'Usuario no autenticado',
@@ -157,36 +129,30 @@ Future<void> updateFloraRemoto(
 
   final nombre = especie['nombre_cientifico'];
 
-  if (nombre == null) {
+  if(nombre == null){
     throw OnError(
       type: 'validation',
-      message: 'Nombre científico inválido',
+      message: 'Nombre cientifico invalido',
       source: 'updateFloraRemoto',
       status: 400,
     );
   }
-
   final url = Uri.parse('$baseUrl/update/${Uri.encodeComponent(nombre)}');
 
-
   try {
-    final response = await http
-        .patch(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${session.accessToken}',
-          },
-          body: jsonEncode({'fila': especie}),
-        )
-        .timeout(const Duration(seconds: 10));
+    final response = await http.patch(
+      url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${session.accessToken}',
+      },
+      body: jsonEncode({'fila': especie, 'version': version}),
+    ).timeout(const Duration(seconds: 10));
 
     final Map<String, dynamic> body = jsonDecode(response.body);
 
-    if (response.statusCode != 200 || body['ok'] != true) {
+    if(response.statusCode != 200 || body['ok'] != true){
       throw OnError.fromJson(body, 'updateFloraRemoto');
     }
-
     return;
   } on OnError {
     rethrow;
@@ -204,7 +170,7 @@ Future<void> softDeleteFloraRemoto(
 ) async {
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
-  if (session == null) {
+  if(session == null) {
     throw OnError(
       type: 'auth',
       message: 'Usuario no autenticado',
@@ -218,27 +184,16 @@ Future<void> softDeleteFloraRemoto(
   );
 
   try {
-    final response = await http
-        .delete(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                'Bearer ${session.accessToken}',
-          },
-        )
-        .timeout(const Duration(seconds: 10));
+    final response = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${session.accessToken}',
+    }).timeout(const Duration(seconds: 10));
 
-    final Map<String, dynamic> body =
-        jsonDecode(response.body);
+    final Map<String, dynamic> body = jsonDecode(response.body);
 
-    if (response.statusCode != 200 || body['ok'] != true) {
-      throw OnError.fromJson(
-        body,
-        'softDeleteFloraRemoto',
-      );
+    if(body['ok'] != true){
+      throw OnError.fromJson(body, 'softDeleteFloraRemoto');
     }
-
     return;
   } on OnError {
     rethrow;
@@ -257,33 +212,33 @@ Future<String> insertImagen(
 ) async {
   final decoded = img.decodeImage(bytes);
 
-  if (decoded == null) {
+  if(decoded == null){
     throw OnError(
       type: 'image',
-      message: 'Imagen no válida',
+      message: 'Imagen no valida',
       source: 'insertImagen',
     );
   }
 
   final jpgBytes = img.encodeJpg(decoded, quality: 90);
 
-  if (nombreCientifico.trim().isEmpty) {
+  if(nombreCientifico.trim().isEmpty) {
     throw OnError(
       type: 'validation',
-      message: 'Nombre científico vacío',
+      message: 'Nombre cientifico vacio',
       source: 'insertImagen',
-    );
+    ); 
   }
 
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
-  if (session == null) {
+  if(session == null){
     throw OnError(
       type: 'auth',
       message: 'Usuario no autenticado',
       source: 'insertImagen',
       status: 401,
-    );
+    ); 
   }
 
   final url = Uri.parse('$baseUrl/insertImagen');
@@ -291,8 +246,7 @@ Future<String> insertImagen(
   try {
     final request = http.MultipartRequest('POST', url);
 
-    request.headers['Authorization'] =
-        'Bearer ${session.accessToken}';
+    request.headers['Authorization'] = 'Bearer ${session.accessToken}';
 
     request.fields['nombreCientifico'] = nombreCientifico;
 
@@ -304,17 +258,14 @@ Future<String> insertImagen(
         contentType: MediaType('image', 'jpeg'),
       ),
     );
-
     final response = await request.send();
-
     final body = await response.stream.bytesToString();
-
     final json = jsonDecode(body);
 
-    if (response.statusCode != 200 || json['ok'] != true) {
+    if(json['ok'] != true) {
       throw OnError.fromJson(json, 'insertImagen');
     }
-
+    
     return json['data'];
   } on OnError {
     rethrow;
@@ -323,16 +274,16 @@ Future<String> insertImagen(
       type: 'network',
       message: e.toString(),
       source: 'insertImagen',
-    );
+    ); 
   }
 }
 
 Future<void> deleteImagen(String urlImagen) async {
-  if (urlImagen.isEmpty) return;
+  if(urlImagen.isEmpty) return;
 
   final session = SupabaseClientSingleton.client.auth.currentSession;
 
-  if (session == null) {
+  if(session == null){
     throw OnError(
       type: 'auth',
       message: 'Usuario no autenticado',
@@ -345,38 +296,34 @@ Future<void> deleteImagen(String urlImagen) async {
     final uri = Uri.parse(urlImagen);
     final fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '';
 
-    if (fileName.isEmpty) {
+    if(fileName.isEmpty) {
       throw OnError(
         type: 'validation',
-        message: 'Nombre de archivo inválido',
+        message: 'Nombre de archivo invalido',
         source: 'deleteImagen',
       );
     }
 
-    final response = await http
-        .delete(
-          Uri.parse('$baseUrl/deleteImagen'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${session.accessToken}',
-          },
-          body: jsonEncode({'fileName': fileName}),
-        )
-        .timeout(const Duration(seconds: 10));
+    final response = await http.delete(Uri.parse('$baseUrl/deleteImagen'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${session.accessToken}',
+      },
+      body: jsonEncode({'fileName': fileName}),
+    ).timeout(const Duration(seconds: 10));
 
-    final Map<String, dynamic> body = jsonDecode(response.body);
+    final Map<String,dynamic> body = jsonDecode(response.body);
 
-    if (response.statusCode != 200 || body['ok'] != true) {
+    if(response.statusCode != 200 || body['ok'] != true) {
       throw OnError.fromJson(body, 'deleteImagen');
     }
   } on OnError {
     rethrow;
   } catch (e) {
     throw OnError(
-      type: 'network',
-      message: e.toString(),
-      source: 'deleteImagen',
-    );
+        type: 'network',
+        message: e.toString(),
+        source: 'deleteImagen',
+      );
   }
 }
-

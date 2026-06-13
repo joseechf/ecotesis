@@ -25,12 +25,10 @@ class EditarUsuario extends StatefulWidget {
 
 class _EditarUsuarioState extends State<EditarUsuario> {
   final _formKey = GlobalKey<FormState>();
-
   late final TextEditingController _emailController;
   late String _rolController;
   late final TextEditingController _estadoRolController;
   final TextEditingController _passwordController = TextEditingController();
-
   bool _ocultarPassword = true;
   bool _cargando = false;
   String? _errorMensaje;
@@ -38,22 +36,20 @@ class _EditarUsuarioState extends State<EditarUsuario> {
   @override
   void initState() {
     super.initState();
-
     _emailController = TextEditingController(text: widget.email);
     _rolController = widget.rolActual;
     _estadoRolController = TextEditingController(text: widget.estadoRol);
   }
 
   @override
-  void dispose() {
+  void dispose(){
     _emailController.dispose();
     _estadoRolController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
-
   Future<bool> _guardarCambios() async {
-    if (!_formKey.currentState!.validate()) return false;
+    if(! _formKey.currentState!.validate()) return false;
     setState(() {
       _cargando = true;
       _errorMensaje = null;
@@ -62,40 +58,38 @@ class _EditarUsuarioState extends State<EditarUsuario> {
       if (_passwordController.text.isNotEmpty) {
         await actualizarPassword(_passwordController.text);
       }
-      if (_rolController != widget.rolActual) {
-        debugPrint('$_rolController solicitando rol ...');
+      if(_rolController != widget.rolActual) {
+        debugPrint('$_rolController solicitando rol ... ');
         await solicitarNuevoRol(_rolController);
       }
       return true;
     } catch (e) {
-      if (!mounted) return false;
+      if(!mounted) return false;
       setState(() {
         _errorMensaje = e.toString();
       });
       return false;
     } finally {
-      if (mounted) {
-        setState(() => _cargando = false);
+      if(mounted) {
+         setState(() => _cargando = false);
       }
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final bool puedeEditarRol =
-        widget.estadoRol == 'aprobado' || widget.estadoRol == 'rechazado';
-
+  Widget build(BuildContext content) {
+    final bool puedeEditarRol = widget.estadoRol == 'aprobado' || widget.estadoRol == 'rechazado';
     return FormularioAuthBase(
       formKey: _formKey,
       cargando: _cargando,
-      titulo: context.tr('titles.edicion'),
+      titulo: content.tr('titles.edicion'), 
       icono: const Icon(
         Icons.person_outline,
         size: 80,
         color: Estilos.verdePrincipal,
-      ),
+      ), 
       campos: [
-        const SizedBox(height: Estilos.paddingGrande),
+        const SizedBox(height: Estilos.paddingGrande,),
         TextFormField(
           controller: _emailController,
           enabled: false,
@@ -105,8 +99,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
             prefixIcon: const Icon(Icons.email_outlined),
           ),
         ),
-        const SizedBox(height: Estilos.paddingMedio),
-        // Rol actual
+        const SizedBox(height: Estilos.paddingMedio,),
         DropdownButtonFormField<String>(
           initialValue: _rolController,
           items: _dropItems(context, [
@@ -114,102 +107,85 @@ class _EditarUsuarioState extends State<EditarUsuario> {
             'administrador',
             'sin_rol',
           ]),
-          onChanged:
-              puedeEditarRol
-                  ? (v) => setState(() => _rolController = v!)
-                  : null,
+          onChanged: 
+          puedeEditarRol
+             ? (v) => setState(()=> _rolController = v!)
+             : null,
           decoration: InputDecoration(
-            labelText: context.tr('gestionUsuario.campos.rol'),
+            labelText: content.tr('gestionUsuario.campos.rol'),
           ),
-        ),
-
-        const SizedBox(height: Estilos.paddingMedio),
-        // Estado del rol (solo lectura)
-        TextFormField(
-          controller: _estadoRolController,
-          enabled: false,
-          readOnly: true,
-          decoration: InputDecoration(
-            labelText: context.tr('gestionUsuario.campos.estadoRol'),
-            prefixIcon: const Icon(Icons.info_outline),
           ),
-        ),
-        const SizedBox(height: Estilos.paddingGrande),
-        // Nueva contraseña
-        CampoContrasena(
-          controladorC: _passwordController,
-          ocultar: _ocultarPassword,
-          onCambiarVisibilidad: () {
-            setState(() {
-              _ocultarPassword = !_ocultarPassword;
-            });
-          },
-          obligatorio: false,
-        ),
-      ],
-
+          const SizedBox(height: Estilos.paddingMedio,),
+          TextFormField(
+            controller: _estadoRolController,
+            enabled: false,
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: context.tr('gestionUsuario.campos.estadoRol'),
+              prefixIcon: const Icon(Icons.info_outline),
+            ),
+          ),
+          const SizedBox(height: Estilos.paddingMedio,),
+          CampoContrasena(
+            controladorC: _passwordController, 
+            ocultar: _ocultarPassword, 
+            onCambiarVisibilidad: (){
+              setState(() {
+                _ocultarPassword = ! _ocultarPassword;
+              });
+            },
+             obligatorio: false
+             ),
+      ], 
       acciones: [
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () async {
               final ok = await _guardarCambios();
-
-              if (ok && context.mounted) {
+              if(ok && mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(context.tr('mensajes.nice')),
+                  SnackBar(content: Text(context.tr('mensajes.nice')),
                     backgroundColor: Colors.green,
                   ),
                 );
               }
-            },
+            }, 
             icon: const Icon(Icons.save_outlined),
             label: Text(context.tr('buttons.editar')),
-          ),
+            ),
         ),
-
-        const SizedBox(height: Estilos.paddingGrande),
-
+        const SizedBox(height: Estilos.paddingMedio,),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(backgroundColor: Estilos.red),
             onPressed: () async {
               final ok = await eliminarUsuario();
-
-              if (ok && context.mounted) {
+              if(ok && mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(context.tr('mensajes.delete')),
-                    backgroundColor: Estilos.red,
+                  SnackBar(content: Text(context.tr('mensaje.delete')),
+                  backgroundColor: Estilos.red,
                   ),
                 );
-
-                Navigator.pop(context, "usuario_eliminado");
+                Navigator.pop(context,"usuario_eliminado");
               }
             },
             icon: const Icon(Icons.delete_outline),
-            label: Text(context.tr('buttons.delete')),
-          ),
+             label: Text(content.tr('buttons.delete')),
+            ),
         ),
-
-        const SizedBox(height: Estilos.paddingGrande),
-
+        const SizedBox(height: Estilos.paddingGrande,),
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              context.read<SessionProvider>().logout();
-              Navigator.pop(context, "logout");
-            },
-            icon: const Icon(Icons.logout_outlined),
-            label: Text(context.tr('buttons.logout')),
-          ),
+          child: ElevatedButton.icon(onPressed: (){
+            content.read<SessionProvider>().logout();
+            Navigator.pop(context,"logout");
+          },
+          icon: const Icon(Icons.logout_outlined),
+          label: Text(content.tr('buttons.logout')),
         ),
-
-        const SizedBox(height: Estilos.paddingGrande),
-
+        ),
+        const SizedBox(height: Estilos.paddingGrande,),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
@@ -220,19 +196,13 @@ class _EditarUsuarioState extends State<EditarUsuario> {
         ),
       ],
       errorMensaje: (_errorMensaje != null) ? _errorMensaje : null,
-    );
+      );
   }
-
   List<DropdownMenuItem<String>> _dropItems(
     BuildContext ctx,
     List<String> values,
-  ) =>
-      values
-          .map(
-            (v) => DropdownMenuItem(
-              value: v,
-              child: Text(ctx.tr('gestionUsuario.roles.$v')),
-            ),
-          )
-          .toList();
+  ) => values.map((v) => DropdownMenuItem(
+    value: v,
+    child: Text(ctx.tr('gestionUsuario.roles.$v')),
+  ),).toList();
 }

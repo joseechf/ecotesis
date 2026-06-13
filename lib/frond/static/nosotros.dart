@@ -1,317 +1,302 @@
 import 'package:flutter/material.dart';
-//import '../iureutilizables/custom_appbar.dart';
 import '../iureutilizables/custom_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../iureutilizables/widgetpersonalizados.dart';
 import '../iureutilizables/footer.dart';
 import 'listas_dinamicas/listas_dinamicas.dart';
-
+import '../estilos.dart';
 class Nosotros extends StatelessWidget {
   const Nosotros({super.key});
-  @override
+
+  @override  
   Widget build(BuildContext context) {
-    double anchoPantalla = MediaQuery.of(context).size.width;
-    final isMobile = anchoPantalla < 800;
+    final anchoPantalla = MediaQuery.of(context).size.width;
+    final isMobile = anchoPantalla < Estilos.cambioMenu;
     return Builder(
-      builder: (context) {
+      builder: (context){
         return Scaffold(
-          /*appBar: CustomAppBar(context: context),
-          drawer:
-              MediaQuery.sizeOf(context).width < 800
-                  ? const MobileMenu()
-                  : null,*/
           appBar: CustomAppBar(context: context),
           drawer: isMobile ? const MobileMenu() : null,
-          body: SafeArea(
-            child: ListView(
-              children: [
-                ImageContainerWidget(
-                  imagePath: 'assets/images/mono1.jpg',
-                  margin: EdgeInsets.zero,
-                  padding: 0,
-                  height: 400,
-                ),
+          body: SafeArea(child: ListView(
+            children: [
+              ImageContainerWidget(
+                imagePath: 'assets/images/mono1.jpg', 
+                margin: EdgeInsets.zero,
+                padding: 0, 
+                height: 400,
+              ),
+              
+              LayoutBuilder(
+                builder: (context, constraints){
+                  double ancho = constraints.maxWidth * 0.090;
+                  return Container(
+                    width: double.infinity,
+                    constraints: BoxConstraints(maxHeight: 400),
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: Stack(
+                      children: [
+                        Opacity(opacity: 0.8,
+                          child: Image.asset(
+                            'assets/images/bosque.jpg',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: 400,
+                            cacheWidth: 500,
+                            cacheHeight: 500,
+                          ),
+                        ),
+                        Center(
+                      child: Text(
+                        context.tr('titles.titlePrincipal.nosotros'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Oswald',
+                          fontSize: ancho,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                      ],
+                    ),
+                  );
+                },
+              ),
 
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    double ancho = constraints.maxWidth;
-
-                    double tamanioResponsive = (ancho * 0.08).clamp(18.0, 48.0);
-
-                    return Container(
-                      width: double.infinity,
-                      constraints: const BoxConstraints(maxHeight: 400),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      child: Stack(
+              ResponsiveLayout(
+                breakpoint: 600,
+                children: [
+                  ImageContainerWidget(
+                    imagePath: 'assets/images/bosque.jpg', 
+                    margin: EdgeInsets.all(20), 
+                    padding: 10, 
+                    height: 400,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(30),
+                    alignment: Alignment.center,
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                          height: 1.4,
+                        ),
                         children: [
-                          Opacity(
-                            opacity: 0.8,
-                            child: Image.asset(
-                              'assets/images/bosque.jpg',
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
+                          TextSpan(
+                            text: context.tr('texts.textsNosotros.historia.p1'),
+                          ),
+                          TextSpan(
+                            text: context.tr('texts.textsNosotros.historia.negrita'),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                          Center(
-                            child: Text(
-                              context.tr('titles.titlePrincipal.nosotros'),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: tamanioResponsive,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          TextSpan(
+                            text: context.tr('texts.textsNosotros.historia.p2'),
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
-
-                ResponsiveLayout(
-                  breakpoint: 600,
-                  children: [
-                    ImageContainerWidget(
-                      imagePath: 'assets/images/bosque.jpg',
-                      margin: EdgeInsets.all(20),
-                      padding: 10,
-                      height: 400,
                     ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(30),
+                  )
+                ],
+              ),
+
+              ImageContainerWidget(
+                imagePath: 'assets/images/casaVieja.jpg', 
+                margin: EdgeInsets.zero,
+                padding: 0, 
+                height: 400,
+              ),
+
+              Container(
+                padding: EdgeInsets.all(20),
+                color: const Color.fromARGB(255, 4, 56, 13),
+                child: Column(
+                  children: [
+                    TextContainerWidget(
+                      text: 'Jay Chait Centro de Aprendizaje Ambiental', 
+                      margin: EdgeInsets.all(10), 
+                      padding: 10, 
+                      backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                       alignment: Alignment.center,
-                      child: RichText(
-                        text: TextSpan(
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black87,
-                            height: 1.4,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: context.tr(
-                                'texts.textsNosotros.historia.p1',
-                              ),
-                            ),
-                            TextSpan(
-                              text: context.tr(
-                                'texts.textsNosotros.historia.negrita',
-                              ),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            TextSpan(
-                              text: context.tr(
-                                'texts.textsNosotros.historia.p2',
-                              ),
-                            ),
-                          ],
-                        ),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: (!isMobile) ? 50 : 30,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextContainerWidget(
+                      text: context.tr('texts.textsNosotros.aprendizaje'),
+                      margin: EdgeInsets.all(10), 
+                      padding: 10, 
+                      backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: (!isMobile) ? 40 : 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
                   ],
                 ),
+              ),
 
-                ImageContainerWidget(
-                  imagePath: 'assets/images/casaVieja.jpg',
-                  margin: EdgeInsets.zero,
-                  padding: 0,
-                  height: 400,
-                ),
-
-                Container(
-                  padding: EdgeInsets.all(20),
-                  color: const Color.fromARGB(255, 4, 56, 13),
-                  child: Column(
-                    children: [
-                      TextContainerWidget(
-                        text: 'Jay Chiat Centro de Aprendizaje Ambiental',
-                        margin: EdgeInsets.all(10),
-                        padding: 10,
-                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                        alignment: Alignment.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: (!isMobile) ? 50 : 30,
-                          fontFamily: 'Oswald',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextContainerWidget(
-                        text: context.tr('texts.textsNosotros.aprendizaje'),
-                        margin: EdgeInsets.all(10),
-                        padding: 10,
-                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                        alignment: Alignment.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: (!isMobile) ? 40 : 20,
-                          fontFamily: 'Oswald',
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
+              Container(
+                color: Colors.white,
+                width: double.infinity,
+                height: 200,
+                alignment: Alignment.center,
+                child: Text(
+                  context.tr('titles.titlePrincipal.equipo'),
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 8, 66, 13),
                   ),
                 ),
+              ),
 
-                Container(
-                  color: Colors.white,
-                  width: double.infinity,
-                  height: 200,
-                  alignment: Alignment.center,
-                  child: Text(
-                    context.tr('titles.titlePrincipal.equipo'),
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 8, 66, 13),
+              // aqui va una lista de persona y descripcion
+              FutureBuilder<List<Map<String, String>>>(
+                future: cargarColaboradores(context),
+                builder: (context, snapshot) {
+                  if(snapshot.hasError){
+                    return Text('Error al cargar los datos');
+                  }
+                  if(!snapshot.hasData){
+                    return const Center(
+                      child: Padding(padding: EdgeInsets.all(20),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  final lista = snapshot.data!;
+                  return Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(lista.length, (index){
+                      return SizedBox(
+                        width: 350,
+                        child: ListaWidgetOrdenada(
+                          datos: lista[index], 
+                          radioImg: 10,
+                          onNavegar: (ctx, ruta){
+                            debugPrint("Ir a $ruta");
+                          },
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
+
+              ImageContainerWidget(
+                imagePath: 'assets/images/mono1.jpg', 
+                margin: EdgeInsets.zero,
+                padding: 0, 
+                height: 400,
+              ),
+
+              Container(
+                padding: EdgeInsets.all(20),
+                color: const Color.fromARGB(255, 4, 56, 13),
+                child: Column(
+                  children: [
+                    TextContainerWidget(
+                      text: context.tr('titles.charrito'), 
+                      margin: EdgeInsets.all(10), 
+                      padding: 10, 
+                      backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
+                    TextContainerWidget(
+                      text: context.tr('texts.textsNosotros.charrito'),
+                      margin: EdgeInsets.all(10), 
+                      padding: 10, 
+                      backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: (!isMobile) ? 40 : 20,
+                        fontFamily: 'Oswald',
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
 
-                // aquí va una lista de persona y descripción
-                FutureBuilder<List<Map<String, String>>>(
-                  future: cargarColaboradores(context),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Error al cargar los datos');
-                    }
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: CircularProgressIndicator(),
+              Container(
+                color: Colors.white,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    TextContainerWidget(
+                      text: context.tr('titles.titlePrincipal.PARTNERS'),
+                      margin: EdgeInsets.all(10),
+                      padding: 10,
+                      backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                      alignment: Alignment.center,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 8, 66, 25),
+                        fontFamily: 'Oswald',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // aqui va una lista de compañeros
+              FutureBuilder<List<Map<String, String>>>(
+                future: cargarCompanieros(context),
+                builder: (context, snapshot) {
+                  if(snapshot.hasError){
+                    return Text('Error al cargar los datos');
+                  }
+                  if(!snapshot.hasData){
+                    return const Center(
+                      child: Padding(padding: EdgeInsets.all(20),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  final lista = snapshot.data!;
+                  return Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(lista.length, (index){
+                      return SizedBox(
+                        width: 350,
+                        child: ListaWidgetOrdenada(
+                          datos: lista[index], 
+                          radioImg: 10,
+                          onNavegar: (ctx, ruta){
+                            debugPrint("Ir a $ruta");
+                          },
                         ),
                       );
-                    }
-                    final lista = snapshot.data!;
-                    return Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: List.generate(lista.length, (index) {
-                        return SizedBox(
-                          width: 350,
-                          child: ListaWidgetOrdenada(
-                            datos: lista[index],
-                            radioImg: 10,
-                            onNavegar: (ctx, ruta) {
-                              debugPrint("Ir a $ruta");
-                            },
-                          ),
-                        );
-                      }),
-                    );
-                  },
-                ),
-
-                ImageContainerWidget(
-                  imagePath: 'assets/images/mono1.jpg',
-                  margin: EdgeInsets.zero,
-                  padding: 0,
-                  height: 400,
-                ),
-
-                Container(
-                  padding: EdgeInsets.all(20),
-                  color: const Color.fromARGB(255, 4, 56, 13),
-                  child: Column(
-                    children: [
-                      TextContainerWidget(
-                        text: context.tr('titles.charrito'),
-                        margin: EdgeInsets.all(10),
-                        padding: 10,
-                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                        alignment: Alignment.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontFamily: 'Oswald',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextContainerWidget(
-                        text: context.tr('texts.textsNosotros.charrito'),
-                        margin: EdgeInsets.all(10),
-                        padding: 10,
-                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                        alignment: Alignment.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: (!isMobile) ? 40 : 20,
-                          fontFamily: 'Oswald',
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Container(
-                  color: Colors.white,
-                  width: double.infinity,
-                  child: Column(
-                    children: [
-                      TextContainerWidget(
-                        text: context.tr('titles.titlePrincipal.PARTNERS'),
-                        margin: EdgeInsets.all(10),
-                        padding: 10,
-                        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                        alignment: Alignment.center,
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 8, 66, 25),
-                          fontSize: 25,
-                          fontFamily: 'Oswald',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // aquí va una lista de compañeros
-                FutureBuilder<List<Map<String, String>>>(
-                  future: cargarCompanieros(context),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Error al cargar los datos');
-                    }
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
-                    final lista = snapshot.data!;
-                    return Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: List.generate(lista.length, (index) {
-                        return SizedBox(
-                          width: 350,
-                          child: ListaWidgetOrdenada(
-                            datos: lista[index],
-                            radioImg: 10,
-                            onNavegar: (ctx, ruta) {
-                              debugPrint("Ir a $ruta");
-                            },
-                          ),
-                        );
-                      }),
-                    );
-                  },
-                ),
-                const Footer(),
-              ],
-            ),
-          ),
+                    }),
+                  );
+                },
+              ),
+              const Footer(),
+            ],
+          )),
         );
       },
     );

@@ -1,56 +1,52 @@
 import 'dart:typed_data';
 
-//  NombreComun
+//NombreComun
 class NombreComun {
   String nombreComun;
-
   NombreComun({required String nombreComun}) : nombreComun = nombreComun.trim();
 
-  // SQLite → VO
-  factory NombreComun.fromRow(Map<String, dynamic> r) =>
-      NombreComun(nombreComun: r['nombre_comun']);
+  // SQLITE a VO
+  factory NombreComun.fromRow(Map<String, dynamic> r) => NombreComun(nombreComun: r['nombre_comun']);
 
-  // VO → SQLite
-  Map<String, dynamic> toRow(String nombreCientifico) => {
+  // VO a  SQLITE
+  Map<String,dynamic> toRow(String nombreCientifico) => {
     'nombre_comun': nombreComun,
     'nombre_cientifico': nombreCientifico,
   };
 }
 
-//  Utilidad
+// Utilidad
 class Utilidad {
   String utilidad;
 
   Utilidad({required String utilidad}) : utilidad = utilidad.trim();
 
-  factory Utilidad.fromRow(Map<String, dynamic> r) =>
-      Utilidad(utilidad: r['utilidad']);
+  factory Utilidad.fromRow(Map<String,dynamic> r) => Utilidad(utilidad: r['utilidad']);
 
-  Map<String, dynamic> toRow(String nombreCientifico) => {
+  Map<String,dynamic> toRow(String nombreCientifico) => {
     'utilidad': utilidad,
     'nombre_cientifico': nombreCientifico,
   };
 }
 
-//  Origen
-class Origen {
+// Origen
+class Origen{
   String origen;
-
   Origen({required String origen}) : origen = origen.trim();
 
-  factory Origen.fromRow(Map<String, dynamic> r) => Origen(origen: r['origen']);
-
+  factory Origen.fromRow(Map<String, dynamic>r) => Origen(origen: r['origen']);
+  
   Map<String, dynamic> toRow(String nombreCientifico) => {
     'origen': origen,
     'nombre_cientifico': nombreCientifico,
   };
 }
 
-//  ImagenTemp
+// ImagenTemp
 class ImagenTemp {
   String urlFoto;
   String estado;
-  Uint8List? bytes;
+  Uint8List ? bytes;
 
   ImagenTemp({this.urlFoto = '', this.estado = 'tentativo', this.bytes});
 }

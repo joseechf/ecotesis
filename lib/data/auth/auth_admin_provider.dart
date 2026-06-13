@@ -1,8 +1,5 @@
 /*
-Cargar solicitudes pendientes
-Aprobar usuario
-Rechazar usuario
-Estados de loading y error
+cargar solicitudes pendientes para que el administrador lo evalue
  */
 
 import 'package:flutter/material.dart';
@@ -10,101 +7,61 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/supabase_client.dart';
 import 'usuario_solicitud_modelo.dart';
 
-class AuthAdminProvider extends ChangeNotifier {
+class AuthAdminProvider extends ChangeNotifier{
   final SupabaseClient _supabase = SupabaseClientSingleton.client;
-
   List<UsuarioSolicitudModel> solicitudes = [];
   bool isLoading = false;
   String? error;
 
-  // usuarios que están siendo procesados
-  final Set<String> processingIds = {};
+  //usuarios que están siendo procesados
+  final Set<String> usuarioEvaluado = {};
 
   Future<void> cargarSolicitudes() async {
-    debugPrint('[Admin] Iniciando carga de solicitudes...');
-
     try {
       isLoading = true;
       error = null;
       notifyListeners();
-
       final response = await _supabase.rpc('get_solicitudes_pendientes');
-
-      debugPrint('[Admin] Respuesta RPC recibida');
-      debugPrint('[Admin] Cantidad recibida: ${(response as List).length}');
-      debugPrint('[Admin] Data cruda: $response');
-
-      solicitudes =
-          response.map((e) => UsuarioSolicitudModel.fromMap(e)).toList();
-
-      debugPrint('[Admin] Solicitudes mapeadas correctamente');
-    } catch (e, stack) {
+      solicitudes = (response as List).map<UsuarioSolicitudModel>((e) => UsuarioSolicitudModel.fromMap(e)).toList();
+    } catch (e) {
       error = e.toString();
-      debugPrint('[Admin][ERROR] cargarSolicitudes → $error');
-      debugPrint('$stack');
+      debugPrint('\n $error');
     } finally {
       isLoading = false;
-      debugPrint('[Admin] Finalizó carga de solicitudes');
       notifyListeners();
     }
   }
 
   Future<void> aprobarUsuario(String userId) async {
-    debugPrint('[Admin] Aprobando usuario: $userId');
-
     try {
-      processingIds.add(userId);
+      usuarioEvaluado.add(userId);
       error = null;
       notifyListeners();
-
-      await _supabase.rpc(
-        'approve_role_request',
-        params: {'target_user': userId},
-      );
-
-      debugPrint('[Admin] Usuario aprobado correctamente: $userId');
-
-      // eliminar de la lista local
+      await _supabase.rpc('approve_role_request', params: {'target_user': userId},);
       solicitudes.removeWhere((s) => s.id == userId);
-
-      debugPrint('[Admin] Usuario removido de lista local');
-    } catch (e, stack) {
+    } catch (e) {
       error = e.toString();
-      debugPrint('[Admin][ERROR] aprobarUsuario → $error');
-      debugPrint('$stack');
+      debugPrint('\n $error');
     } finally {
-      processingIds.remove(userId);
-      debugPrint('[Admin] Finalizó proceso de aprobación: $userId');
+      usuarioEvaluado.remove(userId);
       notifyListeners();
     }
   }
-
+  
   Future<void> rechazarUsuario(String userId) async {
-    debugPrint('[Admin] Rechazando usuario: $userId');
-
-    try {
-      processingIds.add(userId);
+  try {
+      usuarioEvaluado.add(userId);
       error = null;
       notifyListeners();
-
-      await _supabase.rpc(
-        'reject_role_request',
-        params: {'target_user': userId},
-      );
-
-      debugPrint('[Admin] Usuario rechazado correctamente: $userId');
-
+      await _supabase.rpc('reject_role_request', params: {'target_user': userId},);
       solicitudes.removeWhere((s) => s.id == userId);
-
-      debugPrint('[Admin] Usuario removido de lista local');
-    } catch (e, stack) {
+    } catch (e) {
       error = e.toString();
-      debugPrint('[Admin][ERROR] rechazarUsuario → $error');
-      debugPrint('$stack');
+      debugPrint('\n $error');
     } finally {
-      processingIds.remove(userId);
-      debugPrint('[Admin] Finalizó proceso de rechazo: $userId');
+      usuarioEvaluado.remove(userId);
       notifyListeners();
     }
   }
 }
+

@@ -2,25 +2,22 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../estilos.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
 
-  static const _donationAmounts = <Map<String, dynamic>>[
-    {'label': '\$25', 'value': 25},
-    {'label': '\$50', 'value': 50},
-    {'label': '\$75', 'value': 75},
-    {'label': '\$100', 'value': 100},
-    {'label': 'Otros', 'value': 'custom'},
+  static const _donacionCant = <Map<String,dynamic>>[
+    {'label': '\$25','value': 25},
+    {'label': '\$50','value': 50},
+    {'label': '\$75','value': 75},
+    {'label': '\$100','value': 100},
+    {'label': 'Otros','value': 'otros'},
   ];
 
-  Future<void> _handleDonation(dynamic amount) async {
-    final url =
-        amount == 'custom'
-            ? 'https://www.paypal.com/donate'
-            : 'https://www.paypal.com/donate?amount=$amount';
-    if (await canLaunchUrl(Uri.parse(url))) {
+  Future<void> _controlDonacion(dynamic cantidad) async {
+    final url = cantidad == 'otros' ? 'https://www.paypal.com/donate'
+                : 'https://www.paypal.com/donate?amount=$cantidad';
+    if(await canLaunchUrl(Uri.parse(url))){
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
   }
@@ -36,7 +33,7 @@ class Footer extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Donaciones
+          //donaciones
           Text(
             context.tr('mensajes.apoyo'),
             style: TextStyle(
@@ -45,7 +42,7 @@ class Footer extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: Estilos.margenMedio),
+          const SizedBox(height: Estilos.margenMedio,),
           Text(
             context.tr('texts.donacion.p1'),
             textAlign: TextAlign.center,
@@ -54,9 +51,7 @@ class Footer extends StatelessWidget {
               fontSize: Estilos.textoMedio,
             ),
           ),
-
-          const SizedBox(height: Estilos.margenMedio),
-
+          const SizedBox(height: Estilos.margenMedio,),
           Text(
             context.tr('texts.donacion.p2'),
             textAlign: TextAlign.center,
@@ -66,93 +61,80 @@ class Footer extends StatelessWidget {
               fontStyle: FontStyle.italic,
             ),
           ),
-          const SizedBox(height: Estilos.margenMedio),
+          const SizedBox(height: Estilos.margenMedio,),
           Wrap(
             spacing: Estilos.margenMedio,
             runSpacing: Estilos.margenMedio,
             alignment: WrapAlignment.center,
-            children:
-                _donationAmounts
-                    .map(
-                      (d) => _DonationButton(
-                        label: d['label'] as String,
-                        value: d['value'],
-                        onTap: _handleDonation,
-                      ),
-                    )
-                    .toList(),
+            children: _donacionCant.map(
+              (d) => _BotonDonacion(
+                label: d['label'] as String,
+                value: d['value'],
+                onTap: _controlDonacion,
+              ),
+            ).toList(),
           ),
-          const SizedBox(height: Estilos.margenGrande),
-
-          // Redes y contacto
-          LayoutBuilder(
-            builder: (_, c) {
-              final narrow = c.maxWidth < 600;
-              return narrow
-                  ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _social(),
-                      const SizedBox(height: Estilos.margenGrande),
-                      _contact(),
-                    ],
-                  )
-                  : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: _social()),
-                      Expanded(child: _contact()),
-                    ],
-                  );
-            },
-          ),
-          const SizedBox(height: Estilos.margenGrande),
-
-          // Copyright
-          const Divider(color: Estilos.verdeClaro, height: 1),
-          const SizedBox(height: Estilos.paddingGrande),
+          const SizedBox(height: Estilos.margenMedio,),
+          // redes y contactos
+          LayoutBuilder(builder: (_,c){
+            final narrow = c.maxWidth < 600;
+            return narrow ? 
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _social(),
+                  const SizedBox(height: Estilos.margenGrande,),
+                  _contact(),
+                ],
+              ) : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: _social()),
+                  Expanded(child: _contact())
+                ],
+              );
+          }),
+          const SizedBox(height: Estilos.margenMedio,),
+          // copyright
+          const Divider(color: Estilos.verdeClaro, height: 1,),
+          const SizedBox(height: Estilos.paddingGrande,),
           Text(
-            '©2022 by Pro Eco Azuero. Proudly created with Wix.com',
+            '@2022 by Pro Eco Azuero.',
             style: TextStyle(
               color: Estilos.blanco.withValues(alpha: 0.9),
               fontSize: Estilos.textoPequeno,
             ),
-          ),
+          )
         ],
       ),
-    );
+    );     
   }
 
   Widget _social() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _SectionTitle('Síguenos'),
-      const SizedBox(height: Estilos.margenMedio),
+      _SeleccionTitulo('Síguenos'),
+      const SizedBox(height: Estilos.margenMedio,),
       Row(
         children: [
           _iconButton(Icons.facebook, 'https://www.facebook.com/proecoazuero'),
-          const SizedBox(width: Estilos.margenMedio),
+          const SizedBox(width: Estilos.margenMedio,),
           _iconButton(
-            FontAwesomeIcons.xTwitter,
+            Icons.alternate_email,
             'https://twitter.com/proecoazuero',
           ),
-          const SizedBox(width: Estilos.margenMedio),
-          _iconButton(
-            Icons.play_arrow,
-            'https://www.youtube.com/@proecoazuero4588',
-          ),
+          const SizedBox(width: Estilos.margenMedio,),
+          _iconButton(Icons.play_arrow, 'https://www.youtube.com/@proecoazuero4588'),
         ],
-      ),
+      )
     ],
   );
 
   Widget _contact() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _SectionTitle('Contacto'),
-      const SizedBox(height: Estilos.margenMedio),
-      _row(Icons.phone, '+507 1234-5678'),
-      const SizedBox(height: Estilos.margenPequeno),
+      _SeleccionTitulo('Contacto'),
+      const SizedBox(height: Estilos.margenMedio,),
       _row(
         Icons.location_on,
         'Calle Las Malvinas, Frente a Distribuidora Libadi, Panamá',
@@ -161,39 +143,35 @@ class Footer extends StatelessWidget {
   );
 
   Widget _iconButton(IconData icon, String url) => IconButton(
-    icon: Icon(icon, color: Estilos.blanco, size: 28),
+    icon: Icon(icon,color: Estilos.blanco,size: 28,),
     onPressed: () async {
-      if (await canLaunchUrl(Uri.parse(url))) {
-        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      if(await canLaunchUrl(Uri.parse(url))){
+        await launchUrl(Uri.parse(url),mode: LaunchMode.externalApplication);
       }
     },
     padding: EdgeInsets.zero,
     constraints: const BoxConstraints(),
   );
-
+  
   Widget _row(IconData icon, String text) => Row(
-    crossAxisAlignment:
-        icon == Icons.location_on
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.center,
+    crossAxisAlignment: icon == Icons.location_on ? CrossAxisAlignment.start : CrossAxisAlignment.center,
     children: [
-      Icon(icon, color: Estilos.blanco, size: 20),
-      const SizedBox(width: Estilos.margenPequeno),
+      Icon(icon, color: Estilos.blanco, size: 20,),
+      const SizedBox(width: Estilos.margenPequeno,),
       Expanded(
         child: Text(
-          text,
-          style: TextStyle(color: Estilos.blanco, fontSize: Estilos.textoMedio),
+          text, style: TextStyle(color: Estilos.blanco, fontSize: Estilos.textoMedio),
         ),
       ),
     ],
   );
 }
 
-class _DonationButton extends StatelessWidget {
+class _BotonDonacion extends StatelessWidget {
   final String label;
   final dynamic value;
   final Function(dynamic) onTap;
-  const _DonationButton({
+  const _BotonDonacion({
     required this.label,
     required this.value,
     required this.onTap,
@@ -216,19 +194,18 @@ class _DonationButton extends StatelessWidget {
       ),
       onPressed: () => onTap(value),
       child: Text(
-        label,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        label, style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
       ),
-    );
+    );    
   }
 }
 
-class _SectionTitle extends StatelessWidget {
+class _SeleccionTitulo extends StatelessWidget {
   final String text;
-  const _SectionTitle(this.text);
+  const _SeleccionTitulo(this.text);
 
   @override
-  Widget build(BuildContext context) => Text(
+  Widget build(BuildContext context) => Text (
     text,
     style: TextStyle(
       color: Estilos.blanco,
