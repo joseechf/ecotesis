@@ -80,6 +80,27 @@ class DatabaseHelper {
             last_upd TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
           )
         ''');
+        await db.execute('''
+          CREATE VIEW floraCompleta AS
+          SELECT f.*, 
+          coalesce((
+            select json_group_array(json_object('nombre_comun', n.nombre_comun))
+            from NombreComun n
+          where n.nombre_cientifico = f.nombre_cientifico
+          ), '[]') AS NombreComun,
+          coalesce((
+            select json_group_array(json_object('origen', o.origen))
+            from Origen o
+          where o.nombre_cientifico = f.nombre_cientifico
+          ), '[]') AS Origen,
+          coalesce((
+            select json_group_array(json_object('utilidad', u.utilidad))
+            from Utilidad u
+          where u.nombre_cientifico = f.nombre_cientifico
+          ), '[]') AS Utilidad,
+          '[]' AS Imagen
+        FROM Flora f;
+        ''');
         await db.execute(''' 
           CREATE TABLE IF NOT EXISTS ultima_sinc (
             id INTEGER PRIMARY KEY CHECK (id = 1),

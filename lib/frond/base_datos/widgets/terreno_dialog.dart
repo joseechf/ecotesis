@@ -23,7 +23,6 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
   final TextEditingController tamanoCtrl = TextEditingController();
   final TextEditingController coordsCtrl = TextEditingController();
   DateTime? inicioDate;
-  DateTime? finDate;
   late String puntos;
 
   String construirGeoJSON(String coordsRaw){
@@ -57,7 +56,7 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
     bool result = false;
     try {
       if(! _formKey.currentState!.validate()) throw Exception('falló la validacion');
-      if(inicioDate == null || finDate == null || puntos == '') throw Exception('valores fecha o coordenadas vacíos');
+      if(inicioDate == null || puntos == '') throw Exception('valores fecha o coordenadas vacíos');
     } catch (e) {
       final error = OnError(
         type: 'ui',
@@ -71,8 +70,7 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
     final data = {
       "dueno": duenoCtrl.text.trim(),
       "tamano": double.parse(tamanoCtrl.text),
-      "inicio_alquiler": '${inicioDate!.year}-${inicioDate!.month.toString().padLeft(2,"0")}-${inicioDate!.day.toString().padLeft(2,"0")}',
-      "fin_alquiler": '${finDate!.year}-${finDate!.month.toString().padLeft(2,"0")}-${finDate!.day.toString().padLeft(2,"0")}',
+      "inicio_reforestacion": '${inicioDate!.year}-${inicioDate!.month.toString().padLeft(2,"0")}-${inicioDate!.day.toString().padLeft(2,"0")}',
       "coordenadas": coordsFormateadas,
     };
     try {
@@ -143,22 +141,6 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
                   });
                 },
                 child: Text(context.tr('admin.alquiler.fechaInicio')),
-              ),
-              const SizedBox(height: Estilos.paddingMedio,),
-              Text(
-                finDate != null
-                  ? '${finDate!.year}-${finDate!.month}-${finDate!.day}'
-                  : 'YYYY-MM-DD',
-              ),
-              OutlinedButton(
-                onPressed: () async {
-                  final result = await selectDate(context,alquiler: true);
-
-                  setState(() {
-                    finDate = result ?? result;
-                  });
-                },
-                child: Text(context.tr('admin.alquiler.fechaFinal')),
               ),
               const SizedBox(height: Estilos.paddingMedio,),
               SizedBox(

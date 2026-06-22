@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../../../domain/entities/especie_unificada.dart';
 import 'dart:async';
 import 'dart:io' show Platform;
@@ -45,11 +47,11 @@ class EspeciesProvider with ChangeNotifier {
         timeout(const Duration(seconds: 20));
         
         _especies.addAll(
-          response.map<Especie>((json) => Especie.fromJson(json)).toList(),
+          response.map(Especie.fromJson).toList(),
         );
       } else {
         final db = await dbLocal.instancia;
-        final especies = await cargarFloraLocal(db);
+        final especies = await cargarFloraLocalActiva(db);
         _especies.addAll(especies);
       }
     } on OnError catch (e) {
@@ -87,7 +89,7 @@ class EspeciesProvider with ChangeNotifier {
         } on OnError catch (e){
           debugPrint('ERROR INSERTAR REMOTO: ${e.source} | ${e.message}');
           // si el insert falla puede ser por softdelete, se actualiza el registro, si no existe tambien va a fallar, si existe se revive
-          debugPrint('intentando revivir el registro ${nueva.nombreCientifico}');
+          debugPrint('intentando revivir el registro ${nueva.nombre_cientifico}');
           if(imgsBytes != null){
             await _updateRemoto(nueva, imgsBytes);
           }else{
@@ -96,7 +98,7 @@ class EspeciesProvider with ChangeNotifier {
         }
       } else {
           final db = await dbLocal.instancia;
-          final duplicado = await obtenerFloraLocalById(db, nueva.nombreCientifico);
+          final duplicado = await obtenerFloraLocalById(db, nueva.nombre_cientifico);
           if(duplicado != null){
             await updateFloraLocal(db, nueva,null);
           }else{
@@ -176,16 +178,16 @@ class EspeciesProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> eliminar (String nombreCientifico) async {
+  Future<bool> eliminar (String nombre_cientifico) async {
     _error = null;
     notifyListeners();
     try {
       final destino = await _elegirBD();
       if(destino == 'remoto'){
-        await softDeleteFloraRemoto(nombreCientifico);
+        await softDeleteFloraRemoto(nombre_cientifico);
       }else {
         final db = await dbLocal.instancia;
-        final ok = await softDeleteLocal(db, nombreCientifico,null);
+        final ok = await softDeleteLocal(db, nombre_cientifico,null);
         if(!ok){
           throw OnError(
             type: 'local',
@@ -195,7 +197,7 @@ class EspeciesProvider with ChangeNotifier {
         }
       }
       _especies.removeWhere(
-        (e) => e.nombreCientifico == nombreCientifico,
+        (e) => e.nombre_cientifico == nombre_cientifico,
       );
       _error = null;
       return true;
@@ -223,10 +225,10 @@ class EspeciesProvider with ChangeNotifier {
     final List<ImagenTemp> editado = [];
     try {
       for(final bytes in bytesList) {
-        final url = await insertImagen(bytes, nueva.nombreCientifico);
+        final url = await insertImagen(bytes, nueva.nombre_cientifico);
         editado.add(
           ImagenTemp(
-            urlFoto: url,
+            url_foto: url,
             estado: 'tentativo',
           ),
         );
@@ -239,15 +241,15 @@ class EspeciesProvider with ChangeNotifier {
       _especies.add(especieConImagenes);
     } on OnError{
       for (final img in editado) {
-        if(img.urlFoto.isNotEmpty){
-          await deleteImagen(img.urlFoto);
+        if(img.url_foto.isNotEmpty){
+          await deleteImagen(img.url_foto);
         }
       }
       rethrow;
     } catch (e) {
       for(final img in editado){
-        if(img.urlFoto.isNotEmpty){
-          await deleteImagen(img.urlFoto);
+        if(img.url_foto.isNotEmpty){
+          await deleteImagen(img.url_foto);
         }
       }
       throw OnError(
@@ -271,7 +273,7 @@ class EspeciesProvider with ChangeNotifier {
   ) async {
     final editado = <ImagenTemp>[];
     for (final bytes in bytesList){
-      final url = await insertImagen(bytes, nueva.nombreCientifico);
+      final url = await insertImagen(bytes, nueva.nombre_cientifico);
 
       if(url.isEmpty){
         throw OnError(
@@ -280,17 +282,17 @@ class EspeciesProvider with ChangeNotifier {
           source: '_updateRemoto',
         );
       }
-      editado.add(ImagenTemp(urlFoto: url, estado: 'comprobado'));
+      editado.add(ImagenTemp(url_foto: url, estado: 'comprobado'));
     }
     final imagenesValidas = nueva.imagenes.where((i) { 
-      return i.urlFoto.trim().isNotEmpty;
+      return i.url_foto.trim().isNotEmpty;
     }).toList();
     final especieConUrls = nueva.copyWith(
       imagenes: [...imagenesValidas, ...editado],
     );
     await updateFloraRemoto(especieConUrls.toJson(),null);
     final index = _especies.indexWhere(
-      (e) => e.nombreCientifico == nueva.nombreCientifico,
+      (e) => e.nombre_cientifico == nueva.nombre_cientifico,
     );
     if(index != -1){
       _especies[index] = especieConUrls;
@@ -303,7 +305,7 @@ class EspeciesProvider with ChangeNotifier {
     final ok = await updateFloraLocal(db, nueva,null);
     if(ok) {
       final index = _especies.indexWhere(
-        (e) => e.nombreCientifico == nueva.nombreCientifico,
+        (e) => e.nombre_cientifico == nueva.nombre_cientifico,
       );
       if(index != -1) _especies[index] = nueva;
     }
@@ -317,27 +319,27 @@ class EspeciesProvider with ChangeNotifier {
   static bool esUno(int? v) => v == 1;
 
   final Map<String, bool Function(Especie)> _mapaFiltros = {
-      'daSombra': (e) => esUno(e.daSombra),
-      'Flor distintiva': (e) => tieneValor(e.florDistintiva),
-      'Fruta distintiva': (e) => tieneValor(e.frutaDistintiva),
+      'daSombra': (e) => esUno(e.da_sombra),
+      'Flor distintiva': (e) => tieneValor(e.flor_distintiva),
+      'Fruta distintiva': (e) => tieneValor(e.fruta_distintiva),
       'Pionero': (e) => esUno(e.pionero),
-      'Salud del suelo': (e) => esUno(e.saludSuelo),
-      'Crecimiento rápido': (e) => tieneValor(e.formaCrecimiento),
-      'Crecimiento lento': (e) => tieneValor(e.formaCrecimiento),
+      'Salud del suelo': (e) => esUno(e.salud_suelo),
+      'Crecimiento rápido': (e) => tieneValor(e.forma_crecimiento),
+      'Crecimiento lento': (e) => tieneValor(e.forma_crecimiento),
       'Ambiente seco': (e) => tieneValor(e.ambiente),
       'Ambiente humedo': (e) => tieneValor(e.ambiente),
       'Ambiente Mixto': (e) => tieneValor(e.ambiente),
-      'establecido a Sombra': (e) => tieneValor(e.establecidoSolSombra),
-      'establecido a Sol': (e) => tieneValor(e.establecidoSolSombra),
-      'establecido a Mixto': (e) => tieneValor(e.establecidoSolSombra),
+      'establecido a Sombra': (e) => tieneValor(e.establecido_sol_sombra),
+      'establecido a Sol': (e) => tieneValor(e.establecido_sol_sombra),
+      'establecido a Mixto': (e) => tieneValor(e.establecido_sol_sombra),
       'Hospeda monos': (e) => tieneValor(e.huespedes), 
       'Hospeda aves': (e) => tieneValor(e.huespedes), 
       'Poliniza abejas': (e) => tieneValor(e.polinizador),
       'Poliniza mariposas': (e) => tieneValor(e.polinizador), 
       'Polinizador mixto': (e) => tieneValor(e.polinizador),
-      'Nativo América': (e) => esUno(e.nativoAmerica),
-      'Nativo Panamá': (e) => esUno(e.nativoPanama),
-      'Nativo Azuero': (e) => esUno(e.nativoAzuero),
+      'Nativo América': (e) => esUno(e.nativo_america),
+      'Nativo Panamá': (e) => esUno(e.nativo_panama),
+      'Nativo Azuero': (e) => esUno(e.nativo_azuero),
       'Frutal': (e) => e.utilidades.any((u) => tieneValor(u.utilidad)),
       'Maderal': (e) => e.utilidades.any((u) => tieneValor(u.utilidad)),
       'Ganado': (e) => e.utilidades.any((u) => tieneValor(u.utilidad)),

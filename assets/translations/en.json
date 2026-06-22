@@ -18,7 +18,8 @@
     "charrito": "The Azuero Spider Monkey, Charrito",
     "cultivoSostenible": "Growing Plants & Trees Sustainably",
     "pregFrecuentes": "Frequently Asked Questions",
-    "edicion": "User Edit"
+    "edicion": "User Edit",
+    "historia": "Our Story"
   },
   "mensajes": {
     "usuarioActualizado": "Updated User",
@@ -294,19 +295,18 @@
       "invsiembra": "Planting inventory",
       "regventas": "Sales record",
       "regsiembra": "Planting record",
-      "terrenos": "Rented lands"
+      "terrenos": "reforestable lands"
     },
     "capas": {
       "siembra": "sowing",
-      "terrenos": "Rented land",
+      "terrenos": "reforestable land",
       "centros": "educational centers"
     },
     "alquiler": {
       "titulo":"Rental Land",
       "dueño": "owner",
       "tamaño":"Size M2",
-      "fechaInicio":"Start Date of Rental",
-      "fechaFinal": "End Date of Rental",
+      "fechaInicio":"Start Date of Reforestation",
       "coordenadas": "Enter Coordinates"
     },
     "siembra": {

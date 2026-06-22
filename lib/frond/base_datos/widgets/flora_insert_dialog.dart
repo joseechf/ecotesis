@@ -54,35 +54,35 @@ class _EspecieDialogInsertEditState extends State<EspecieDialogInsertEdit> {
     final especieAuxiliar = widget.especieInicial;
 
     nombreCientificoCtrl = TextEditingController(
-      text: especieAuxiliar?.nombreCientifico ?? '',
+      text: especieAuxiliar?.nombre_cientifico ?? '',
     );
     florCtrl = TextEditingController(
-      text: especieAuxiliar?.florDistintiva ?? '',
+      text: especieAuxiliar?.flor_distintiva ?? '',
     );
     frutaCtrl = TextEditingController(
-      text: especieAuxiliar?.frutaDistintiva ?? '',
+      text: especieAuxiliar?.fruta_distintiva ?? '',
     );
     huespedes = especieAuxiliar?.huespedes;
-    formaCrecimiento = especieAuxiliar?.formaCrecimiento;
+    formaCrecimiento = especieAuxiliar?.forma_crecimiento;
     polinizador = especieAuxiliar?.polinizador;
     ambiente = especieAuxiliar?.ambiente;
     coberturaCtrl = TextEditingController(
       text: especieAuxiliar?.cobertura.toString() ?? '',
     );
-    establecidoSolSombra = especieAuxiliar?.establecidoSolSombra;
+    establecidoSolSombra = especieAuxiliar?.establecido_sol_sombra;
     estratoCtrl = TextEditingController(text: especieAuxiliar?.estrato ?? '');
-    daSombra = especieAuxiliar?.daSombra == 1;
-    saludSuelo = especieAuxiliar?.saludSuelo == 1;
+    daSombra = especieAuxiliar?.da_sombra == 1;
+    saludSuelo = especieAuxiliar?.salud_suelo == 1;
     pionero = especieAuxiliar?.pionero == 1;
-    nativoAmerica = especieAuxiliar?.nativoAmerica == 1;
-    nativoPanama = especieAuxiliar?.nativoPanama == 1;
-    nativoAzuero = especieAuxiliar?.nativoAzuero == 1;
+    nativoAmerica = especieAuxiliar?.nativo_america == 1;
+    nativoPanama = especieAuxiliar?.nativo_panama == 1;
+    nativoAzuero = especieAuxiliar?.nativo_azuero == 1;
     nombresComunes = List.from(especieAuxiliar?.nombresComunes ?? []);
     utilidades = List.from(especieAuxiliar?.utilidades ?? []);
     origenes = List.from(especieAuxiliar?.origenes ?? []);
     imagenes = especieAuxiliar != null && especieAuxiliar.imagenes.isNotEmpty
                 ? especieAuxiliar.imagenes
-                  .map((i) => ImagenTemp(urlFoto: i.urlFoto, bytes: i.bytes)).toList()
+                  .map((i) => ImagenTemp(url_foto: i.url_foto, bytes: i.bytes)).toList()
                   : [ImagenTemp()];
   }
 
@@ -109,28 +109,28 @@ class _EspecieDialogInsertEditState extends State<EspecieDialogInsertEdit> {
 
     final provider = context.read<EspeciesProvider>();
     double cob = double.tryParse(coberturaCtrl.text) ?? 0;
-    final nombresLimpios = nombresComunes.where((n) => n.nombreComun.trim().isNotEmpty).toList();
+    final nombresLimpios = nombresComunes.where((n) => n.nombre_comun.trim().isNotEmpty).toList();
     final utilidadesLimpios = utilidades.where((n) => n.utilidad.trim().isNotEmpty).toList();
     final origenesLimpios = origenes.where((n) => n.origen.trim().isNotEmpty).toList();
-    final imagenesLimpias = imagenes.where((n) => n.bytes != null || n.urlFoto.isNotEmpty).toList();
+    final imagenesLimpias = imagenes.where((n) => n.bytes != null || n.url_foto.isNotEmpty).toList();
     final bytesNuevos = imagenesLimpias.map((i) => i.bytes).whereType<Uint8List>().toList();
     final especieBase = Especie(
-      nombreCientifico: nombreCientificoCtrl.text.trim(),
-      daSombra: daSombra ? 1 : 0,
-      saludSuelo: saludSuelo ? 1 : 0,
+      nombre_cientifico: nombreCientificoCtrl.text.trim(),
+      da_sombra: daSombra ? 1 : 0,
+      salud_suelo: saludSuelo ? 1 : 0,
       pionero: pionero ? 1 : 0,
-      nativoAmerica: nativoAmerica ? 1 : 0,
-      nativoPanama: nativoPanama ? 1 : 0,
-      nativoAzuero: nativoAzuero ? 1 : 0,
-      florDistintiva: florCtrl.text.trim().isEmpty ? null : florCtrl.text.trim(),
-      frutaDistintiva: frutaCtrl.text.trim().isEmpty ? null : frutaCtrl.text.trim(),
+      nativo_america: nativoAmerica ? 1 : 0,
+      nativo_panama: nativoPanama ? 1 : 0,
+      nativo_azuero: nativoAzuero ? 1 : 0,
+      flor_distintiva: florCtrl.text.trim().isEmpty ? null : florCtrl.text.trim(),
+      fruta_distintiva: frutaCtrl.text.trim().isEmpty ? null : frutaCtrl.text.trim(),
       estrato: estratoCtrl.text.trim().isEmpty ? null : estratoCtrl.text.trim(),
       huespedes: huespedes,
-      formaCrecimiento: formaCrecimiento,
+      forma_crecimiento: formaCrecimiento,
       polinizador: polinizador,
       ambiente: ambiente,
       cobertura: cob,
-      establecidoSolSombra: establecidoSolSombra,
+      establecido_sol_sombra: establecidoSolSombra,
       nombresComunes: nombresLimpios,
       utilidades: utilidadesLimpios,
       origenes: origenesLimpios,
@@ -300,9 +300,9 @@ class _EspecieDialogInsertEditState extends State<EspecieDialogInsertEdit> {
                     items: nombresComunes, 
                     setState: setState, 
                     label: context.tr('bdInterfaz.insert.Ncomun'), 
-                    getValor: (n) => n.nombreComun, 
-                    setValor: (n, v) => n.nombreComun = v, 
-                    crearVacio: () => NombreComun(nombreComun: ''),
+                    getValor: (n) => n.nombre_comun, 
+                    setValor: (n, v) => n.nombre_comun = v, 
+                    crearVacio: () => NombreComun(nombre_comun: ''),
                     validator: ValidadorTexto.validaNoObligatorio,
                   ),
                   const SizedBox(height: Estilos.paddingMedio,),

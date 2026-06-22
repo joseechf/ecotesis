@@ -24,7 +24,7 @@ class EspecieModal extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Estilos.radioBordeGrande),
       ),
-      title: Text(especie.nombreCientifico),
+      title: Text(especie.nombre_cientifico),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
         child: SingleChildScrollView(
@@ -53,7 +53,7 @@ class EspecieModal extends StatelessWidget {
                           itemBuilder: (_, index){
                             final img = especie.imagenes[index];
                             return Image.network(
-                              img.urlFoto,
+                              img.url_foto,
                               width: double.infinity,
                               height: 300,
                               fit: BoxFit.contain,
@@ -80,35 +80,35 @@ class EspecieModal extends StatelessWidget {
                 _fila(
                   Icons.label,
                   context.tr('bdInterfaz.insert.Ncomun'),
-                  especie.nombresComunes.map((n) => n.nombreComun).join(', '),
+                  especie.nombresComunes.map((n) => n.nombre_comun).join(', '),
                 ),
               // da sombra
-              if(especie.daSombra != null)
+              if(especie.da_sombra != null)
                 _fila(
                   Icons.grass,
                   context.tr('bdInterfaz.insert.daSombra'),
-                  especie.daSombra == 1 ? 'Sí' : 'No',
+                  especie.da_sombra == 1 ? 'Sí' : 'No',
                 ),
               // Flor distintiva
-              if(especie.florDistintiva != null && especie.florDistintiva != '')
+              if(especie.flor_distintiva != null && especie.flor_distintiva != '')
                 _fila(
                   Icons.local_florist,
                   context.tr('bdInterfaz.insert.florDistintiva'),
-                  especie.florDistintiva!,
+                  especie.flor_distintiva!,
                 ),
               // Fruta distintiva
-              if(especie.frutaDistintiva != null && especie.frutaDistintiva != '')
+              if(especie.fruta_distintiva != null && especie.fruta_distintiva != '')
                 _fila(
                   Icons.eco,
                   context.tr('bdInterfaz.insert.frutaDistintiva'),
-                  especie.frutaDistintiva!,
+                  especie.fruta_distintiva!,
                 ),
               // Salud del suelo
-              if(especie.saludSuelo != null)
+              if(especie.salud_suelo != null)
                 _fila(
                   Icons.grass,
                   context.tr('bdInterfaz.insert.saludSuelo'),
-                  especie.saludSuelo == 1 ? 'Sí' : 'No',
+                  especie.salud_suelo == 1 ? 'Sí' : 'No',
                 ),
               // Huéspedes
               if(especie.huespedes != null && especie.huespedes != '')
@@ -118,14 +118,14 @@ class EspecieModal extends StatelessWidget {
                   especie.huespedes!,
                 ), 
               // Forma de crecimiento
-              if(especie.formaCrecimiento != null && especie.formaCrecimiento != '')
+              if(especie.forma_crecimiento != null && especie.forma_crecimiento != '')
                 _fila(
                   Icons.trending_up,
                   context.tr('bdInterfaz.insert.formaCrecimiento'),
-                  especie.formaCrecimiento!,
+                  especie.forma_crecimiento!,
                 ), 
               // Pionero
-              if(especie.formaCrecimiento != null && especie.formaCrecimiento != '')
+              if(especie.forma_crecimiento != null && especie.forma_crecimiento != '')
                 _fila(
                   Icons.star,
                   context.tr('bdInterfaz.insert.pionero'),
@@ -145,33 +145,33 @@ class EspecieModal extends StatelessWidget {
                   context.tr('bdInterfaz.insert.ambiente'),
                   especie.ambiente!,
                 ),
-              // establecidoSolSombra
-              if(especie.establecidoSolSombra != null && especie.establecidoSolSombra != '')
+              // establecido_sol_sombra
+              if(especie.establecido_sol_sombra != null && especie.establecido_sol_sombra != '')
                 _fila(
                   Icons.terrain,
                   context.tr('bdInterfaz.insert.establecidoSolSombra'),
-                  especie.establecidoSolSombra!,
+                  especie.establecido_sol_sombra!,
                 ),
               // Nativo de América
-              if(especie.nativoAmerica != null)
+              if(especie.nativo_america != null)
                 _fila(
                   Icons.location_on,
                   context.tr('bdInterfaz.insert.nativoAmericano'),
-                  especie.nativoAmerica == 1 ? 'Sí' : 'No',
+                  especie.nativo_america == 1 ? 'Sí' : 'No',
                 ),
               // Nativo de Panamá
-              if(especie.nativoPanama != null)
+              if(especie.nativo_panama != null)
                 _fila(
                   Icons.location_on,
                   context.tr('bdInterfaz.insert.nativoPanama'),
-                  especie.nativoPanama == 1 ? 'Sí' : 'No',
+                  especie.nativo_panama == 1 ? 'Sí' : 'No',
                 ),
               // Nativo de Azuero
-              if(especie.nativoAzuero != null)
+              if(especie.nativo_azuero != null)
                 _fila(
                   Icons.location_on,
                   context.tr('bdInterfaz.insert.nativoAzuero'),
-                  especie.nativoAzuero == 1 ? 'Sí' : 'No',
+                  especie.nativo_azuero == 1 ? 'Sí' : 'No',
                 ),
               // Estrato
               if(especie.estrato != null && especie.estrato != '')

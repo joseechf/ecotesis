@@ -18,7 +18,8 @@
     "charrito": "El Mono Araña De Azuero, Charrito",
     "cultivoSostenible": "Cultivar Plantas Y Árboles De Manera Sostenible",
     "pregFrecuentes": "Preguntas Frecuentes",
-    "edicion": "Edicion Usuario"
+    "edicion": "Edicion Usuario",
+    "historia": "Nuestra historia"
   },
   "mensajes": {
     "usuarioActualizado": "Usuario Actualizado",
@@ -294,19 +295,18 @@
       "invsiembra": "Inventario siembra",
       "regventas": "Registro ventas",
       "regsiembra": "Registro siembra",
-      "terrenos": "Terrenos alquilados"
+      "terrenos": "Terrenos reforestables"
     },
     "capas": {
       "siembra": "siembra",
-      "terrenos": "Terrenos alquilados",
+      "terrenos": "Terrenos reforestables",
       "centros": "centros educativos"
     },
     "alquiler": {
       "titulo":"Terrenos de Alquiler",
       "dueño": "dueño",
       "tamaño":"Tamaño M2",
-      "fechaInicio":"Fecha de inicio de alquiler",
-      "fechaFinal": "Fecha de fin del alquiler",
+      "fechaInicio":"Fecha de inicio de reforestación",
       "coordenadas": "Ingrese las coordenadas"
     },
     "siembra": {

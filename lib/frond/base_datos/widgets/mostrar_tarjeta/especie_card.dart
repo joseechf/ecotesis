@@ -43,7 +43,7 @@ class EspecieCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    especie.nombreCientifico,
+                    especie.nombre_cientifico,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -70,7 +70,7 @@ class EspecieCard extends StatelessWidget {
                         SizedBox(width: 10,),
                         Expanded(child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: especie.nombresComunes.take(1).map((n) => Text(n.nombreComun)).toList(),
+                          children: especie.nombresComunes.take(1).map((n) => Text(n.nombre_comun)).toList(),
                         ),),
                       ],
                     ),
@@ -141,11 +141,11 @@ class EspecieCard extends StatelessWidget {
     }
 
     // imagen desde servidor
-    if(img.urlFoto.isNotEmpty){
-      debugPrint('Intentando cargar imagen: ${img.urlFoto}');
+    if(img.url_foto.isNotEmpty){
+      debugPrint('Intentando cargar imagen: ${img.url_foto}');
 
       return CachedNetworkImage(
-        imageUrl: img.urlFoto,
+        imageUrl: img.url_foto,
         width: double.infinity,
         fit: BoxFit.cover,
         progressIndicatorBuilder: (_,_,_) => const Center(

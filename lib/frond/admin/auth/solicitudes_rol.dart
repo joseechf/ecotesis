@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../data/auth/auth_admin_provider.dart';
-import '../../iureutilizables/custom_appbar.dart';
 
 class SolicitudesRolScreen extends StatefulWidget {
   const SolicitudesRolScreen({super.key});

@@ -132,8 +132,8 @@ Widget campoImagenTemp({
             ),
             child:  
             img.bytes != null 
-               ? Image.memory(img.bytes!,  fit: BoxFit.cover) : img.urlFoto.isEmpty
-               ? const Icon(Icons.image) : Image.network(img.urlFoto, fit: BoxFit.cover,),
+               ? Image.memory(img.bytes!,  fit: BoxFit.cover) : img.url_foto.isEmpty
+               ? const Icon(Icons.image) : Image.network(img.url_foto, fit: BoxFit.cover,),
           ),
           IconButton(
             icon: const Icon(Icons.upload),

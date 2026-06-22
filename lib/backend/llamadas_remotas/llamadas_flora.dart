@@ -36,7 +36,7 @@ Future<Map<String,dynamic>> getReporte() async {
 
 Future<List<Map<String, dynamic>>> getFlora({
   required String endpoint,
-  String method = 'Get',
+  String method = 'GET',
   bool requiereAuth = false,
   Map<String, dynamic>? body,
 }) async {
@@ -62,14 +62,14 @@ Future<List<Map<String, dynamic>>> getFlora({
     resp = await http.get(url, headers: headers).timeout(const Duration(seconds: 10));
   }
 
-  if(resp.statusCode != 200) {
-    final respuesta = jsonDecode(resp.body);
+  final decoded = jsonDecode(resp.body);
+  debugPrint('========= decoded ========= $decoded');
 
-    throw OnError.fromJson(respuesta, 'getFlora');
+  if(resp.statusCode != 200) {
+    throw OnError.fromJson(decoded, 'getFlora');
   }
 
-  final json = jsonDecode(resp.body);
-  return (json['data'] as List).cast<Map<String,dynamic>>();
+  return List<Map<String,dynamic>>.from(decoded['data']);
 }
 
 Future<void> insertAPI (

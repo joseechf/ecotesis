@@ -1,20 +1,22 @@
+import 'dart:convert';
+
 import '../value_objects.dart';
 
 class Especie {
-  final String nombreCientifico;
-  final int? daSombra;
-  final String? florDistintiva;
-  final String? frutaDistintiva;
-  final int? saludSuelo;
+  final String nombre_cientifico;
+  final int? da_sombra;
+  final String? flor_distintiva;
+  final String? fruta_distintiva;
+  final int? salud_suelo;
   final String? huespedes;
-  final String? formaCrecimiento;
+  final String? forma_crecimiento;
   final int? pionero;
   final String? polinizador;
   final String? ambiente;
-  final String? establecidoSolSombra;
-  final int? nativoAmerica;
-  final int? nativoPanama;
-  final int? nativoAzuero;
+  final String? establecido_sol_sombra;
+  final int? nativo_america;
+  final int? nativo_panama;
+  final int? nativo_azuero;
   final String? estrato;
   final double? cobertura;
 
@@ -24,20 +26,20 @@ class Especie {
   final List<ImagenTemp> imagenes;
 
   Especie({
-    required this.nombreCientifico,
-    this.daSombra,
-    this.florDistintiva,
-    this.frutaDistintiva,
-    this.saludSuelo,
+    required this.nombre_cientifico,
+    this.da_sombra,
+    this.flor_distintiva,
+    this.fruta_distintiva,
+    this.salud_suelo,
     this.huespedes,
-    this.formaCrecimiento,
+    this.forma_crecimiento,
     this.pionero,
     this.polinizador,
     this.ambiente,
-    this.establecidoSolSombra,
-    this.nativoAmerica,
-    this.nativoPanama,
-    this.nativoAzuero,
+    this.establecido_sol_sombra,
+    this.nativo_america,
+    this.nativo_panama,
+    this.nativo_azuero,
     this.estrato,
     this.cobertura,
     List<NombreComun> nombresComunes = const [],
@@ -54,19 +56,19 @@ class Especie {
        imagenes = List.unmodifiable(imagenes);
 
   Especie copyWith({
-   int? daSombra,
-   String? florDistintiva,
-   String? frutaDistintiva,
-   int? saludSuelo,
+   int? da_sombra,
+   String? flor_distintiva,
+   String? fruta_distintiva,
+   int? salud_suelo,
    String? huespedes,
-   String? formaCrecimiento,
+   String? forma_crecimiento,
    int? pionero,
    String? polinizador,
    String? ambiente,
-   String? establecidoSolSombra,
-   int? nativoAmerica,
-   int? nativoPanama,
-   int? nativoAzuero,
+   String? establecido_sol_sombra,
+   int? nativo_america,
+   int? nativo_panama,
+   int? nativo_azuero,
    String? estrato,
    double? cobertura,
 
@@ -76,20 +78,20 @@ class Especie {
    List<ImagenTemp>? imagenes,
   }){
     return Especie(
-      nombreCientifico: nombreCientifico,
-      daSombra: daSombra ?? this.daSombra,
-      florDistintiva: florDistintiva ?? this.florDistintiva,
-      frutaDistintiva: florDistintiva ?? this.frutaDistintiva,
-      saludSuelo: saludSuelo ?? this.saludSuelo,
+      nombre_cientifico: nombre_cientifico,
+      da_sombra: da_sombra ?? this.da_sombra,
+      flor_distintiva: flor_distintiva ?? this.flor_distintiva,
+      fruta_distintiva: fruta_distintiva ?? this.fruta_distintiva,
+      salud_suelo: salud_suelo ?? this.salud_suelo,
       huespedes: huespedes ?? this.huespedes,
-      formaCrecimiento: formaCrecimiento ?? this.formaCrecimiento,
+      forma_crecimiento: forma_crecimiento ?? this.forma_crecimiento,
       pionero: pionero ?? this.pionero,
       polinizador: polinizador ?? this.polinizador,
       ambiente: ambiente ?? this.ambiente,
-      establecidoSolSombra: establecidoSolSombra ?? this.establecidoSolSombra,
-      nativoAmerica: nativoAmerica ?? this.nativoAmerica,
-      nativoPanama: nativoAmerica ?? this.nativoAmerica,
-      nativoAzuero: nativoAzuero ?? this.nativoAzuero,
+      establecido_sol_sombra: establecido_sol_sombra ?? this.establecido_sol_sombra,
+      nativo_america: nativo_america ?? this.nativo_america,
+      nativo_panama: nativo_panama ?? this.nativo_panama,
+      nativo_azuero: nativo_azuero ?? this.nativo_azuero,
       estrato: estrato ?? this.estrato,
       cobertura: cobertura ?? this.cobertura,
       nombresComunes: nombresComunes ?? this.nombresComunes,
@@ -103,128 +105,97 @@ class Especie {
 
   factory Especie.fromJson(Map<String, dynamic> json) {
     return Especie(
-      nombreCientifico: json['nombre_cientifico'] as String,
-      daSombra: json['da_sombra'] as int?,
-      florDistintiva: json['flor_distintiva'] as String?,
-      frutaDistintiva: json['fruta_distintiva'] as String?,
-      saludSuelo: json['salud_suelo'] as int?,
+      nombre_cientifico: json['nombre_cientifico'] as String,
+      da_sombra: json['da_sombra'] as int?,
+      flor_distintiva: json['flor_distintiva'] as String?,
+      fruta_distintiva: json['fruta_distintiva'] as String?,
+      salud_suelo: json['salud_suelo'] as int?,
       huespedes: json['huespedes'] as String?,
-      formaCrecimiento: json['forma_crecimiento'] as String?,
+      forma_crecimiento: json['forma_crecimiento'] as String?,
       pionero: json['pionero'] as int?,
       polinizador: json['polinizador'] as String?,
       ambiente: json['ambiente'] as String?,
-      establecidoSolSombra: json['establecido_sol_sombra'] as String?,
-      nativoAmerica: json['nativo_america'] as int?,
-      nativoPanama: json['nativo_panama'] as int?,
-      nativoAzuero: json['nativo_azuero'] as int?,
+      establecido_sol_sombra: json['establecido_sol_sombra'] as String?,
+      nativo_america: json['nativo_america'] as int?,
+      nativo_panama: json['nativo_panama'] as int?,
+      nativo_azuero: json['nativo_azuero'] as int?,
       estrato: json['estrato'] as String?,
       cobertura: double.tryParse(json['cobertura']?.toString()?? '') ?? 0,
 
       nombresComunes:
-        (json['NombreComun'] as List<dynamic>?)
-          ?.map(
-            (e) => NombreComun(nombreComun: e['nombre_comun'] as String),
-          ).toList() ?? const [],
+        _parseJsonList(json['NombreComun']).
+          map(NombreComun.fromMap).toList(),
       utilidades: 
-          (json['Utilidad'] as List<dynamic>?)
-            ?.map((e) => Utilidad(utilidad: e['utilidad'] as String),)
-            .toList() ?? const [],
+          _parseJsonList(json['Utilidad']).
+          map(Utilidad.fromMap).toList(),
       origenes: 
-          (json['Origen'] as List<dynamic>?)
-            ?.map((e) => Origen(origen: e['origen'] as String),)
-            .toList() ?? const [],
+          _parseJsonList(json['Origen']).
+          map(Origen.fromMap).toList(),
       imagenes: 
-          (json['Imagen'] as List<dynamic>?)
-              ?.map((e)=> ImagenTemp(
-                urlFoto: e['url_foto'] as String,
-                estado: e['estado'] as String,
-              ),
-              )
-              .toList() ??
-              const [],
+          _parseJsonList(json['Imagen']).
+          map(ImagenTemp.fromMap).toList(),
     );
   }
 
   Map<String,dynamic>toJson(){
     return{
-      'nombre_cientifico': nombreCientifico,
-      'da_sombra': daSombra,
-      'flor_distintiva': florDistintiva,
-      'fruta_distintiva': frutaDistintiva,
-      'salud_suelo': saludSuelo,
+      'nombre_cientifico': nombre_cientifico,
+      'da_sombra': da_sombra,
+      'flor_distintiva': flor_distintiva,
+      'fruta_distintiva': fruta_distintiva,
+      'salud_suelo': salud_suelo,
       'huespedes': huespedes,
-      'forma_crecimiento': formaCrecimiento,
+      'forma_crecimiento': forma_crecimiento,
       'pionero': pionero,
       'polinizador': polinizador,
       'ambiente': ambiente,
-      'establecido_sol_sombra': establecidoSolSombra,
-      'nativo_america': nativoAmerica,
-      'nativo_panama': nativoPanama,
-      'nativo_azuero': nativoAzuero,
+      'establecido_sol_sombra': establecido_sol_sombra,
+      'nativo_america': nativo_america,
+      'nativo_panama': nativo_panama,
+      'nativo_azuero': nativo_azuero,
       'estrato': estrato,
       'cobertura': cobertura,
 
-      'NombreComun': nombresComunes.map((e) => {'nombre_comun': e.nombreComun}).toList(),
-      'Utilidad': utilidades.map((e) => {'utilidad': e.utilidad}).toList(),
-      'Origen': origenes.map((e) => {'origen': e.origen}).toList(),
-      'Imagen': imagenes.map((e) => {'url_foto': e.urlFoto, 'estado': e.estado}).toList(),
+      'NombreComun': nombresComunes.map((e) => e.toMap()).toList(),
+      'Utilidad': utilidades.map((e) => e.toMap()).toList(),
+      'Origen': origenes.map((e) => e.toMap()).toList(),
+      'Imagen': imagenes.map((e) => e.toMap()).toList(),
     };
   }
 
-  // SQLITE
-// contruye la especie base desde la tabla principal
-// las listas se inyectan ya reconstruidas desde llamadas_flora
-factory Especie.fromDbMap({
-  required Map<String,dynamic> row,
-  List<NombreComun> nombresComunes = const [],
-  List<Utilidad> utilidades = const [],
-  List<Origen> origenes = const [],
-  List<ImagenTemp> imagenes = const [],
-}){
-  return Especie(
-    nombreCientifico: row['nombre_cientifico'] as String,
-    daSombra: row['da_sombra'] as int?,
-    florDistintiva: row['flor_distintiva'] as String?,
-    frutaDistintiva: row['fruta_distintiva'] as String?,
-    saludSuelo: row['salud_suelo'] as int?,
-    huespedes: row['huespedes'] as String?,
-    formaCrecimiento: row['forma_crecimiento'] as String?,
-    pionero: row['pionero'] as int?,
-    polinizador: row['polinizador'] as String?,
-    ambiente: row['ambiente'] as String?,
-    establecidoSolSombra: row['establecido_sol_sombra'] as String?,
-    nativoAmerica: row['nativo_america'] as int?,
-    nativoPanama: row['nativo_panama'] as int?,
-    nativoAzuero: row['nativo_azuero'] as int?,
-    estrato: row['estrato'] as String?,
-    cobertura: row['cobertura'] as double?,
-    nombresComunes: nombresComunes,
-    utilidades: utilidades,
-    origenes: origenes,
-    imagenes: imagenes,
-  );
-}
 
   // solo guarda la parte raiz (tabla flora)
   Map<String, dynamic> toDbRow(){
     return{
-      'nombre_cientifico': nombreCientifico,
-      'da_sombra': daSombra,
-      'flor_distintiva': florDistintiva,
-      'fruta_distintiva': frutaDistintiva,
-      'salud_suelo': saludSuelo,
+      'nombre_cientifico': nombre_cientifico,
+      'da_sombra': da_sombra,
+      'flor_distintiva': flor_distintiva,
+      'fruta_distintiva': fruta_distintiva,
+      'salud_suelo': salud_suelo,
       'huespedes': huespedes,
-      'forma_crecimiento': formaCrecimiento,
+      'forma_crecimiento': forma_crecimiento,
       'pionero': pionero,
       'polinizador': polinizador,
       'ambiente': ambiente,
-      'establecido_sol_sombra': establecidoSolSombra,
-      'nativo_america': nativoAmerica,
-      'nativo_panama': nativoPanama,
-      'nativo_azuero': nativoAzuero,
+      'establecido_sol_sombra': establecido_sol_sombra,
+      'nativo_america': nativo_america,
+      'nativo_panama': nativo_panama,
+      'nativo_azuero': nativo_azuero,
       'estrato': estrato,
       'cobertura': cobertura,
     };
+  }
+
+  static List<Map<String, dynamic>> _parseJsonList(dynamic value){
+    if(value == null) return [];
+    if(value is List){
+      return value.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    }
+    final decoded = jsonDecode(value.toString());
+    if(decoded is List){
+      return decoded.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    }
+    return [];
   }
 
 }

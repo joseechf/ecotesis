@@ -35,8 +35,8 @@ dependencies:
     sdk: flutter
   easy_localization: ^3.0.0 #para el idioma
   http: ^1.3.0
-  http_parser: # para usar MediaType en llamadasFlora.dart
-  provider:
+  http_parser: ^4.1.2 # para usar MediaType en llamadasFlora.dart
+  provider: ^6.1.5
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -46,29 +46,29 @@ dependencies:
   sqflite: ^2.3.0
   path_provider: ^2.1.1
   uuid: ^4.0.0
-  image_picker: # obtener imagenes
-  cached_network_image: # cachear imagenes para la UI
+  image_picker: ^1.2.1 # obtener imagenes
+  cached_network_image: ^3.4.1 # cachear imagenes para la UI
   path: ^1.9.0
   syncfusion_flutter_pdfviewer: ^33.2.7
   url_launcher: ^6.2.5
   # dependencias mapa
   flutter_map: # mapa base
-  vector_map_tiles: # tiles vectoriales (las imagenes que forman el mapa)
-  latlong2: # modelos de LatLng
+  vector_map_tiles:  # tiles vectoriales (las imagenes que forman el mapa)
+  latlong2: ^0.9.1 # modelos de LatLng
   # dependencia para login
   #universal_html: ^2.3.0
-  flutter_dotenv: 
+  flutter_dotenv: ^6.0.0
   #supabase
-  supabase_flutter:
+  supabase_flutter: ^2.10.3
   # extencion de la imagen 
-  image:
+  image: ^4.8.0
   # calcular hash para sincronizacion
   crypto: ^3.0.3
   # para especie_dto
   json_annotation: ^4.8.1 
 
   #pruebas sqlite
-  sqflite_common_ffi:
+  sqflite_common_ffi: ^2.3.6
   #iconos de comunidad
   phosphoricons_flutter: ^1.0.0 
 

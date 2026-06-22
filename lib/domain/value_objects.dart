@@ -2,51 +2,74 @@ import 'dart:typed_data';
 
 //NombreComun
 class NombreComun {
-  String nombreComun;
-  NombreComun({required String nombreComun}) : nombreComun = nombreComun.trim();
+  String nombre_comun;
+  NombreComun({required this.nombre_comun});
+
 
   // SQLITE a VO
-  factory NombreComun.fromRow(Map<String, dynamic> r) => NombreComun(nombreComun: r['nombre_comun']);
+  factory NombreComun.fromMap(Map<String, dynamic> mapa){
+    return NombreComun(nombre_comun: mapa['nombre_comun'] as String);
+  }
 
   // VO a  SQLITE
-  Map<String,dynamic> toRow(String nombreCientifico) => {
-    'nombre_comun': nombreComun,
-    'nombre_cientifico': nombreCientifico,
-  };
+  Map<String, dynamic> toMap(){
+    return {
+      'nombre_comun': nombre_comun,
+    };
+  }
 }
 
 // Utilidad
 class Utilidad {
   String utilidad;
 
-  Utilidad({required String utilidad}) : utilidad = utilidad.trim();
-
-  factory Utilidad.fromRow(Map<String,dynamic> r) => Utilidad(utilidad: r['utilidad']);
-
-  Map<String,dynamic> toRow(String nombreCientifico) => {
-    'utilidad': utilidad,
-    'nombre_cientifico': nombreCientifico,
-  };
+  Utilidad({required this.utilidad});
+  factory Utilidad.fromMap(
+    Map<String, dynamic> mapa,
+  ){
+    return Utilidad(utilidad: mapa['utilidad'] as String);
+  }
+  Map<String, dynamic> toMap(){
+    return {
+      'utilidad': utilidad,
+    };
+  }
 }
 
 // Origen
 class Origen{
   String origen;
-  Origen({required String origen}) : origen = origen.trim();
+  Origen({required this.origen});
 
-  factory Origen.fromRow(Map<String, dynamic>r) => Origen(origen: r['origen']);
-  
-  Map<String, dynamic> toRow(String nombreCientifico) => {
-    'origen': origen,
-    'nombre_cientifico': nombreCientifico,
-  };
+  factory Origen.fromMap(
+    Map<String, dynamic> mapa,
+  ){
+    return Origen(origen: mapa['origen'] as String);
+  }
+  Map<String, dynamic> toMap(){
+    return {
+      'origen': origen,
+    };
+  }
 }
 
 // ImagenTemp
 class ImagenTemp {
-  String urlFoto;
+  String url_foto;
   String estado;
   Uint8List ? bytes;
 
-  ImagenTemp({this.urlFoto = '', this.estado = 'tentativo', this.bytes});
+  ImagenTemp({this.url_foto = '', this.estado = 'tentativo', this.bytes});
+
+  factory ImagenTemp.fromMap(
+    Map<String, dynamic> mapa,
+  ){
+    return ImagenTemp(url_foto: mapa['url_foto'] as String, estado: mapa['estado'] as String);
+  }
+  Map<String, dynamic> toMap(){
+    return {
+      'url_foto': url_foto,
+      'estado': estado
+    };
+  }
 }

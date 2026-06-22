@@ -66,11 +66,34 @@ class Nosotros extends StatelessWidget {
               ResponsiveLayout(
                 breakpoint: 600,
                 children: [
-                  ImageContainerWidget(
-                    imagePath: 'assets/images/bosque.jpg', 
-                    margin: EdgeInsets.all(20), 
-                    padding: 10, 
-                    height: 400,
+                  Stack(
+                    children: [
+                      Opacity(
+                        opacity: 0.8,
+                        child: Image.asset(
+                          'assets/images/bosque.jpg',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: Center(
+                          child: TextContainerWidget(
+                            text: context.tr('titles.historia'),
+                            margin: const EdgeInsets.all(20), 
+                            padding: 20, 
+                            backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                            alignment: Alignment.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: (anchoPantalla * 0.07).clamp(16.0, 40.0),
+                              fontFamily: 'Oswald',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        )
+                      )
+                    ],
                   ),
                   Container(
                     width: double.infinity,

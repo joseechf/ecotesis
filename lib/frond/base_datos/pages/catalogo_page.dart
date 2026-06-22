@@ -333,7 +333,7 @@ class _CatalogoPageState extends State<CatalogoPage>{
         }, 
         onEliminar: () async {
           Navigator.of(context, rootNavigator: true).pop();
-          final ok = await provider.eliminar(especie.nombreCientifico);
+          final ok = await provider.eliminar(especie.nombre_cientifico);
           if(!mounted) return;
           if(!ok && provider.error != null){
             ScaffoldMessenger.of(context).showSnackBar(

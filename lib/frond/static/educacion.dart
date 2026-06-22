@@ -45,16 +45,18 @@ class Educacion extends StatelessWidget {
                 children: [
                   Stack(
                     children: [
-                      Align(
-                        child: Opacity(opacity: 0.8,
-                        child: Image.asset('assets/images/escuelarural.jpg',fit: BoxFit.cover,),
+                      Opacity(
+                        opacity: 0.8,
+                        child: Image.asset(
+                          'assets/images/escuelitac.jpg',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Builder(builder: (context){
-                          return TextContainerWidget(
-                            text: context.tr('texts.educacion.monoArania'), 
+                      Positioned.fill(
+                        child: Center(
+                          child: TextContainerWidget(
+                            text: context.tr('texts.educacion.monoArania'),
                             margin: const EdgeInsets.all(20), 
                             padding: 20, 
                             backgroundColor: const Color.fromARGB(0, 255, 255, 255),
@@ -65,10 +67,9 @@ class Educacion extends StatelessWidget {
                               fontFamily: 'Oswald',
                               fontWeight: FontWeight.bold,
                             ),
-                            overflow: TextOverflow.visible,
-                            );
-                        }),
-                      ),
+                          )
+                        )
+                      )
                     ],
                   ),
                   TextContainerWidget(
@@ -160,19 +161,19 @@ class Educacion extends StatelessWidget {
                 children: [
                   Stack(
                     children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Opacity(opacity: 0.8, child: Image.asset(
+                      Opacity(
+                        opacity: 0.8,
+                        child: Image.asset(
                           'assets/images/bosque.jpg',
                           fit: BoxFit.cover,
-                        ),),
+                          width: double.infinity,
+                        ),
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Builder(builder: (context){
-                          return TextContainerWidget(
-                            text: context.tr('texts.educacion.kids.title'), 
-                            margin: EdgeInsets.all(20), 
+                      Positioned.fill(
+                        child: Center(
+                          child: TextContainerWidget(
+                            text: context.tr('texts.educacion.kids.title'),
+                            margin: const EdgeInsets.all(20), 
                             padding: 20, 
                             backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                             alignment: Alignment.center,
@@ -182,8 +183,8 @@ class Educacion extends StatelessWidget {
                               fontFamily: 'Oswald',
                               fontWeight: FontWeight.bold,
                             ),
-                          );
-                        }),
+                          )
+                        )
                       )
                     ],
                   ),

@@ -97,8 +97,8 @@ final List<String> listaEstudiantes = [
 //plantando
 final List<String> listaPlantando = [
   'assets/images/reforestando1.jpg',
-  'assets/images/reforestando1.jpg',
-  'assets/images/reforestando1.jpg',
+  'assets/images/reforestando2.jpg',
+  'assets/images/reforestando3.jpg',
 ];
 
 //ecoguias pdfs

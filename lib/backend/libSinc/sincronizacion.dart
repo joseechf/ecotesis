@@ -1,4 +1,3 @@
-import 'package:ecoazuero/domain/adapter/mapper.dart';
 
 import '../llamadas_locales/llamadas_flora.dart';
 import '../llamadas_remotas/llamadas_flora.dart';
@@ -208,19 +207,19 @@ class SincronizadorLocal {
     }
     if(filas.insertToLocal.isNotEmpty){
       final response = await getFlora(
-        endpoint: 'getflora/porids',
+        endpoint: 'getflora/porids', 
         method: 'POST',
         requiereAuth: true,
         body: {'ids': filas.insertToLocal},
       );
 
-      final especies = response.map((json) => adaptarRemotoAJsonDominio(json))
-	             .map((jsonAdaptado) => Especie.fromJson(jsonAdaptado))
+      final especies = response
+	             .map((json) => Especie.fromJson(json))
 	  	     .toList();
 
       for(final e in especies){
         
-	      debugPrint('insertando ${e.nombreCientifico} en bd local');
+	      debugPrint('insertando ${e.nombre_cientifico} en bd local');
       }
       if(especies.isNotEmpty){
 	      await insertFloraLocal(db, especies,remoteMetaDataCompletaMap);
@@ -234,11 +233,11 @@ class SincronizadorLocal {
         body: {'ids': filas.updateToLocal},
       );
 
-      final especies = response.map((json) => adaptarRemotoAJsonDominio(json))
-			.map((jsonAdaptado)=> Especie.fromJson(jsonAdaptado))
-			.toList();
+      final especies = response
+	             .map((json) => Especie.fromJson(json))
+	  	     .toList();
       for(final esp in especies){
-        final meta = remoteMetaDataCompletaMap[esp.nombreCientifico];
+        final meta = remoteMetaDataCompletaMap[esp.nombre_cientifico];
         final version = meta?['version'] as int?;
 	      await updateFloraLocal(db, esp,version);
       }
@@ -274,6 +273,14 @@ class SincronizadorRemoto {
       final version = meta?['version'] as int?;
       final especie = await obtenerFloraLocalById(db, id);
       if(especie != null){
+        //en local se ignoran las imagenes por lo que se recuperan, en caso de exister, al actualizar un registro localmente que existia en remoto
+        final resultPorImagen = await getFlora(endpoint: 'getflora/porids',method: 'POST',requiereAuth: true,body: {'ids': [id],});
+        if(resultPorImagen.isNotEmpty){
+          especie['Imagen'] = resultPorImagen.first['Imagen'];
+          debugPrint('\n ==== especie con imagen para subir a remoto   $especie');
+        }else{
+          debugPrint('\n ==== valio verga la obtencion de img   $resultPorImagen');
+        }
 	      await updateFloraRemoto(especie,version);
       }
     }
