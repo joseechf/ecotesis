@@ -19,7 +19,14 @@
     "cultivoSostenible": "Growing Plants & Trees Sustainably",
     "pregFrecuentes": "Frequently Asked Questions",
     "edicion": "User Edit",
-    "historia": "Our Story"
+    "historia": "Our Story",
+    "doc_sinc": {
+      "Descipcion": "Description",
+      "uso": "Usage",
+      "Requisitos": "Requirements",
+      "conflictos": "Conflict resolution",
+      "Limpieza": "Cleaning"
+    }
   },
   "mensajes": {
     "usuarioActualizado": "Updated User",

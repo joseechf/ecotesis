@@ -19,7 +19,14 @@
     "cultivoSostenible": "Cultivar Plantas Y Árboles De Manera Sostenible",
     "pregFrecuentes": "Preguntas Frecuentes",
     "edicion": "Edicion Usuario",
-    "historia": "Nuestra historia"
+    "historia": "Nuestra historia",
+    "doc_sinc": {
+      "Descipcion": "Descipción",
+      "uso": "Uso",
+      "Requisitos": "Requisitos",
+      "conflictos": "Resolucion de conflictos",
+      "Limpieza": "Limpieza"
+    }
   },
   "mensajes": {
     "usuarioActualizado": "Usuario Actualizado",
@@ -194,7 +201,7 @@
       "regla2": "Las especies de la base de datos remota no se eliminan, solo se bloquean.",
       "regla3": "Las especies de la base de datos locales una vez eliminadas son irrecuperables.",
 
-      "limpieza": "la base de datos local se puede limpiar y luego sincronizar para obtener los registros remotos"
+      "limpieza": "La base de datos local se puede limpiar y luego sincronizar para obtener los registros remotos"
     },
     "donacion": {
       "p1": "Tus donaciones nos ayudan a trabajar con las comunidades de Azuero para reforestar el vulnerable ecosistema del bosque seco tropical. Nuestra visión es la de una península de Azuero renovada, con un bosque seco protegido, apoyada por una población amorosa. Sus donaciones marcan una gran diferencia para lograr nuestros objetivos.",

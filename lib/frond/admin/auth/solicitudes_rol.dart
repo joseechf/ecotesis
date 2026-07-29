@@ -23,16 +23,6 @@ class _SolicitudesRolScreenState extends State<SolicitudesRolScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Solicitudes de Rol'),),
       body: Builder(builder: (_){
-        /*if(provider.isLoading){
-          return Scaffold(
-            appBar: CustomAppBar(context: context),
-            drawer: 
-              MediaQuery.sizeOf(context).width < 800
-                ? const MobileMenu()
-                : null,
-            body: const Center(child: CircularProgressIndicator(),),
-          );
-        }*/
         if(provider.error != null) {
           return Center(
             child: Text(
