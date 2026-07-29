@@ -96,7 +96,7 @@ Future<bool> insertFloraLocal(Database db, List<Especie> especies, Map<String, M
   }
 }
 
-Future<bool> updateFloraLocal(Database db, Especie esp, int? version) async {
+Future<String> updateFloraLocal(Database db, Especie esp, int? version) async {
   try {
     await db.transaction((txn) async {
       final floraRow = esp.toDbRow();
@@ -113,10 +113,10 @@ Future<bool> updateFloraLocal(Database db, Especie esp, int? version) async {
       await _borrarVO(txn,esp.nombre_cientifico);
       await _guardarRelacionesYSync(txn, esp, floraRow, version);
     });
-    return true;
+    return 'true';
   } catch (e) {
     debugPrint('Error updateFloraLocal $e');
-    return false;
+    return e.toString();
   }
 }
 

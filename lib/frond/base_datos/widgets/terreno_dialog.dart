@@ -34,23 +34,6 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
     ''';
   }
 
-  void mostrarErrorUI(BuildContext context, OnError error) {
-    debugPrint(' ERROR REAL UI: ${error.source} | ${error.type} | ${error.message}',);
-    showDialog(
-      context: context, 
-      builder: (_) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(
-          '${error.source}: ${error.message}'
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), 
-          child: const Text('Aceptar'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void guardar() async {
     bool result = false;
@@ -59,9 +42,10 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
       if(inicioDate == null || puntos == '') throw Exception('valores fecha o coordenadas vacíos');
     } catch (e) {
       final error = OnError(
-        type: 'ui',
+        status: '422',
+        type: TypeError.validacion,
         message: e.toString(),
-        source: 'siembra',
+        source: 'terreno',
       );
       if(!mounted) return;
       mostrarErrorUI(context, error);
@@ -76,7 +60,8 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
     try {
       await insertAPI(data, 'insertTerreno', null);
       if(!mounted) return;
-      Navigator.pop(context,result);
+      result = true;
+      Navigator.pop(context,result); 
     } on OnError catch (e) {
       if(context.mounted){
         if(!mounted) return;
@@ -84,7 +69,8 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
       }
     } catch (e) {
       final error = OnError(
-        type: 'ui',
+        status: '500',
+        type: TypeError.unknown,
         message: e.toString(),
         source: 'NombrePantalla',
       );
@@ -96,7 +82,7 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
     @override  
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(context.tr('admin.alquiler.titulo')),
+      title: Text(context.tr('admin.terrenos.titulo')),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -104,7 +90,7 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
             mainAxisSize: MainAxisSize.min,
             children: [
               CampoTexto(
-                    label: context.tr('admin.alquiler.dueño'),
+                    label: context.tr('admin.terrenos.dueño'),
                     controller: duenoCtrl,
                     validator: ValidadorTexto.validaObligatorio,
               ),
@@ -112,7 +98,7 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
               TextFormField(
                     controller: tamanoCtrl,
                     decoration: InputDecoration(
-                      labelText: context.tr('admin.alquiler.tamaño'),
+                      labelText: context.tr('admin.terrenos.tamaño'),
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value){
@@ -140,7 +126,7 @@ class _DialogAgregarTerrenoState extends State<DialogAgregarTerreno>{
                     inicioDate = result ?? result;
                   });
                 },
-                child: Text(context.tr('admin.alquiler.fechaInicio')),
+                child: Text(context.tr('admin.terrenos.fechaInicio')),
               ),
               const SizedBox(height: Estilos.paddingMedio,),
               SizedBox(

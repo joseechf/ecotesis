@@ -41,30 +41,35 @@ class _GestionUsuarioState extends State<GestionUsuario>{
 
     try {
       if(_esRegistro){
-        final response = await signup(
+        await signup(
           email: _correoController.text.trim(),
           password: _contrasenaController.text,
           rolSolicitado: _rolSeleccionado, 
         );
         if(!mounted) return;
-        if(response.session == null){
-          Navigator.pop(context, "Registro exitoso");
-        }else{
-          Navigator.pop(context, "Registro fallido");
-        }
+        Navigator.pop(context, context.tr('gestionUsuario.accion.registro'));
       }else {
-        final response = await login(
+        await login(
           email: _correoController.text.trim(), 
           password: _contrasenaController.text
         );
         if(!mounted) return;
-        if(response.session != null){
-          Navigator.pop(context, "Inicio de sesion exitoso");
-        }
+        Navigator.pop(context, context.tr('gestionUsuario.accion.sesion'));
       }
     } catch (e) {
-      if(!mounted) return;
-      _errorMensaje = e.toString();
+      setState(() {
+        debugPrint(e.toString());
+        final error = e.toString();
+        if(error.contains('statusCode: 400')){
+          _errorMensaje = context.tr("mensajes.errorSupabase.400");
+        } else if(error.contains('statusCode: null')){
+           _errorMensaje = context.tr("mensajes.errorSupabase.null");
+        } else if(error.contains('statusCode: 500')){
+           _errorMensaje = context.tr("mensajes.errorSupabase.500");
+        } else {
+          _errorMensaje = context.tr("mensajes.desconocido");
+        }
+      });
     }finally{
       if(mounted){
         setState(() => _cargando = false);

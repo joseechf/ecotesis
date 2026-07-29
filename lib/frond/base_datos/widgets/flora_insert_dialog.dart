@@ -148,9 +148,10 @@ class _EspecieDialogInsertEditState extends State<EspecieDialogInsertEdit> {
         mostrarErrorUI(
           context, 
           OnError(
-            type: 'ui',
-            message: 'Operación fallida sin detalle',
-            source: 'EspecieDialog',
+            status: '500',
+            type: TypeError.unknown,
+            message: 'Operación fallida en _EspecieDialogInsertEditState',
+            source: 'interfaz editar especie',
           ),
         );
       }

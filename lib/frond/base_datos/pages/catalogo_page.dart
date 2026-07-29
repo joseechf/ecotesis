@@ -1,3 +1,4 @@
+import 'package:ecoazuero/frond/iureutilizables/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/especies_provider.dart';
@@ -14,6 +15,8 @@ import '../../iureutilizables/reglas_rol.dart';
 import '../widgets/flora_insert_dialog.dart';
 import '../widgets/siembra_dialog.dart';
 import '../widgets/terreno_dialog.dart';
+
+import '../../iureutilizables/errores.dart';
 
 class CatalogoPage extends StatefulWidget {
   const CatalogoPage({super.key});
@@ -156,23 +159,21 @@ class _CatalogoPageState extends State<CatalogoPage>{
                             width: 210,
                             child: ElevatedButton.icon(
                               onPressed: () async {
+                                final mensaje = ScaffoldMessenger.of(context);
+                                final nicemensaje = context.tr('mensajes.nice');
+                                final errormensaje = context.tr('mensajes.error');
                                 final resultado = await showDialog<bool>(
                                   context: context,
                                   builder: (_) => EspecieDialogInsertEdit(tieneInternet: tieneInternet,),
                                 );
-                                if(!context.mounted) return;
                                 if(resultado == true){
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Especie guardada correctamente'),
-                                    ),
-                                  );
+                                  mensaje.showSnackBar(
+                                    SnackBar(content: Text(nicemensaje), backgroundColor: Estilos.verdePrincipal,));
                                 } else if (resultado == false) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Error al guardar la especie'),
-                                    ),
-                                  );
+                                  mensaje.showSnackBar(
+                                    SnackBar(
+                                      content: Text(errormensaje),
+                                  ));
                                 }
                               },
                               icon: const Icon(Icons.park),
@@ -215,14 +216,15 @@ class _CatalogoPageState extends State<CatalogoPage>{
                             width: 215,
                             child: ElevatedButton.icon(
                               onPressed: () async {
+                                final mensaje = ScaffoldMessenger.of(context);
+                                final nicemensaje = context.tr('mensajes.nice');
                                 final resultado = await showDialog<bool>(
                                   context: context,
                                   builder: (_) => const SiembraDialog(),
                                 );
-                                if(!resultado!) return;
-                                if(!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(context.tr('mensajes.nice')), backgroundColor: Estilos.verdePrincipal,)
+                                if(resultado != true) return;
+                                  mensaje.showSnackBar(
+                                    SnackBar(content: Text(nicemensaje), backgroundColor: Estilos.verdePrincipal,)
                                   );
                               }, 
                               icon: const Icon(Icons.spa),
@@ -245,15 +247,15 @@ class _CatalogoPageState extends State<CatalogoPage>{
                             width: 215,
                             child: ElevatedButton.icon(
                               onPressed: () async {
+                                final mensaje = ScaffoldMessenger.of(context);
+                                final nicemensaje = context.tr('mensajes.nice');
                                 final resultado = await showDialog<bool>(
                                   context: context,
                                   builder: (_) => const DialogAgregarTerreno(),
                                 );
-                                if(!context.mounted) return;
-                                if(!resultado!) return;
-                                if(!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(context.tr('mensajes.nice')), backgroundColor: Estilos.verdePrincipal,)
+                                if(resultado != true) return;
+                                  mensaje.showSnackBar(
+                                    SnackBar(content: Text(nicemensaje), backgroundColor: Estilos.verdePrincipal,)
                                   );
                               }, 
                               icon: const Icon(Icons.landscape),
@@ -303,9 +305,9 @@ class _CatalogoPageState extends State<CatalogoPage>{
                         }),
                       );
                     },
-                  )
+                  ),
                   
-                  
+                  Footer()
             ],
           ),
         ),
@@ -322,22 +324,36 @@ class _CatalogoPageState extends State<CatalogoPage>{
       builder: (_) => EspecieModal(
         especie: especie, 
         onEditar: () async {
+          final mensaje = ScaffoldMessenger.of(context);
+          final nicemensaje = context.tr('mensajes.nice');
           final especieEditada = await showDialog<bool>(
             context: context,
             builder: (_) => EspecieDialogInsertEdit(especieInicial: especie,tieneInternet: tieneInternet,),
           );
           if(!mounted) return;
           if(especieEditada == true){
+            mensaje.showSnackBar(
+              SnackBar(content: Text(nicemensaje), backgroundColor: Estilos.verdePrincipal,)
+            );
             Navigator.of(context, rootNavigator: true).pop();
           }
         }, 
         onEliminar: () async {
+          final mensaje = ScaffoldMessenger.of(context);
+          final nicemensaje = context.tr('mensajes.nice');
           Navigator.of(context, rootNavigator: true).pop();
           final ok = await provider.eliminar(especie.nombre_cientifico);
-          if(!mounted) return;
           if(!ok && provider.error != null){
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(provider.error!.message), backgroundColor: Estilos.red,)
+            if(mounted){
+              mostrarErrorUI(context,OnError(status: '500',type: TypeError.interface,message: provider.error!.message));
+            }else {
+              mensaje.showSnackBar(
+              SnackBar(content: Text("Error desconocido - Unknown error"), backgroundColor: Estilos.red,) 
+            );
+            }
+          }else{
+            mensaje.showSnackBar(
+              SnackBar(content: Text(nicemensaje), backgroundColor: Estilos.verdeOscuro,)
             );
           }
         },

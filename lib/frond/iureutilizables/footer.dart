@@ -76,21 +76,21 @@ class Footer extends StatelessWidget {
           ),
           const SizedBox(height: Estilos.margenMedio,),
           // redes y contactos
-          LayoutBuilder(builder: (_,c){
-            final narrow = c.maxWidth < 600;
+          LayoutBuilder(builder: (context,c){
+            final narrow = MediaQuery.sizeOf(context).width < Estilos.cambioMenu;  
             return narrow ? 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _social(),
+                  _social(context),
                   const SizedBox(height: Estilos.margenGrande,),
-                  _contact(),
+                  _contact(context),
                 ],
               ) : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: _social()),
-                  Expanded(child: _contact())
+                  Expanded(child: _social(context)),
+                  Expanded(child: _contact(context))
                 ],
               );
           }),
@@ -110,10 +110,10 @@ class Footer extends StatelessWidget {
     );     
   }
 
-  Widget _social() => Column(
+  Widget _social(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _SeleccionTitulo('Síguenos'),
+      _SeleccionTitulo(context.tr('footer.siguenos')),
       const SizedBox(height: Estilos.margenMedio,),
       Row(
         children: [
@@ -130,10 +130,10 @@ class Footer extends StatelessWidget {
     ],
   );
 
-  Widget _contact() => Column(
+  Widget _contact(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _SeleccionTitulo('Contacto'),
+      _SeleccionTitulo(context.tr('footer.contacto')),
       const SizedBox(height: Estilos.margenMedio,),
       _row(
         Icons.location_on,
@@ -150,7 +150,10 @@ class Footer extends StatelessWidget {
       }
     },
     padding: EdgeInsets.zero,
-    constraints: const BoxConstraints(),
+    constraints: const BoxConstraints(
+      minHeight: 48,
+      minWidth: 48
+    ),
   );
   
   Widget _row(IconData icon, String text) => Row(

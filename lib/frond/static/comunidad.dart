@@ -57,7 +57,7 @@ class Comunidad extends StatelessWidget {
                 height: 400,
               ),
 
-ResponsiveLayout(
+              ResponsiveLayout(
                 breakpoint: 900,
                 children: [
                   TextContainerWidget(

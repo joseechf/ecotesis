@@ -23,24 +23,6 @@ class _CrecimientoDialogState extends State<CrecimientoDialog> {
   final salud = TextEditingController();
   final afeccion = TextEditingController();
 
-  void mostrarErrorUI(BuildContext context, OnError error) {
-    debugPrint(' ERROR REAL UI: ${error.source} | ${error.type} | ${error.message}',);
-    showDialog(
-      context: context, 
-      builder: (_) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(
-          '${error.source}: ${error.message}'
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), 
-          child: const Text('Aceptar'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void guardar() async {
     bool result = false;
     try {
@@ -48,9 +30,10 @@ class _CrecimientoDialogState extends State<CrecimientoDialog> {
       if(selectedDate == null) throw Exception('valor fecha vacío');
     } catch (e) {
       final error = OnError(
-        type: 'ui',
+        status: '422',
+        type: TypeError.validacion,
         message: e.toString(),
-        source: 'siembra',
+        source: 'mostrar',
       );
       if(!mounted) return;
       mostrarErrorUI(context, error);
@@ -74,9 +57,10 @@ class _CrecimientoDialogState extends State<CrecimientoDialog> {
       }
     } catch (e) {
       final error = OnError(
-        type: 'ui',
+        status: '500',
+        type: TypeError.unknown,
         message: e.toString(),
-        source: 'crecimiento',
+        source: 'backend crecimiento',
       );
       if(!mounted) return;
       mostrarErrorUI(context, error);

@@ -17,9 +17,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>{
   Color fondo = const Color.fromARGB(0, 196, 230, 204);
-
   @override  
   Widget build(BuildContext context) {
+    final listaHacemos = cargarListasHacemos(context);
     final anchoPantalla = MediaQuery.of(context).size.width;
     final isMobile = anchoPantalla < Estilos.cambioMenu;
     return Scaffold(
@@ -133,17 +133,7 @@ class _MyHomePageState extends State<MyHomePage>{
           ),
 
           // bloque cargando 1
-          FutureBuilder<List<Map<String,String>>>(
-            future: cargarListasHacemos(context),
-            builder: (context, snapshot) {
-              if(snapshot.hasError) return Text('Error al cargar los datos');
-                if(!snapshot.hasData){
-                  return const Center(
-                    child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator(),),
-                  );
-                }
-                final listaHacemos = snapshot.data!;
-                return Container(
+          Container(
                   color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     children: [
@@ -206,9 +196,7 @@ class _MyHomePageState extends State<MyHomePage>{
                       ),
                     ],
                   ),
-                );
-            },
-          ),
+                ),
             TextContainerWidget(
             text: context.tr('texts.textsHome.NewYorkTimes'),
             margin: EdgeInsets.all(20),

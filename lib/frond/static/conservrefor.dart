@@ -11,6 +11,7 @@ class Conservrefor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final listaIniciativas = cargarListaIniciativas(context);
     final anchoPantalla = MediaQuery.of(context).size.width;
     final isMobil =  anchoPantalla < Estilos.cambioMenu;
     return Scaffold(
@@ -169,17 +170,7 @@ class Conservrefor extends StatelessWidget {
                 fontWeight: FontWeight.w200,
               )
             ), 
-            FutureBuilder<List<Map<String, String>>>(
-                future: cargarListaIniciativas(context),
-                builder: (context, datos) {
-                  if(datos.hasError){
-                    return Text('Error al cargar la seccion');
-                  }
-                  if(!datos.hasData){
-                    return Text(' SECCION VACIA');
-                  }
-                  final listaIniciativas = datos.data!;
-                  return Wrap(
+             Wrap(
                     spacing: 10.0,
                     runSpacing: 10.0,
                     children: List.generate(listaIniciativas.length, (index){
@@ -194,9 +185,7 @@ class Conservrefor extends StatelessWidget {
                         ),
                       );
                     }),
-                  );
-                },
-              ),
+                  ),
           ],
         ),
 

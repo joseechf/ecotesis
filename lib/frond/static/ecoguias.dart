@@ -15,7 +15,7 @@ class Ecoguias extends StatelessWidget {
   Widget build(BuildContext context){
     double anchoPantalla = MediaQuery.of(context).size.width;
     double alturaPantalla = MediaQuery.of(context).size.height;
-
+    final listaGuia = cargarGuias(context);
     final isMobil = anchoPantalla < Estilos.cambioMenu;
     return Scaffold(
       appBar: CustomAppBar(context: context),
@@ -75,26 +75,12 @@ class Ecoguias extends StatelessWidget {
               ],
             ),
 
-            FutureBuilder<List<Map<String, String>>>(
-                future: cargarGuias(context),
-                builder: (context, snapshot) {
-                  if(snapshot.hasError){
-                    return Text('Error al cargar los datos');
-                  }
-                  if(!snapshot.hasData){
-                    return const Center(
-                      child: Padding(padding: EdgeInsets.all(20),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  final lista = snapshot.data!;
-                  return Wrap(
+             Wrap(
                     alignment: WrapAlignment.center,
                     spacing: 10,
                     runSpacing: 10,
-                    children: List.generate(lista.length, (index){
-                      final datos = lista[index];
+                    children: List.generate(listaGuia.length, (index){
+                      final datos = listaGuia[index];
                       datos['boton'] = context.tr(datos['pdfkey'].toString());
                       return SizedBox(
                         width: 350,
@@ -114,9 +100,7 @@ class Ecoguias extends StatelessWidget {
                         ),
                       );
                     }),
-                  );
-                },
-              ),
+                  ),
               SizedBox(height: 20,),
               const Footer(),
           ],

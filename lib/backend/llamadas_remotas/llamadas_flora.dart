@@ -30,6 +30,7 @@ Future<Map<String,dynamic>> getReporte() async {
 
     return (reporte['status'] != 200) ? {'status': 200, 'reporte': reporte['reporte']} : {'status': 500};
   } catch (e) {
+    debugPrint('$e');
     return {'status': 500};    
   }
 }
@@ -46,7 +47,7 @@ Future<List<Map<String, dynamic>>> getFlora({
     final session = SupabaseClientSingleton.client.auth.currentSession;
 
     if(session == null) {
-      throw OnError.fromJson({'status': 400, 'error': {'message': 'no autenticado','type': 'autenticacion'}},'getFlora');
+      throw OnError.fromJson({'status': 401, 'message': 'no autenticado','type': TypeError.authentication},'getFlora');
     }
     headers['Authorization'] = 'Bearer ${session.accessToken}';
   }
@@ -63,10 +64,9 @@ Future<List<Map<String, dynamic>>> getFlora({
   }
 
   final decoded = jsonDecode(resp.body);
-  debugPrint('========= decoded ========= $decoded');
 
   if(resp.statusCode != 200) {
-    throw OnError.fromJson(decoded, 'getFlora');
+    throw OnError.fromJson({'status': decoded.status,'message': decoded.message,'type': TypeError.database},'API');
   }
 
   return List<Map<String,dynamic>>.from(decoded['data']);
@@ -81,10 +81,10 @@ Future<void> insertAPI (
 
   if(session == null){
     throw OnError(
-      type: 'auth',
+      type: TypeError.authentication,
       message: 'Usuario no autenticado',
       source: 'insertAPI',
-      status: 401,  
+      status: '401',  
     );
   }
 
@@ -101,14 +101,18 @@ Future<void> insertAPI (
     final Map<String, dynamic> body = jsonDecode(response.body);
 
     if(response.statusCode != 200 || body['ok'] != true){
-      throw OnError.fromJson(body, 'insertAPI');
+      final tipo = (body['type']?.toString() == TypeError.validacion) ? TypeError.validacion : TypeError.database;
+      throw OnError.fromJson({'status': body['status'],'message': body['message'],'type': tipo},'API');
     }
 
     return;
   } on OnError{
     rethrow;
   } catch (e) {
-    throw OnError(type: 'network',message: e.toString(),source: 'insertAPI');
+    if(e.toString() == "TypeError: null: type 'Null' is not a subtype of type 'String'"){
+      throw OnError(status: '500', type: TypeError.interface,message: 'Nombre Cientifico debe existir en la base de datos',source: 'mostrar');
+    }
+    throw OnError(status: '500', type: TypeError.interface,message: e.toString(),source: 'insertAPI');
   }
 }
 
@@ -120,10 +124,10 @@ Future<void> updateFloraRemoto(
 
   if(session == null) {
     throw OnError(
-      type: 'auth',
+      type: TypeError.authentication,
       message: 'Usuario no autenticado',
       source: 'updateFloraRemoto',
-      status: 401,
+      status: '401',  
     );
   }
 
@@ -131,10 +135,10 @@ Future<void> updateFloraRemoto(
 
   if(nombre == null){
     throw OnError(
-      type: 'validation',
+      type: TypeError.validacion,
       message: 'Nombre cientifico invalido',
       source: 'updateFloraRemoto',
-      status: 400,
+      status: '400',
     );
   }
   final url = Uri.parse('$baseUrl/update/${Uri.encodeComponent(nombre)}');
@@ -151,17 +155,14 @@ Future<void> updateFloraRemoto(
     final Map<String, dynamic> body = jsonDecode(response.body);
 
     if(response.statusCode != 200 || body['ok'] != true){
-      throw OnError.fromJson(body, 'updateFloraRemoto');
+      final tipo = (body['type']?.toString() == TypeError.validacion) ? TypeError.validacion : TypeError.database;
+      throw OnError.fromJson({'status': body['status'],'message': body['message'],'type': tipo},'API');
     }
     return;
   } on OnError {
     rethrow;
   } catch (e) {
-    throw OnError(
-      type: 'network',
-      message: e.toString(),
-      source: 'updateFloraRemoto',
-    );
+    throw OnError(status: '500', type: TypeError.interface,message: e.toString(),source: 'updateFloraRemoto');
   }
 }
 
@@ -175,7 +176,7 @@ Future<void> softDeleteFloraRemoto(
       type: 'auth',
       message: 'Usuario no autenticado',
       source: 'softDeleteFloraRemoto',
-      status: 401,
+      status: '401',
     );
   }
 
@@ -192,17 +193,14 @@ Future<void> softDeleteFloraRemoto(
     final Map<String, dynamic> body = jsonDecode(response.body);
 
     if(body['ok'] != true){
-      throw OnError.fromJson(body, 'softDeleteFloraRemoto');
+      final tipo = (body['type']?.toString() == TypeError.validacion) ? TypeError.validacion : TypeError.database;
+      throw OnError.fromJson({'status': body['status'],'message': body['message'],'type': tipo},'API');
     }
     return;
   } on OnError {
     rethrow;
   } catch (e) {
-    throw OnError(
-      type: 'network',
-      message: e.toString(),
-      source: 'softDeleteFloraRemoto',
-    );
+    throw OnError(status: '500', type: TypeError.interface,message: e.toString(),source: 'softDeleteFloraRemoto');
   }
 }
 
@@ -214,7 +212,8 @@ Future<String> insertImagen(
 
   if(decoded == null){
     throw OnError(
-      type: 'image',
+      status: '422',
+      type: TypeError.validacion,
       message: 'Imagen no valida',
       source: 'insertImagen',
     );
@@ -224,9 +223,10 @@ Future<String> insertImagen(
 
   if(nombreCientifico.trim().isEmpty) {
     throw OnError(
-      type: 'validation',
+      type: TypeError.validacion,
       message: 'Nombre cientifico vacio',
       source: 'insertImagen',
+      status: '422',
     ); 
   }
 
@@ -234,10 +234,10 @@ Future<String> insertImagen(
 
   if(session == null){
     throw OnError(
-      type: 'auth',
+      type: TypeError.authentication,
       message: 'Usuario no autenticado',
       source: 'insertImagen',
-      status: 401,
+      status: '401',
     ); 
   }
 
@@ -259,22 +259,19 @@ Future<String> insertImagen(
       ),
     );
     final response = await request.send();
-    final body = await response.stream.bytesToString();
-    final json = jsonDecode(body);
+    final resp = await response.stream.bytesToString();
+    final body = jsonDecode(resp);
 
-    if(json['ok'] != true) {
-      throw OnError.fromJson(json, 'insertImagen');
+    if(body['ok'] != true) {
+      final tipo = (body['type']?.toString() == TypeError.validacion) ? TypeError.validacion : TypeError.database;
+      throw OnError.fromJson({'status': body['status'],'message': body['message'],'type': tipo},'API');
     }
     
-    return json['data'];
+    return body['data'];
   } on OnError {
     rethrow;
   } catch (e) {
-    throw OnError(
-      type: 'network',
-      message: e.toString(),
-      source: 'insertImagen',
-    ); 
+    throw OnError(status: '500', type: TypeError.interface,message: e.toString(),source: 'insertImagen');
   }
 }
 
@@ -285,10 +282,10 @@ Future<void> deleteImagen(String urlImagen) async {
 
   if(session == null){
     throw OnError(
-      type: 'auth',
+      type: TypeError.authentication,
       message: 'Usuario no autenticado',
       source: 'deleteImagen',
-      status: 401,
+      status: '401',
     );
   }
 
@@ -298,9 +295,10 @@ Future<void> deleteImagen(String urlImagen) async {
 
     if(fileName.isEmpty) {
       throw OnError(
-        type: 'validation',
+        type: TypeError.validacion,
         message: 'Nombre de archivo invalido',
         source: 'deleteImagen',
+        status: '422'
       );
     }
 
@@ -320,10 +318,6 @@ Future<void> deleteImagen(String urlImagen) async {
   } on OnError {
     rethrow;
   } catch (e) {
-    throw OnError(
-        type: 'network',
-        message: e.toString(),
-        source: 'deleteImagen',
-      );
+    throw OnError(status: '500', type: TypeError.interface,message: e.toString(),source: 'deleteImagen');
   }
 }

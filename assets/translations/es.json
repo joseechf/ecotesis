@@ -26,7 +26,15 @@
     "delete": "Eliminado",
     "nice":"Accion completada",
     "error": "Accion No Completada",
-    "apoyo": "Apoya Nuestro Trabajo"
+    "apoyo": "Apoya Nuestro Trabajo",
+    "logout":"Sesion Cerrada",
+    "errorSupabase": {
+      "400": "Error en la autenticación",
+      "null": "El servidor no responde",
+      "500": "Error interno del servidor"
+    },
+    "desconocido": "Error desconocido",
+    "errorJSON": "Error al cargar GeoJSON"
   },
   "buttons": {
     "change_language": "Cambiar Idioma",
@@ -55,7 +63,7 @@
     "sincronizar": "Sincronizar",
     "limpiar": "Limpiar",
     "rol":"Solicitudes de Rol",
-    "cerrar": "cerrar",
+    "cerrar": "Cerrar",
     "crecimiento": "Crecimiento",
     "fecha":"Seleccionar Fecha"
   },
@@ -67,7 +75,7 @@
       "textconservacion": "Restaurar el ecosistema del bosque seco tropical y apoyar las prácticas sostenibles de uso de la tierra en Azuero para salvar al mono araña de Azuero, en peligro crítico de extinción.",
       "hacemos": {
         "titulo": {
-          "conservacion": "conservación",
+          "conservacion": "Conservación",
           "educDiv": "Educación y divulgación",
           "colaboracion": "Colaboración"
         },
@@ -195,6 +203,11 @@
   },
   "nonumero": "No introduzca numeros",
   "gestionUsuario": {
+    "accion": {
+      "edicion": "Usuario Editado",
+      "registro": "Usuario Registrado",
+      "sesion": "Inicio de sesion existosa"
+    },
     "titulo": {
       "login": "Bienvenido",
       "registro": "Crear cuenta"
@@ -235,7 +248,7 @@
     }
   },
   "bdInterfaz": {
-    "titulo": "ESPECIES CATEGORIZADAS",
+    "titulo": "Especies Categorizadas",
     "lectura": "Modo lectura",
     "nuevoRegistro": "Agregar especie",
     "nuevoSiembra": "Agregar siembra",
@@ -266,8 +279,8 @@
       "Mixto": "Mixto",
       "ambiente": "Ambiente",
       "cobertura": "Cobertura",
-      "cob": "area de cobertura en M2",
-      "establecidoSolSombra": "establecido a",
+      "cob": "Area de cobertura en M2",
+      "establecidoSolSombra": "Establecido a",
       "Sol": "Sol",
       "Sombra": "Sombra",
       "Seco": "Seco",
@@ -288,7 +301,7 @@
     }
   },
   "admin": {
-    "titulo": "CONSOLA DE ADMINISTRADOR",
+    "titulo": "Consola de Administrador",
     "bienvenida": "Bienvenido a la consola de administrador",
     "tablas": {
       "inventas": "Inventario venta",
@@ -298,13 +311,13 @@
       "terrenos": "Terrenos reforestables"
     },
     "capas": {
-      "siembra": "siembra",
+      "siembra": "Siembra",
       "terrenos": "Terrenos reforestables",
-      "centros": "centros educativos"
+      "centros": "Centros educativos"
     },
-    "alquiler": {
-      "titulo":"Terrenos de Alquiler",
-      "dueño": "dueño",
+    "terrenos": {
+      "titulo":"Terrenos / Fincas",
+      "dueño": "Dueño",
       "tamaño":"Tamaño M2",
       "fechaInicio":"Fecha de inicio de reforestación",
       "coordenadas": "Ingrese las coordenadas"
@@ -312,9 +325,9 @@
     "siembra": {
       "titulo": "Nueva siembra",
       "usuario":"Usuario",
-      "distrito": "distrito",
+      "distrito": "Distrito",
       "cantidad": "Cantidad",
-      "ubicacion": "ubicacion"
+      "ubicacion": "Ubicacion"
     },
     "crecimiento": {
       "seguimiento": "Seguimiento Crecimiento",
@@ -325,7 +338,7 @@
   },
   "mapa": {
     "siembra": "Sembrados",
-    "terrenos": "Terrenos alquilados"
+    "terrenos": "Terrenos / Fincas"
   },
   "colaboradores":{
     "Dra_Maria_Gonzalez":{
@@ -335,6 +348,14 @@
     "Carlos_Mendez":{
       "puesto": "Coordinador de Proyectos",
       "descripcion": "Responsable de la gestión y ejecución de proyectos ambientales comunitarios."
+    },
+    "Ana_Maria":{
+      "puesto": "Voluntaria",
+      "descripcion": "Responsable de guiar las siembras y llevar el registro de semillas."
     }
+  },
+  "footer": {
+    "siguenos": "Siguenos",
+    "contacto": "Contacto"
   }
 } 

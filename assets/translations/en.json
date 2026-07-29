@@ -26,7 +26,15 @@
     "delete": "Deleted",
     "nice":"Action completed",
     "error": "Action Not Completed",
-    "apoyo": "Support Our Work"
+    "apoyo": "Support Our Work",
+    "logout":"Logout",
+    "errorSupabase": {
+      "400": "Authentication error",
+      "null": "Server not responding",
+      "500": "Internal server error"
+    },
+    "desconocido": "Unknown error",
+    "errorJSON": "Error loading GeoJSON"
   },
   "buttons": {
     "change_language": "Change Language",
@@ -55,7 +63,7 @@
     "sincronizar": "Synchronize",
     "limpiar": "Clear",
     "rol":"Role Requests",
-    "cerrar": "close",
+    "cerrar": "Close",
     "crecimiento": "Growth",
     "fecha":"Select Date"
   },
@@ -67,7 +75,7 @@
       "textconservacion": "Restoring the tropical dry forest ecosystem and supporting sustainable land use practices in Azuero to save the critically endangered Azuero Spider Monkey.",
       "hacemos": {
         "titulo": {
-          "conservacion": "conservation",
+          "conservacion": "Conservation",
           "educDiv": "Education and Outreach",
           "colaboracion": "Collaboration"
         },
@@ -91,7 +99,7 @@
     },
     "conservrefor": {
       "restHabit": {
-        "title": "RESTORING HABITAT",
+        "title": "Restoring Habitat",
         "text": {
           "p1": "In collaboration with local landowners,",
           "negrita": "Pro Eco Azuero is restoring habitat along a biological corridor  80km in length, with a 10km buffer on each side - nearly 25,000 hectares",
@@ -137,18 +145,18 @@
         "texto3": "Increase awareness and  critical analysis of environmental problems in order to transform future landowners into protectors of the environment."
       },
       "kids": {
-        "title": "PRO ECO KIDS",
+        "title": "Pro Eco Kids",
         "texto": "In 2010, we formed a program called Pro Eco Kids, a group of 5-12-year-old youth environmental leaders that meets weekly at our office in Pedasi to discover the importance of environmental conservation through fun and hands-on experiences. In the past the Pro Eco Kids have explored topics such as waste/recycling, biodiversity, the science and importance of plants, sea turtles, and respect for nature. Some Pro Eco Kids activities include planting in the garden, promotion of reusable bags to town residents, participation in the 2012 Pedasi Local Parade, visits to local protected areas and farms, and exciting guests from the community to engage the kids through their passion for different aspects of conservation and environmental issues. "
       }
     },
     "comunidad": {
       "texto1": "A key part of our work is knitting together a network ranging from grassroots actors to international institutions, working together to create positive environmental change in Azuero.",
       "comites": {
-        "titulo": "ECO ARTISANS",
-        "texto": "The Azuero Eco Artisans group brings together women and girls from rural communities in the Azuero peninsula to create hand-crafted products from locally sourced, sustainable materials that they can sell to support their families and communities. The communities where the Eco Artisans live are associated with our ecological corridor, which has been mapped to strategically reforest and unify patches of tropical dry forest to fortify the area's resilience against the effects of climate change."
+        "titulo": "Environmental Commitees",
+        "texto": "Pro Eco Azuero has supported the creation of environmental committees in rural Azuero communities that are losing their livelihoods due to climate change. These committees provide training in sustainable agricultural practices, as well as resources to build community tree nurseries for growing seedlings that will generate much-needed income for these communities. These seedlings will help reforest the Azuero Peninsula, making communities climate-resilient and restoring habitat for endangered wildlife."
       },
       "instituciones": {
-        "titulo": "EDUCATIONAL INSTITUTIONS",
+        "titulo": "Educational Institutions",
         "texto": "Among our collaborators are educational institutions. We host students and faculty that perform research or conduct internships that intersect and engage with Pro Eco Azuero's programs. The Azuero offers a perfect combination of remoteness and easy access, excellent scientific documentation, research projects in progress, good accommodations, and a well-equipped laboratory."
       },
       "recursoColaborador": {
@@ -159,12 +167,12 @@
         "texto4": "As we continue to work with private landowners to reforest strategic areas of Azuero, these new reforestation sites serve as wonderful study sites for research on the impacts of reforestation on wildlife and farmland productivity."
       },
       "artesanos": {
-        "titulo": "ECO ARTISANS",
+        "titulo": "Eco Artisans",
         "texto": "The Azuero Eco Artisans group brings together women and girls from rural communities in the Azuero peninsula to create hand-crafted products from locally sourced, sustainable materials that they can sell to support their families and communities. The communities where the Eco Artisans live are associated with our ecological corridor, which has been mapped to strategically reforest and unify patches of tropical dry forest to fortify the area's resilience against the effects of climate change."
       }
     },
     "ecoguias": {
-      "titulo": "ECO-GUIDES",
+      "titulo": "Eco Guides",
       "texto": "On this page you will find guides to jumpstart your eco-journey in Azuero. These guides serve as the jumping off point for the specifics of sustainable living on the peninsula. Looking to put in a live fence? Check out our guide on live fences for where to start. Want to know how to reduce waste? Check out the Reduce, Reuse, Recycle Eco-guide. These eco-guides are living documents and we rely on community feedback to keep them in top shape!",
       "pdfs": {
         "firecontrol": "https://c127f5b3-6ab9-4e4a-ae3e-345e3b233d42.filesusr.com/ugd/e6eb07_a0be277e85d94ab4bc744fe2886cc828.pdf",
@@ -195,6 +203,11 @@
   },
   "nonumero": "Dont set numbers",
   "gestionUsuario": {
+    "accion": {
+      "edicion": "User Edit",
+      "registro": "User registered",
+      "sesion": "Successful login"
+    },
     "titulo": {
       "login": "Welcome",
       "registro": "Create account"
@@ -235,7 +248,7 @@
     }
   },
   "bdInterfaz": {
-    "titulo": "CATEGORIZED SPECIES",
+    "titulo": "Categorized Species",
     "lectura": "Rading mode",
     "nuevoRegistro": "Add species",
     "sinEspecies": "No species found",
@@ -266,8 +279,8 @@
       "Mixto": "Mixed",
       "ambiente": "Environment",
       "cobertura": "Coverage",
-      "cob": "coverage area in M2",
-      "establecidoSolSombra": "established to",
+      "cob": "Coverage area in M2",
+      "establecidoSolSombra": "Established to",
       "Sol": "Sun",
       "Sombra": "Shadow",
       "Seco": "Dry",
@@ -288,23 +301,23 @@
     }
   },
   "admin": {
-    "titulo": "ADMIN CONSOLE",
+    "titulo": "Admin Console",
     "bienvenida": "Welcome to the admin console",
     "tablas": {
       "inventas": "Sales inventory",
       "invsiembra": "Planting inventory",
       "regventas": "Sales record",
       "regsiembra": "Planting record",
-      "terrenos": "reforestable lands"
+      "terrenos": "Reforestable lands"
     },
     "capas": {
-      "siembra": "sowing",
-      "terrenos": "reforestable land",
-      "centros": "educational centers"
+      "siembra": "Sowing",
+      "terrenos": "Reforestable land",
+      "centros": "Educational centers"
     },
-    "alquiler": {
-      "titulo":"Rental Land",
-      "dueño": "owner",
+    "terrenos": {
+      "titulo":"Estates / Land",
+      "dueño": "Owner",
       "tamaño":"Size M2",
       "fechaInicio":"Start Date of Reforestation",
       "coordenadas": "Enter Coordinates"
@@ -314,7 +327,7 @@
       "usuario":"User",
       "distrito": "district",
       "cantidad": "Quantity",
-      "ubicacion": "location"
+      "ubicacion": "Location"
     },
     "crecimiento": {
       "seguimiento": "Growth Tracking",
@@ -325,7 +338,7 @@
   },
   "mapa": {
     "siembra": "Sown",
-    "terrenos": "Rented lands"
+    "terrenos": "Estates / Lands"
   },
   "colaboradores":{
     "Dra_Maria_Gonzalez":{
@@ -335,6 +348,14 @@
     "Carlos_Mendez":{
       "puesto": "Project Coordinator",
       "descripcion": "Responsible for the management and execution of community environmental projects."
+    },
+    "Ana_Maria":{
+      "puesto": "Volunteer",
+      "descripcion": "Responsible for overseeing planting and maintaining seed records."
     }
+  },
+  "footer": {
+    "siguenos": "Follow us",
+    "contacto": "Contact"
   }
 } 

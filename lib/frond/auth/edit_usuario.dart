@@ -62,11 +62,23 @@ class _EditarUsuarioState extends State<EditarUsuario> {
         debugPrint('$_rolController solicitando rol ... ');
         await solicitarNuevoRol(_rolController);
       }
+      if(!mounted) return true;
+      Navigator.pop(context, context.tr('gestionUsuario.accion.edicion'));
       return true;
     } catch (e) {
       if(!mounted) return false;
       setState(() {
-        _errorMensaje = e.toString();
+        debugPrint(e.toString());
+        final error = e.toString();
+        if(error.contains('statusCode: 400')){
+          _errorMensaje = context.tr("mensajes.errorSupabase.400");
+        } else if(error.contains('statusCode: null')){
+           _errorMensaje = context.tr("mensajes.errorSupabase.null");
+        } else if(error.contains('statusCode: 500')){
+           _errorMensaje = context.tr("mensajes.errorSupabase.500");
+        } else {
+          _errorMensaje = context.tr("mensajes.desconocido");
+        }
       });
       return false;
     } finally {
@@ -163,11 +175,11 @@ class _EditarUsuarioState extends State<EditarUsuario> {
               final ok = await eliminarUsuario();
               if(ok && mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(context.tr('mensaje.delete')),
+                  SnackBar(content: Text(context.tr('mensajes.delete')),
                   backgroundColor: Estilos.red,
                   ),
                 );
-                Navigator.pop(context,"usuario_eliminado");
+                Navigator.pop(context,context.tr('mensajes.delete'));
               }
             },
             icon: const Icon(Icons.delete_outline),
@@ -179,7 +191,14 @@ class _EditarUsuarioState extends State<EditarUsuario> {
           width: double.infinity,
           child: ElevatedButton.icon(onPressed: (){
             content.read<SessionProvider>().logout();
-            Navigator.pop(context,"logout");
+            if( mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(context.tr('mensajes.logout')),
+                  backgroundColor: Estilos.verdePrincipal,
+                  ),
+                );
+                Navigator.pop(context,context.tr('mensajes.logout'));
+              }
           },
           icon: const Icon(Icons.logout_outlined),
           label: Text(content.tr('buttons.logout')),

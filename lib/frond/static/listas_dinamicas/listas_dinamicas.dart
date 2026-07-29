@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 //nosotros
-Future<List<Map<String,String>>> cargarColaboradores(
+List<Map<String,String>> cargarColaboradores(
   BuildContext context,
-) async {
+) {
   return [
     {
       'imagen': 'assets/images/colaborador1.jpg',
@@ -21,16 +21,16 @@ Future<List<Map<String,String>>> cargarColaboradores(
     {
       'imagen': 'assets/images/colaborador4.jpg',
       'titulo': 'Ana María',
-      'puesto': context.tr('colaboradores.Dra_Maria_Gonzalez.puesto'),
-      'descripcion': context.tr('colaboradores.Dra_Maria_Gonzalez.descripcion'),
+      'puesto': context.tr('colaboradores.Ana_Maria.puesto'),
+      'descripcion': context.tr('colaboradores.Ana_Maria.descripcion'),
     },
   ];
 }
 
 // compañeros
-Future<List<Map<String, String>>> cargarCompanieros(
+List<Map<String, String>> cargarCompanieros(
   BuildContext context,
-) async {
+) {
   return [
     {'imagen': 'assets/images/colaborador1.jpg','titulo':'Alisson Ortega'},
     {'imagen': 'assets/images/colaborador2.jpg','titulo':'Jose Juan'},
@@ -39,9 +39,9 @@ Future<List<Map<String, String>>> cargarCompanieros(
 }
 
 // home
-Future<List<Map<String, String>>> cargarListasHacemos(
+List<Map<String, String>> cargarListasHacemos(
   BuildContext context,
-) async {
+) {
   return [
     {
       'imagen': 'assets/images/mono1.jpg',
@@ -65,9 +65,9 @@ Future<List<Map<String, String>>> cargarListasHacemos(
 }
 
 // conservacion y reforestacion
-Future<List<Map<String, String>>> cargarListaIniciativas(
+List<Map<String, String>> cargarListaIniciativas(
   BuildContext context,
-) async {
+) {
   return [
     {
       'imagen': 'assets/images/viveros.jpg',
@@ -102,9 +102,9 @@ final List<String> listaPlantando = [
 ];
 
 //ecoguias pdfs
-Future<List<Map<String, String>>> cargarGuias(
+List<Map<String, String>> cargarGuias(
   BuildContext context,
-) async {
+) {
   return [
     {
       'imagen': 'assets/images/incendio.jpg',

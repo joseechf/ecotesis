@@ -26,24 +26,6 @@ class _SiembraDialogState extends State<SiembraDialog> {
   late String? distrito = 'Chitre';
   List<double>? coordenadas;
 
-    void mostrarErrorUI(BuildContext context, OnError error) {
-    debugPrint(' ERROR REAL UI: ${error.source} | ${error.type} | ${error.message}',);
-    showDialog(
-      context: context, 
-      builder: (_) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(
-          '${error.source}: ${error.message}'
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), 
-          child: const Text('Aceptar'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void guardar() async {
     bool result = false;
     try {
@@ -51,7 +33,8 @@ class _SiembraDialogState extends State<SiembraDialog> {
       if(coordenadas == null || selectedDate == null) throw Exception('valores fecha o coordenadas vacíos');
     } catch (e) {
       final error = OnError(
-        type: 'ui',
+        status: '422',
+        type: TypeError.validacion,
         message: e.toString(),
         source: 'siembra',
       );
@@ -80,7 +63,8 @@ class _SiembraDialogState extends State<SiembraDialog> {
       }
     } catch (e) {
       final error = OnError(
-        type: 'ui',
+        status: '500',
+        type: TypeError.unknown,
         message: e.toString(),
         source: 'siembra',
       );

@@ -19,32 +19,36 @@ import '../admin/consola_admin.dart';
 import 'reglas_rol.dart';
 import '../../data/auth/session_provider.dart';
 import '../static/doc_sincronizacion.dart';
+import '../../validar_red.dart';
 
 const double _cambioMenu = 900;
 
 //configuracion de los elementosdel menu
-final _menuItems = [
-  _Item('buttons.somos',Icons.groups, () => Nosotros()),
-  _Item.group('buttons.trabajo',[
-    _Item('buttons.conservref',Icons.forest, () => Conservrefor()),
-    _Item('buttons.educacion',Icons.school, () => Educacion()),
-    _Item('buttons.comunidad',Icons.groups, () => Comunidad()),
-  ]),
-  _Item.group('buttons.recursos', [
-    _Item('buttons.mapa',Icons.map, ()=> MappAzuero()),
-    _Item('buttons.ecoguias',Icons.eco, () => Ecoguias()),
-    _Item('buttons.basedatos', Icons.storage, () => const CatalogoPage()),
-    if(kIsWeb)
-      _Item(
-        'buttons.biblioteca',
-        Icons.local_library,
-        null,
-        url: 'https://www.librarything.com/catalog/ProEcoAzuero',
-      ),
-  ]),
-  _Item('buttons.doc',Icons.description, () => ExplicacionSincronizacion()),
-];
 
+List<_Item> _buildMenuItems(bool hayInternet){
+  return [
+    _Item('buttons.somos',Icons.groups, () => Nosotros()),
+    _Item.group('buttons.trabajo',[
+      _Item('buttons.conservref',Icons.forest, () => Conservrefor()),
+      _Item('buttons.educacion',Icons.school, () => Educacion()),
+      _Item('buttons.comunidad',Icons.groups, () => Comunidad()),
+    ]),
+    _Item.group('buttons.recursos', [
+      if(hayInternet)
+        _Item('buttons.mapa',Icons.map, ()=> MappAzuero()),
+      _Item('buttons.ecoguias',Icons.eco, () => Ecoguias()),
+      _Item('buttons.basedatos', Icons.storage, () => const CatalogoPage()),
+      if(kIsWeb)
+        _Item(
+          'buttons.biblioteca',
+          Icons.local_library,
+          null,
+          url: 'https://www.librarything.com/catalog/ProEcoAzuero',
+        ),
+    ]),
+    _Item('buttons.doc',Icons.description, () => ExplicacionSincronizacion()),
+  ];
+}
 class _Item{
   final String key;
   final IconData? icon;
@@ -109,10 +113,28 @@ class _Logo extends StatelessWidget {
 }
 
 //Menu de pantalla grande (Desktop / Web) utilizando MenuBar nativo
-class _DesktopMenu extends StatelessWidget {
+class _DesktopMenu extends StatefulWidget {
+  const _DesktopMenu();
+  @override
+  State<_DesktopMenu> createState() => _DesktopMenuState();
+}
+
+class _DesktopMenuState extends State<_DesktopMenu>{
+  bool hayInternet = false;
+  @override
+  void initState(){
+    super.initState();
+    validarRed().then((value){
+      if(!mounted) return;
+        setState(() {
+          hayInternet = value;
+        });
+    });
+  }
   @override
   Widget build(BuildContext context) {
      final session = context.watch<SessionProvider>();
+     final menuItems = _buildMenuItems(hayInternet);
 
      return Row(
       mainAxisSize: MainAxisSize.min,
@@ -126,20 +148,21 @@ class _DesktopMenu extends StatelessWidget {
           ),
         ), 
         child: MenuBar(
-          children: _menuItems.map((item){
+          children: menuItems.map((item){
             if(item.isGroup){
               return SubmenuButton(
                 menuChildren: item.children!.map((hijo){
-                return MenuItemButton(
-                  leadingIcon: Icon(hijo.icon, color: Estilos.verdeOscuro, size: 20,),
-                  onPressed: () => _handle(context, hijo),
-                  child: Text(
-                    context.tr(hijo.key),
-                    style: const TextStyle(color: Estilos.verdeOscuro, fontSize: Estilos.textoGrande),
-                  ),
-                );
-              }).toList(), 
-              child: _MenuTextLabel(labelKey: item.key,hasDropdown: true),);
+                  return MenuItemButton(
+                    leadingIcon: Icon(hijo.icon, color: Estilos.verdeOscuro, size: 20,),
+                    onPressed: () => _handle(context, hijo),
+                    child: Text(
+                      context.tr(hijo.key),
+                      style: const TextStyle(color: Estilos.verdeOscuro, fontSize: Estilos.textoGrande),
+                    ),
+                  );
+                }).toList(), 
+                child: _MenuTextLabel(labelKey: item.key,hasDropdown: true),
+              );
             } else {
               return MenuItemButton(
                 onPressed: () => _handle(context,item),
@@ -217,12 +240,31 @@ class _MenuTextLabel extends StatelessWidget {
 }
 
 // menu movil o pantalla chica
-class MobileMenu extends StatelessWidget{
+class MobileMenu extends StatefulWidget{
   const MobileMenu({super.key});
+
+  @override
+  State<MobileMenu> createState() => _MobileMenuState();
+}
+
+class _MobileMenuState extends State<MobileMenu>{
+  bool hayInternet = false;
+
+  @override
+  void initState(){
+    super.initState();
+    validarRed().then((value){
+      if(!mounted) return;
+        setState(() {
+          hayInternet = value;
+        });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final session = context.watch<SessionProvider>();
+    final menuItems = _buildMenuItems(hayInternet);
     return Drawer(
       backgroundColor: Estilos.verdePrincipal,
       shape: const RoundedRectangleBorder(
@@ -248,7 +290,7 @@ class MobileMenu extends StatelessWidget{
           Expanded(
             child: ListView(
               children: [
-                ..._buildMobileItems(_menuItems, context),
+                ..._buildMobileItems(menuItems, context),
                 const Divider(color: Estilos.blanco, thickness: 0.5,),
                 _Tile(Icons.account_circle_rounded, 'titles.login',() async {
                   Navigator.pop(context);

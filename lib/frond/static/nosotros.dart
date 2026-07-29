@@ -12,6 +12,8 @@ class Nosotros extends StatelessWidget {
   Widget build(BuildContext context) {
     final anchoPantalla = MediaQuery.of(context).size.width;
     final isMobile = anchoPantalla < Estilos.cambioMenu;
+    final listaCompanieros = cargarCompanieros(context);
+    final listaColaboradores = cargarColaboradores(context);
     return Builder(
       builder: (context){
         return Scaffold(
@@ -184,30 +186,15 @@ class Nosotros extends StatelessWidget {
                 ),
               ),
 
-              // aqui va una lista de persona y descripcion
-              FutureBuilder<List<Map<String, String>>>(
-                future: cargarColaboradores(context),
-                builder: (context, snapshot) {
-                  if(snapshot.hasError){
-                    return Text('Error al cargar los datos');
-                  }
-                  if(!snapshot.hasData){
-                    return const Center(
-                      child: Padding(padding: EdgeInsets.all(20),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  final lista = snapshot.data!;
-                  return Wrap(
+ Wrap(
                     alignment: WrapAlignment.center,
                     spacing: 10,
                     runSpacing: 10,
-                    children: List.generate(lista.length, (index){
+                    children: List.generate(listaColaboradores.length, (index){
                       return SizedBox(
                         width: 350,
                         child: ListaWidgetOrdenada(
-                          datos: lista[index], 
+                          datos: listaColaboradores[index], 
                           radioImg: 10,
                           onNavegar: (ctx, ruta){
                             debugPrint("Ir a $ruta");
@@ -215,9 +202,7 @@ class Nosotros extends StatelessWidget {
                         ),
                       );
                     }),
-                  );
-                },
-              ),
+                  ),
 
               ImageContainerWidget(
                 imagePath: 'assets/images/mono1.jpg', 
@@ -282,31 +267,15 @@ class Nosotros extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // aqui va una lista de compañeros
-              FutureBuilder<List<Map<String, String>>>(
-                future: cargarCompanieros(context),
-                builder: (context, snapshot) {
-                  if(snapshot.hasError){
-                    return Text('Error al cargar los datos');
-                  }
-                  if(!snapshot.hasData){
-                    return const Center(
-                      child: Padding(padding: EdgeInsets.all(20),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  final lista = snapshot.data!;
-                  return Wrap(
+                Wrap(
                     alignment: WrapAlignment.center,
                     spacing: 10,
                     runSpacing: 10,
-                    children: List.generate(lista.length, (index){
+                    children: List.generate(listaCompanieros.length, (index){
                       return SizedBox(
                         width: 350,
                         child: ListaWidgetOrdenada(
-                          datos: lista[index], 
+                          datos: listaCompanieros[index], 
                           radioImg: 10,
                           onNavegar: (ctx, ruta){
                             debugPrint("Ir a $ruta");
@@ -314,9 +283,7 @@ class Nosotros extends StatelessWidget {
                         ),
                       );
                     }),
-                  );
-                },
-              ),
+                  ),
               const Footer(),
             ],
           )),

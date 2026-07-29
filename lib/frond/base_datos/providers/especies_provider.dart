@@ -59,7 +59,8 @@ class EspeciesProvider with ChangeNotifier {
       debugPrint('Error provider cargarFlora: ${e.message}');
     } catch (e) {
       _error = OnError(
-        type: 'provider',
+        status: '500',
+        type: TypeError.network,
         message: e.toString(),
         source: 'cargarFlora',
       );
@@ -113,7 +114,8 @@ class EspeciesProvider with ChangeNotifier {
         return false;
     } catch (e) {
       _error = OnError(
-        type: 'provider',
+        status: '500',
+        type: TypeError.network,
         message: e.toString(),
         source: 'insertar',
       );
@@ -136,10 +138,11 @@ class EspeciesProvider with ChangeNotifier {
         await _updateRemoto(nueva, imgsBytes ?? []);
       } else{
         final ok = await _updateLocal(nueva);
-        if(!ok){
+        if(ok != 'true'){
           throw OnError(
-            type: 'local',
-            message: 'ERROR actualizando local',
+            status: '500',
+            type: TypeError.database,
+            message: ok,
             source: 'update',
           );
         }
@@ -152,7 +155,8 @@ class EspeciesProvider with ChangeNotifier {
       return false;
     } catch (e) {
       _error = OnError(
-        type: 'provider',
+        status: '500',
+        type: TypeError.network,
         message: e.toString(),
         source: 'update',
       );
@@ -190,9 +194,10 @@ class EspeciesProvider with ChangeNotifier {
         final ok = await softDeleteLocal(db, nombre_cientifico,null);
         if(!ok){
           throw OnError(
-            type: 'local',
+            status: '500',
+            type: TypeError.database,
             message: 'ERROR actualizando local',
-            source: 'eliminar',
+            source: 'mostrar',
           );
         }
       }
@@ -207,7 +212,8 @@ class EspeciesProvider with ChangeNotifier {
       return false;
     } catch (e) {
       _error = OnError(
-        type: 'provider',
+        status: '500',
+        type: TypeError.database,
         message: e.toString(),
         source: 'eliminar',
       );
@@ -253,9 +259,10 @@ class EspeciesProvider with ChangeNotifier {
         }
       }
       throw OnError(
-        type: 'provider',
+        status: '500',
+        type: TypeError.database,
         message: e.toString(),
-        source: '_insertarRemoto',
+        source: 'API',
       );
     }
   }
@@ -277,9 +284,10 @@ class EspeciesProvider with ChangeNotifier {
 
       if(url.isEmpty){
         throw OnError(
-          type: 'image',
+          status: '500',
+          type: TypeError.server,
           message: 'ERROR subiendo la imagen',
-          source: '_updateRemoto',
+          source: 'mostrar',
         );
       }
       editado.add(ImagenTemp(url_foto: url, estado: 'comprobado'));
@@ -300,10 +308,10 @@ class EspeciesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> _updateLocal(Especie nueva) async {
+  Future<String> _updateLocal(Especie nueva) async {
     final db = await dbLocal.instancia;
     final ok = await updateFloraLocal(db, nueva,null);
-    if(ok) {
+    if(ok == 'true') {
       final index = _especies.indexWhere(
         (e) => e.nombre_cientifico == nueva.nombre_cientifico,
       );
