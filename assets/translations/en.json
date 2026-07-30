@@ -41,7 +41,18 @@
       "500": "Internal server error"
     },
     "desconocido": "Unknown error",
-    "errorJSON": "Error loading GeoJSON"
+    "errorJSON": "Error loading GeoJSON",
+    "erroresFormateados": {
+      "api": "API validation rejected the data",
+      "apiobdremota": "Error in the API or remote database",
+      "servidorauth": "Authentication server error",
+      "invaliddata": "Invalid data entered",
+      "autenticacion": "Authentication failed",
+      "internet": "Internet connection error",
+      "intentenuevamente": "Application error; please try again",
+      "bd": "Local or remote database error",
+      "unknow": "Unknown error encountered in"
+    }
   },
   "buttons": {
     "change_language": "Change Language",

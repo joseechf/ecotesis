@@ -36,47 +36,48 @@ class TypeError {
     debugPrint(' ERROR REAL UI: ${error.status} | ${error.source} | ${error.type} | message: ${error.message}',);
     showDialog(
       context: context, 
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Error'),
-        content: Text(generarMensaje(error)),
+        content: Text(generarMensaje(error,context)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), 
-          child: const Text('Aceptar'),
-          ), 
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), 
+          child: const Text('Aceptar'), 
+          ),
+           
         ],
       ),
     );
   }
 
-  String generarMensaje(OnError error){
+  String generarMensaje(OnError error, context){
     
     if(TypeError.validacion == error.type && error.source == 'API'){
-      return 'La validación de la API rechaza los datos';
+      return '${context.tr("mensajes.erroresFormateados.api")}';
     }
     if(TypeError.database == error.type && error.source == 'API'){
-      return 'Error en el API o la base de datos remota';
+      return '${context.tr("mensajes.erroresFormateados.apiobdremota")}';
     }
     if(TypeError.server == error.type && error.source == 'supabase'){
-      return 'Error en el servidor de autenticación';
+      return '${context.tr("mensajes.erroresFormateados.servidorauth")}';
     }
     if(error.source == 'mostrar'){
       return 'Error ${error.type} -- ${error.message}';
     }
     switch (error.type) {
       case TypeError.validacion:
-        return 'Datos ingresados invalidos';
+        return '${context.tr("mensajes.erroresFormateados.invaliddata")}';
       case TypeError.authentication:
-        return 'La autenticación falló';
+        return '${context.tr("mensajes.erroresFormateados.autenticacion")}';
       case TypeError.network:
-        return 'Error en la conexión a internet';
+        return '${context.tr("mensajes.erroresFormateados.internet")}';
       case TypeError.interface:
-        return 'Error en la aplicación intentelo nuevamente';
+        return '${context.tr("mensajes.erroresFormateados.intentenuevamente")}';
       case TypeError.database:
-        return 'Error en la base de datos local o remota';
+        return '${context.tr("mensajes.erroresFormateados.bd")}';
       case TypeError.unknown:
-        return 'Error desconocido obtenido en ${error.source}';
+        return '${context.tr("mensajes.erroresFormateados.unknow")} ${error.source}';
     }
-    return 'Error desconocido';
+    return 'Error desconocido - Unknown error';
   }
 
   List source = ['API','interface','supabase',''];
