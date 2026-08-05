@@ -189,7 +189,7 @@ Future<void> mostrarInfoGeometrica(
           ),
         ),
         actions: [
-          if((propiedades['nombre_cientifico'] != null) && _isAdmin(context))
+          if((propiedades['nombre cientifico - scientific name'] != null) && _isAdmin(context))
             SizedBox(
               width: 170,
               child: ElevatedButton.icon(

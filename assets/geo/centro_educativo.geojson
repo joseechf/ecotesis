@@ -5,15 +5,15 @@
       "type": "Feature",
       "properties": {
         "id": "escuela1",
-        "nombre": "Centro Educativo El Guayacán",
-        "provincia": "Herrera",
-        "distrito": "Chitré",
-        "corregimiento": "La Arena",
-        "electricidad": "Sí",
-        "internet": "Sí",
-        "tipo_servicio": "Fibra",
-        "nivel": "Primaria",
-        "estado": "Activo"
+        "Nombre - Name": "Centro Educativo El Guayacán",
+        "Provincia - Province": "Herrera",
+        "Distrito - Distric": "Chitré",
+        "Corregimiento - Village": "La Arena",
+        "Electricidad - Electricity": "Sí",
+        "Internet": "Sí",
+        "Tipo_servicio - Service Type": "Fibra",
+        "Nivel - Level": "Primaria",
+        "Estado - State": "Activo"
       },
       "geometry": {
         "type": "Point",
@@ -24,15 +24,15 @@
       "type": "Feature",
       "properties": {
         "id": "escuela2",
-        "nombre": "Escuela Rural La Esperanza",
-        "provincia": "Los Santos",
-        "distrito": "Las Tablas",
-        "corregimiento": "San José",
-        "electricidad": "Sí",
-        "internet": "No",
-        "tipo_servicio": "Ninguno",
-        "nivel": "Primaria",
-        "estado": "Activo"
+        "Nombre - Name": "Escuela Rural La Esperanza",
+        "Provincia - Province": "Los Santos",
+        "Distrito - Distric": "Las Tablas",
+        "Corregimiento - Village": "San José",
+        "Electricidad - Electricity": "Sí",
+        "Internet": "No",
+        "Tipo_servicio - Service Type": "Ninguno",
+        "Nivel - Level": "Primaria",
+        "Estado - State": "Activo"
       },
       "geometry": {
         "type": "Point",
@@ -43,15 +43,15 @@
       "type": "Feature",
       "properties": {
         "id": "escuela3",
-        "nombre": "Instituto Educativo Santa María",
-        "provincia": "Herrera",
-        "distrito": "Parita",
-        "corregimiento": "Cabecera",
-        "electricidad": "Sí",
-        "internet": "Sí",
-        "tipo_servicio": "Satelital",
-        "nivel": "Secundaria",
-        "estado": "Activo"
+        "Nombre - Name": "Instituto Educativo Santa María",
+        "Provincia - Province": "Herrera",
+        "Distrito - Distric": "Parita",
+        "Corregimiento - Village": "Cabecera",
+        "Electricidad - Electricity": "Sí",
+        "Internet": "Sí",
+        "Tipo_servicio - Service Type": "Satelital",
+        "Nivel - Level": "Secundaria",
+        "Estado - State": "Activo"
       },
       "geometry": {
         "type": "Point",
@@ -62,15 +62,15 @@
       "type": "Feature",
       "properties": {
         "id": "escuela4",
-        "nombre": "Centro Básico Nuevo Horizonte",
-        "provincia": "Los Santos",
-        "distrito": "Guararé",
-        "corregimiento": "El Espinal",
-        "electricidad": "Sí",
-        "internet": "Sí",
-        "tipo_servicio": "ADSL",
-        "nivel": "Básica",
-        "estado": "Activo"
+        "Nombre - Name": "Centro Básico Nuevo Horizonte",
+        "Provincia - Province": "Los Santos",
+        "Distrito - Distric": "Guararé",
+        "Corregimiento - Village": "El Espinal",
+        "Electricidad - Electricity": "Sí",
+        "Internet": "Sí",
+        "Tipo_servicio - Service Type": "ADSL",
+        "Nivel - Level": "Básica",
+        "Estado - State": "Activo"
       },
       "geometry": {
         "type": "Point",
@@ -81,15 +81,15 @@
       "type": "Feature",
       "properties": {
         "id": "escuela5",
-        "nombre": "Escuela Comunitaria San Miguel",
-        "provincia": "Veraguas",
-        "distrito": "Santiago",
-        "corregimiento": "Ponuga",
-        "electricidad": "Sí",
-        "internet": "Sí",
-        "tipo_servicio": "Satelital",
-        "nivel": "Primaria",
-        "estado": "Activo"
+        "Nombre - Name": "Escuela Comunitaria San Miguel",
+        "Provincia - Province": "Veraguas",
+        "Distrito - Distric": "Santiago",
+        "Corregimiento - Village": "Ponuga",
+        "Electricidad - Electricity": "Sí",
+        "Internet": "Sí",
+        "Tipo_servicio - Service Type": "Satelital",
+        "Nivel - Level": "Primaria",
+        "Estado - State": "Activo"
       },
       "geometry": {
         "type": "Point",
@@ -100,15 +100,15 @@
       "type": "Feature",
       "properties": {
         "id": "escuela6",
-        "nombre": "Colegio Técnico Azuero Digital",
-        "provincia": "Herrera",
-        "distrito": "Ocú",
-        "corregimiento": "Cabecera",
-        "electricidad": "Sí",
-        "internet": "Sí",
-        "tipo_servicio": "Fibra",
-        "nivel": "Secundaria",
-        "estado": "Activo"
+        "Nombre - Name": "Colegio Técnico Azuero Digital",
+        "Provincia - Province": "Herrera",
+        "Distri - Districto": "Ocú",
+        "Corregimiento - Village": "Cabecera",
+        "Electricid - Electricityad": "Sí",
+        "Internet": "Sí",
+        "Tipo_servic - Service Typeio": "Fibra",
+        "Niv - Levelel": "Secundaria",
+        "Esta - Statedo": "Activo"
       },
       "geometry": {
         "type": "Point",

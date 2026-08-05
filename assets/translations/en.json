@@ -52,6 +52,9 @@
       "intentenuevamente": "Application error; please try again",
       "bd": "Local or remote database error",
       "unknow": "Unknown error encountered in"
+    },
+    "admin":{
+      "nosolicitud": "No pending requests"
     }
   },
   "buttons": {
@@ -144,8 +147,8 @@
       "cultivosSostenibles": {
         "titulo": {
           "viveros": "Tree Nursery",
-          "Microproductores": "Tree Nursery",
-          "semillas": "Seed Bank"
+          "Microproductores": "Micro-producers",
+          "semillas": "Seed Bank" 
         },
         "texto": {
           "viveros": "Each year we grow thousands of native, fruit and timber seedlings for planting out in the field during the June-July reforestation season.",

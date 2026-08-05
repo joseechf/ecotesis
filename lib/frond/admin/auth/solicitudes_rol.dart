@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../data/auth/auth_admin_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SolicitudesRolScreen extends StatefulWidget {
   const SolicitudesRolScreen({super.key});
@@ -32,7 +33,7 @@ class _SolicitudesRolScreenState extends State<SolicitudesRolScreen> {
           );
         }
         if(provider.solicitudes.isEmpty){
-          return const Center(child: Text('No hay solicitudes pendientes'),);
+          return Center(child: Text(context.tr("mensajes.admin.nosolicitud")),); 
         }
         return ListView.builder(
           itemCount: provider.solicitudes.length,

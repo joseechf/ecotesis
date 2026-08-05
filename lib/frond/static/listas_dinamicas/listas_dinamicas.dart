@@ -77,7 +77,7 @@ List<Map<String, String>> cargarListaIniciativas(
     {
       'imagen': 'assets/images/doñas.jpg',
       'titulo': context.tr('texts.conservrefor.cultivosSostenibles.titulo.Microproductores'),
-      'resumen': context.tr('texts.conservrefor.cultivosSostenibles.texto.Microproductores'),
+      'resumen': context.tr('texts.conservrefor.cultivosSostenibles.texto.Microproductores'), 
     },
     {
       'imagen': 'assets/images/semillas.jpg',

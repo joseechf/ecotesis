@@ -52,6 +52,9 @@
       "intentenuevamente": "Error en la aplicación intentelo nuevamente",
       "bd": "Error en la base de datos local o remota",
       "unknow": "Error desconocido obtenido en"
+    },
+    "admin":{
+      "nosolicitud": "No hay solicitudes pendientes"
     }
   },
   "buttons": {
@@ -117,7 +120,7 @@
     },
     "conservrefor": {
       "restHabit": {
-        "title": "RESTAURACIÓN DEL HÁBITAT",
+        "title": "Restauración del Hábitat",
         "text": {
           "p1": "En colaboración con los propietarios locales,",
           "negrita": "Pro Eco Azuero está restaurando hábitat a lo largo de un corredor biológico más de 120 km de longitud,",
@@ -150,7 +153,7 @@
         "texto": {
           "viveros": "Cada año cultivamos miles de plántulas nativas, frutales y maderables para sembrarlas en el campo durante la temporada de reforestación de junio a julio.",
           "Microproductores": "Creamos microcontratos con residentes rurales para cultivar árboles jóvenes en viveros caseros, que luego les compramos para nuestra temporada de reforestación: su crecimiento económico impulsa la conservación del hábitat.",
-          "semillas": "Creamos microcontratos con residentes rurales para cultivar árboles jóvenes en viveros caseros, que luego les compramos para nuestra temporada de reforestación: su crecimiento económico impulsa la conservación del hábitat."
+          "semillas": "Recolectamos semillas de plantas y árboles locales para intercambiarlas con otros miembros de la comunidad y con bancos de semillas locales."
         }
       }
     },
